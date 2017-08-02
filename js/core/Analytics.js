@@ -566,7 +566,6 @@ class Analytics {
       this.sample.time = this.utils.getCurrentTimestamp();
 
       if (!this.isCastClient && !this.isCastReceiver) {
-        console.log('Sent Sample: ' + this.sample.state + ' - isLive: ' + this.sample.isLive);
         this.analyticsCall.sendRequest(this.sample, this.utils.noOp);
         return;
       }
