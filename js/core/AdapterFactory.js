@@ -6,6 +6,7 @@ import PlayerDetector from '../utils/PlayerDetector'
 import BitmovinAdapter from '../adapters/BitmovinAdapter'
 import Bitmovin7Adapter from '../adapters/Bitmovin7Adapter'
 import VideoJsAdapter from '../adapters/VideoJsAdapter'
+import HlsjsAdapter from '../adapters/HlsjsAdapter'
 
 class AdapterFactory {
   constructor() {
@@ -19,6 +20,8 @@ class AdapterFactory {
       return new Bitmovin7Adapter(player, eventCallback);
     } else if (this.playerDetector.isVideoJs(player)) {
       return new VideoJsAdapter(player, eventCallback, eventMachine);
+    } else if(PlayerDetector.isHlsjs(player)) {
+      return new HlsjsAdapter(player, eventCallback, eventMachine);
     }
   };
 }
