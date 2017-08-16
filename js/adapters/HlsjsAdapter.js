@@ -116,8 +116,7 @@ export default class HlsjsAdapter {
       this.eventCallback(Events.METADATA_LOADED, info);
     });
 
-    // We lack an event to indicate the intent to play !
-
+    // We need the PLAY event to indicate the intent to play
     // NOTE: use TIMECHANGED event on 'playing' and trigger PLAY as intended in states.dot graph
 
     this.listenToMediaElementEvent('play', () => {
