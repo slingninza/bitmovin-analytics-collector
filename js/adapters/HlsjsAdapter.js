@@ -194,8 +194,6 @@ export default class HlsjsAdapter {
 
       this.isBuffering_ = false;
 
-      console.log('timeupdate');
-
       if (!this.isPaused_) {
         this.eventCallback(Events.TIMECHANGED, {
           currentTime
@@ -217,7 +215,7 @@ export default class HlsjsAdapter {
     // but data is unexpectedly not forthcoming.
     // https://developer.mozilla.org/en-US/docs/Web/Events/stalled
     this.listenToMediaElementEvent('stalled', () => {
-      console.log('stalled');
+
       // this event doesn't indicate buffering by definition (interupted playback),
       // only that data throughput to playout buffers is not as high as expected
       // It happens on Chrome every once in a while as SourceBuffer's are not fed
@@ -228,7 +226,7 @@ export default class HlsjsAdapter {
     // The waiting event is fired when playback has stopped because of a temporary lack of data.
     // See https://developer.mozilla.org/en-US/docs/Web/Events/waiting
     this.listenToMediaElementEvent('waiting', () => {
-      console.log('waiting');
+
       this.onBuffering();
     });
 
@@ -273,8 +271,6 @@ export default class HlsjsAdapter {
     this.mediaEl = hls.media;
 
     this.registerMediaElement();
-
-    console.log('SOURCE_LOADED');
 
     this.eventCallback(Events.SOURCE_LOADED);
   }
@@ -350,7 +346,6 @@ export default class HlsjsAdapter {
 
     const {currentTime} = this.mediaEl;
 
-    console.log('pause');
     this.eventCallback(Events.PAUSE, {
       currentTime
     });
