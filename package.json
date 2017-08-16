@@ -22,15 +22,18 @@
     "babel-preset-es2016": "^6.16.0",
     "babel-preset-es2017": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
+    "eslint": "^4.4.1",
     "javascript-state-machine": "^2.4.0",
     "string-replace-loader": "^1.0.5",
-    "write-json-webpack-plugin": "^1.0.0",
-    "webpack": "^1.14.0"
+    "webpack": "^1.14.0",
+    "write-json-webpack-plugin": "^1.0.0"
   },
   "scripts": {
     "release": "webpack --config=webpack.config.release.js",
     "debug": "webpack --config=webpack.config.debug.js",
-    "debug:watch": "webpack --config=webpack.config.debug.js --watch"
+    "debug:watch": "webpack --config=webpack.config.debug.js --watch",
+    "lint": "eslint *.js js",
+    "lint:fix": "eslint *.js js --fix"
   },
   "babel": {
     "presets": [
