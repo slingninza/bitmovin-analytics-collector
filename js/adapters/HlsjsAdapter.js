@@ -2,7 +2,7 @@ import Events from '../enums/Events';
 
 import Hls from 'hls.js';
 
-const BUFFERING_TIMECHANGED_TIMEOUT = 1500;
+const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 export default class HlsjsAdapter {
 
