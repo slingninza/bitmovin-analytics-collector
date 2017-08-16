@@ -6,7 +6,8 @@ const Players = {
   BITMOVIN: 'bitmovin',
   JW      : 'jw',
   RADIANT : 'radiant',
-  VIDEOJS : 'videojs'
+  VIDEOJS : 'videojs',
+  HLSJS   : 'hlsjs' 
 };
 
 export default Players
