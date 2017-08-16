@@ -40,9 +40,14 @@ let loaders = [{
   }
 }];
 
+const externals = {
+  'hls.js': 'Hls'
+}
+
 module.exports = {
   banner,
   entry,
+  externals,
   preLoaders,
   loaders,
   getGitVersion

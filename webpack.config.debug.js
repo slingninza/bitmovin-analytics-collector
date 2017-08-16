@@ -1,9 +1,10 @@
-let {banner, entry, preLoaders, loaders} = require('./webpack.config.js');
+let {banner, entry, externals, preLoaders, loaders} = require('./webpack.config.js');
 const webpack = require('webpack');
 const packageProperties = require('./package.json');
 
 module.exports = {
   entry,
+  externals,
   output: {
     path: './build/debug',
     filename: 'bitmovinanalytics.min.js',

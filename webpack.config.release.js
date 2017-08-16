@@ -1,4 +1,4 @@
-let {getGitVersion, banner, entry, preLoaders, loaders} = require('./webpack.config.js');
+let {getGitVersion, banner, entry, externals, preLoaders, loaders} = require('./webpack.config.js');
 const WriteJsonPlugin = require('write-json-webpack-plugin');
 const webpack = require('webpack');
 const packageProperties = require('./package.json');
@@ -17,6 +17,7 @@ const releasePackageJson = {
 
 module.exports = {
   entry,
+  externals,
   output: {
     path: './build/release',
     filename: 'bitmovinanalytics.min.js',
