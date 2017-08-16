@@ -21,6 +21,8 @@ class VideoJsAdapter {
     return 'progressive';
   }
 
+  // this seems very generic. one could put it in a helper
+  // and use it in many adapter implementations.
   getStreamSources(url) {
     let mpdUrl       = null;
     let m3u8Url      = null;
@@ -155,6 +157,9 @@ class VideoJsAdapter {
         currentTime: this.currentTime()
       });
 
+      // that is not the quality that is currently being played.
+      // for more accuracy one can use the segment-metadata cue tracking: 
+      // https://github.com/videojs/videojs-contrib-hls#segment-metadata
       const selectedPlaylist = this.tech_.hls.playlists.media();
       if (!selectedPlaylist) {
         return;
