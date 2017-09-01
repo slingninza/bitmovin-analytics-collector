@@ -8,8 +8,8 @@ import CdnProviders from '../enums/CDNProviders'
 
 let analytics;
 
-const register = (player) => {
-  analytics.register(player);
+const register = (player, opts = {}) => {
+  analytics.register(player, opts);
 };
 
 const getCurrentImpressionId = () => {

@@ -9,7 +9,7 @@ class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
 
-  constructor(stateMachineCallbacks) {
+  constructor(stateMachineCallbacks, opts = {}) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
     this.pausedTimestamp       = null;
@@ -40,7 +40,7 @@ class Bitmovin7AnalyticsStateMachine {
       CASTING                  : 'CASTING'
     };
 
-    this.createStateMachine();
+    this.createStateMachine(opts);
   }
 
   getAllStates() {
@@ -53,7 +53,7 @@ class Bitmovin7AnalyticsStateMachine {
       'FINISH_QUALITYCHANGE_REBUFFERING'];
   }
 
-  createStateMachine() {
+  createStateMachine(opts = {}) {
     this.stateMachine = StateMachine.create({
       initial  : this.States.SETUP,
       error: (eventName, from, to, args, errorCode, errorMessage) => {
@@ -230,7 +230,11 @@ class Bitmovin7AnalyticsStateMachine {
           }
         },
         onenterstate : (event, from, to, timestamp, eventObject) => {
-          this.onEnterStateTimestamp = timestamp || new Date().getTime();
+          if (from === "none" && opts.starttime) {
+            this.onEnterStateTimestamp = opts.starttime
+          } else {
+            this.onEnterStateTimestamp = timestamp || new Date().getTime();
+          }
 
           logger.log('Entering State ' + to + ' with ' + event);
           if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {

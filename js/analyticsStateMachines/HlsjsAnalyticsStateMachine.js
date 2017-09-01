@@ -3,7 +3,7 @@ import StateMachine from 'javascript-state-machine'
 import Events from '../enums/Events'
 
 class AnalyticsStateMachineFactory {
-  constructor(stateMachineCallbacks) {
+  constructor(stateMachineCallbacks, opts = {}) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
     this.pausedTimestamp       = null;
@@ -33,7 +33,7 @@ class AnalyticsStateMachineFactory {
       CASTING                  : 'CASTING'
     };
 
-    this.createStateMachine();
+    this.createStateMachine(opts);
   }
 
   getAllStates() {
@@ -46,7 +46,7 @@ class AnalyticsStateMachineFactory {
       'FINISH_QUALITYCHANGE_REBUFFERING'];
   }
 
-  createStateMachine() {
+  createStateMachine(opts = {}) {
     this.stateMachine = StateMachine.create({
       initial  : this.States.SETUP,
       error: (eventName, from, to, args, errorCode, errorMessage) => {
@@ -198,7 +198,11 @@ class AnalyticsStateMachineFactory {
       ],
       callbacks: {
         onenterstate : (event, from, to, timestamp, eventObject) => {
-          this.onEnterStateTimestamp = timestamp || new Date().getTime();
+          if (from === "none" && opts.starttime) {
+            this.onEnterStateTimestamp = opts.starttime
+          } else {
+            this.onEnterStateTimestamp = timestamp || new Date().getTime();
+          }
 
           logger.log('[' + from + '] => ' + event + ' => [' + to + ']');
           //logger.log('Entering State ' + to + ' with ' + event + ' from ' + from);

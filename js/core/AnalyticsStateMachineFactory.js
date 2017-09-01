@@ -13,15 +13,15 @@ class AnalyticsStateMachineFactory {
     this.playerDetector = new PlayerDetector;
   }
 
-  getAnalyticsStateMachine(player, stateMachineCallbacks) {
+  getAnalyticsStateMachine(player, stateMachineCallbacks, opts = {}) {
     if (this.playerDetector.isBitmovinVersionPre7(player)) {
-      return new BitmovinAnalyticsStateMachine(stateMachineCallbacks);
+      return new BitmovinAnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (this.playerDetector.isBitmovinVersion7Plus(player)) {
-      return new Bitmovin7AnalyticsStateMachine(stateMachineCallbacks);
+      return new Bitmovin7AnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (this.playerDetector.isVideoJs(player)) {
-      return new VideoJsAnalyticsStateMachine(stateMachineCallbacks);
+      return new VideoJsAnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (PlayerDetector.isHlsjs(player)) {
-      return new HlsjsAnalyticsStateMachine(stateMachineCallbacks);
+      return new HlsjsAnalyticsStateMachine(stateMachineCallbacks, opts);
     }
   };
 }

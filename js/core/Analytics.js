@@ -418,8 +418,11 @@ class Analytics {
     this.setConfigParameters();
   };
 
-  register = (player) => {
-    this.analyticsStateMachine = this.analyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks);
+  register = (player, opts = {}) => {
+    if (!opts.starttime) {
+      opts.starttime = this.utils.getCurrentTimestamp()
+    }
+    this.analyticsStateMachine = this.analyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
 
     this.adapter = this.adapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
     if (!this.adapter) {
