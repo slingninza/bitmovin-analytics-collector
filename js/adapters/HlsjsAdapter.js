@@ -410,7 +410,7 @@ export default class HlsjsAdapter {
       const eventObject = {
         width,
         height,
-        bitrate,
+        bitrate: parseInt(bitrate, 10),
         currentTime: mediaEl.currentTime
       };
 
