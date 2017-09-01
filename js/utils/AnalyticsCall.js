@@ -8,6 +8,8 @@ class AnalyticsCall extends HttpCall{
   static analyticsServerUrl = ANALYTICS_BACKEND_BASE_URL + '/analytics';
 
   sendRequest = function(sample, callback) {
+    console.log("VideoStartup: ", sample.videoStartupTime)
+    console.log("Player Startup: ", sample.playerStartupTime)
     this.post(AnalyticsCall.analyticsServerUrl, sample, callback);
   };
 
