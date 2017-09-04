@@ -143,6 +143,7 @@ class Analytics {
         if (!this.isCastReceiver) {
           this.sample.impressionId = this.utils.generateUUID();
         }
+        logger.log('Setup bitmovin analytics ' + this.sample.analyticsVersion + ' with impressionId: ' + this.sample.impressionId);
 
         this.setDuration(time);
         this.setState(state);

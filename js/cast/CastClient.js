@@ -28,7 +28,7 @@ class CastClient {
         this.handleReceiverMessage(receiverMessage);
 
       } catch (error) {
-        console.error('Message parsing failed ' + message);
+        logger.error('Message parsing failed ' + message);
       }
     });
   }
