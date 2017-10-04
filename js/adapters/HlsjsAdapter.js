@@ -20,6 +20,8 @@ export default class HlsjsAdapter {
     this.m3u8Url_ = null;
     this.isPaused_ = false;
     this.previousMediaTime_ = null;
+    this.needsReadyEvent_ = true;
+    this.needsFirstPlayIntent_ = true;
 
     this.resetMedia();
     this.register();
@@ -113,6 +115,11 @@ export default class HlsjsAdapter {
         muted
       };
 
+      // silence events if we have not yet intended play
+      if (this.needsFirstPlayIntent_) {
+        return;
+      }
+
       this.eventCallback(Events.METADATA_LOADED, info);
     });
 
@@ -121,6 +128,8 @@ export default class HlsjsAdapter {
 
     this.listenToMediaElementEvent('play', () => {
       const {currentTime} = mediaEl;
+
+      this.needsFirstPlayIntent_ = false;
 
       this.eventCallback(Events.PLAY, {
         currentTime
@@ -135,6 +144,11 @@ export default class HlsjsAdapter {
       const {currentTime} = mediaEl;
 
       this.isPaused_ = false;
+
+      // silence events if we have not yet intended play
+      if (this.needsFirstPlayIntent_) {
+        return;
+      }
 
       this.eventCallback(Events.TIMECHANGED, {
         currentTime
@@ -193,6 +207,11 @@ export default class HlsjsAdapter {
       const {currentTime} = mediaEl;
 
       this.isBuffering_ = false;
+
+      // silence events if we have not yet intended play
+      if (this.needsFirstPlayIntent_) {
+        return;
+      }
 
       if (!this.isPaused_) {
         this.eventCallback(Events.TIMECHANGED, {
@@ -272,7 +291,7 @@ export default class HlsjsAdapter {
 
     this.registerMediaElement();
 
-    this.eventCallback(Events.SOURCE_LOADED);
+    this.onMaybeReady();
   }
 
   onMediaDetaching() {
@@ -282,6 +301,17 @@ export default class HlsjsAdapter {
   onManifestLoading() {
     // we don't care how often this gets called, its just a help-out
     this.m3u8Url_ = this.hls.url;
+
+    this.onMaybeReady();
+  }
+
+  onMaybeReady() {
+
+    if (!this.needsReadyEvent_ || !this.mediaEl || !this.m3u8Url_) {
+      return;
+    }
+
+    this.needsReadyEvent_ = false;
 
     const {duration, autoplay, 
         width, height, 
@@ -317,9 +347,6 @@ export default class HlsjsAdapter {
     this.stateMachine.updateMetadata(info);
 
     this.eventCallback(Events.READY, info);
-
-    // where is "METADATA_LOADING"?
-    //this.eventCallback(Events.METADATA_LOADING);
   }
 
   onBuffering() {

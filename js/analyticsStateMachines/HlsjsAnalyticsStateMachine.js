@@ -56,8 +56,7 @@ class AnalyticsStateMachineFactory {
         {name: Events.TIMECHANGED, from: this.States.SETUP, to: this.States.SETUP},
         {name: Events.READY, from: [this.States.SETUP, this.States.ERROR], to: this.States.READY},
 
-        // there should be a "METADATA_LOADING"
-        {name: Events.METADATA_LOADED, from: this.States.READY, to: this.States.STARTUP},
+        {name: Events.PLAY, from: this.States.READY, to: this.States.STARTUP},
 
         {name: Events.START_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
         {name: Events.END_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
