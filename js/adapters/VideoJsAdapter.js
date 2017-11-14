@@ -73,13 +73,13 @@ class VideoJsAdapter {
   register() {
     const that = this;
     this.player.on('loadedmetadata', function() {
-      const tech       = this.tech({IWillNotUseThisInPlugins: true});
       const streamType = that.getStreamType(this.currentSrc());
       const sources    = that.getStreamSources(this.currentSrc());
+      const mode = that.getVideojsSourceHandlerMode_();
       const info       = {
         isLive     : this.duration() === Infinity,
         version    : videojs.VERSION,
-        type       : tech.sourceHandler_.options_.mode === 'html5' ? 'html5' : 'native',
+        type       : mode,
         duration   : this.duration(),
         streamType,
         autoplay   : this.autoplay(),
@@ -92,13 +92,13 @@ class VideoJsAdapter {
       that.stateMachine.updateMetadata(info);
     });
     this.player.ready(function() {
-      const tech       = this.tech({IWillNotUseThisInPlugins: true});
       const streamType = that.getStreamType(this.currentSrc());
       const sources    = that.getStreamSources(this.currentSrc());
+      const mode = that.getVideojsSourceHandlerMode_();
       const info       = {
         isLive     : false,
         version    : videojs.VERSION,
-        type       : tech.sourceHandler_.options_.mode === 'html5' ? 'html5' : 'native',
+        type       : mode,
         duration   : this.duration(),
         streamType,
         autoplay   : this.autoplay(),
