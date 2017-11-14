@@ -116,7 +116,6 @@ class VideoJsAdapter {
       })
     });
     this.player.on('pause', function() {
-      console.log('pause');
       that.eventCallback(Events.PAUSE, {
         currentTime: this.currentTime()
       })
