@@ -153,7 +153,7 @@ class VideoJsAdapter {
       });
     });
 
-    let analyticsBitrate = -1;
+    let analyticsBitrate;
     let bufferingTimeout;
     let lastTimeupdate   = Date.now();
     let isStalling       = false;
