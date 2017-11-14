@@ -57,6 +57,19 @@ class VideoJsAdapter {
     }
   }
 
+  /**
+   * @returns {string} 'native' | 'flash' | 'html5'
+   */
+  getVideojsSourceHandlerMode_() {
+    const tech = this.player.tech({IWillNotUseThisInPlugins: true});
+
+    if (!tech.sourceHandler_) {
+      return 'native';
+    } else {
+      return tech.sourceHandler_.options_.mode;
+    }
+  }
+
   register() {
     const that = this;
     this.player.on('loadedmetadata', function() {
