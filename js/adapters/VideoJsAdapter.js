@@ -167,28 +167,6 @@ class VideoJsAdapter {
         currentTime: this.currentTime()
       });
 
-      const selectedPlaylist = this.tech_.hls.playlists.media();
-      if (!selectedPlaylist) {
-        return;
-      }
-
-      const {attributes} = selectedPlaylist;
-      const bitrate      = attributes.BANDWIDTH;
-      const width        = attributes.RESOLUTION.width;
-      const height       = attributes.RESOLUTION.height;
-
-      if (analyticsBitrate !== bitrate) {
-        const eventObject = {
-          width,
-          height,
-          bitrate,
-          currentTime: this.currentTime()
-        };
-
-        that.eventCallback(Events.VIDEO_CHANGE, eventObject);
-        analyticsBitrate = bitrate;
-      }
-
       bufferingTimeout = window.setTimeout(() => {
         if ((this.paused() || this.ended()) && !isStalling) {
           return;
@@ -197,7 +175,52 @@ class VideoJsAdapter {
         that.eventCallback(Events.START_BUFFERING, {
           currentTime: this.currentTime()
         });
-      }, BUFFERING_TIMECHANGED_TIMEOUT)
+      }, BUFFERING_TIMECHANGED_TIMEOUT);
+
+      // Check for HLS source-handler (videojs-contrib-hls)
+      // When we just use Videojs without any specific source-handler (not using MSE API based engine)
+      // but just native technology (HTML5/Flash) to do for example "progressive download" with plain Webm/Mp4
+      // or use native HLS on Safari this may not not be present. In that case Videojs is just
+      // a wrapper around the respective playback tech (HTML or Flash).
+
+      const tech = this.tech({IWillNotUseThisInPlugins: true});
+      if (tech.hls) {
+  
+        // From here we are going onto Videojs-HLS source-handler specific API
+        //
+        const hls = this.tech_.hls;
+
+        // Maybe we have the HLS source-handler initialized, but it is
+        // not actually activated and used (just wrapping HTML5 built-in HLS playback like in Safari)
+        if (!hls.playlists || typeof hls.playlists.media !== 'function') {
+          return;
+        }
+
+        // Check for current media playlist
+        const selectedPlaylist = hls.playlists.media();
+        if (!selectedPlaylist) {
+          return;
+        }
+
+        const {attributes} = selectedPlaylist;
+        const bitrate      = attributes.BANDWIDTH;
+        const width        = attributes.RESOLUTION.width;
+        const height       = attributes.RESOLUTION.height;
+  
+        // update actual bitrate
+        if (isNaN(analyticsBitrate) || analyticsBitrate !== bitrate) {
+          const eventObject = {
+            width,
+            height,
+            bitrate,
+            currentTime: this.currentTime()
+          };
+  
+          that.eventCallback(Events.VIDEO_CHANGE, eventObject);
+          analyticsBitrate = bitrate;
+        }
+      }
+  
     });
 
     this.player.on('stalled', function() {
