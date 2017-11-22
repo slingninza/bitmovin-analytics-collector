@@ -57,16 +57,29 @@ class VideoJsAdapter {
     }
   }
 
+  /**
+   * @returns {string} 'native' | 'flash' | 'html5'
+   */
+  getVideojsSourceHandlerMode_() {
+    const tech = this.player.tech({IWillNotUseThisInPlugins: true});
+
+    if (!tech.sourceHandler_) {
+      return 'native';
+    } else {
+      return tech.sourceHandler_.options_.mode;
+    }
+  }
+
   register() {
     const that = this;
     this.player.on('loadedmetadata', function() {
-      const tech       = this.tech({IWillNotUseThisInPlugins: true});
       const streamType = that.getStreamType(this.currentSrc());
       const sources    = that.getStreamSources(this.currentSrc());
+      const mode = that.getVideojsSourceHandlerMode_();
       const info       = {
         isLive     : this.duration() === Infinity,
         version    : videojs.VERSION,
-        type       : tech.sourceHandler_.options_.mode === 'html5' ? 'html5' : 'native',
+        type       : mode,
         duration   : this.duration(),
         streamType,
         autoplay   : this.autoplay(),
@@ -79,13 +92,13 @@ class VideoJsAdapter {
       that.stateMachine.updateMetadata(info);
     });
     this.player.ready(function() {
-      const tech       = this.tech({IWillNotUseThisInPlugins: true});
       const streamType = that.getStreamType(this.currentSrc());
       const sources    = that.getStreamSources(this.currentSrc());
+      const mode = that.getVideojsSourceHandlerMode_();
       const info       = {
         isLive     : false,
         version    : videojs.VERSION,
-        type       : tech.sourceHandler_.options_.mode === 'html5' ? 'html5' : 'native',
+        type       : mode,
         duration   : this.duration(),
         streamType,
         autoplay   : this.autoplay(),
@@ -103,7 +116,6 @@ class VideoJsAdapter {
       })
     });
     this.player.on('pause', function() {
-      console.log('pause');
       that.eventCallback(Events.PAUSE, {
         currentTime: this.currentTime()
       })
@@ -141,7 +153,7 @@ class VideoJsAdapter {
       });
     });
 
-    let analyticsBitrate = -1;
+    let analyticsBitrate;
     let bufferingTimeout;
     let lastTimeupdate   = Date.now();
     let isStalling       = false;
@@ -155,28 +167,6 @@ class VideoJsAdapter {
         currentTime: this.currentTime()
       });
 
-      const selectedPlaylist = this.tech_.hls.playlists.media();
-      if (!selectedPlaylist) {
-        return;
-      }
-
-      const {attributes} = selectedPlaylist;
-      const bitrate      = attributes.BANDWIDTH;
-      const width        = attributes.RESOLUTION.width;
-      const height       = attributes.RESOLUTION.height;
-
-      if (analyticsBitrate !== bitrate) {
-        const eventObject = {
-          width,
-          height,
-          bitrate,
-          currentTime: this.currentTime()
-        };
-
-        that.eventCallback(Events.VIDEO_CHANGE, eventObject);
-        analyticsBitrate = bitrate;
-      }
-
       bufferingTimeout = window.setTimeout(() => {
         if ((this.paused() || this.ended()) && !isStalling) {
           return;
@@ -185,7 +175,52 @@ class VideoJsAdapter {
         that.eventCallback(Events.START_BUFFERING, {
           currentTime: this.currentTime()
         });
-      }, BUFFERING_TIMECHANGED_TIMEOUT)
+      }, BUFFERING_TIMECHANGED_TIMEOUT);
+
+      // Check for HLS source-handler (videojs-contrib-hls)
+      // When we just use Videojs without any specific source-handler (not using MSE API based engine)
+      // but just native technology (HTML5/Flash) to do for example "progressive download" with plain Webm/Mp4
+      // or use native HLS on Safari this may not not be present. In that case Videojs is just
+      // a wrapper around the respective playback tech (HTML or Flash).
+
+      const tech = this.tech({IWillNotUseThisInPlugins: true});
+      if (tech.hls) {
+  
+        // From here we are going onto Videojs-HLS source-handler specific API
+        //
+        const hls = this.tech_.hls;
+
+        // Maybe we have the HLS source-handler initialized, but it is
+        // not actually activated and used (just wrapping HTML5 built-in HLS playback like in Safari)
+        if (!hls.playlists || typeof hls.playlists.media !== 'function') {
+          return;
+        }
+
+        // Check for current media playlist
+        const selectedPlaylist = hls.playlists.media();
+        if (!selectedPlaylist) {
+          return;
+        }
+
+        const {attributes} = selectedPlaylist;
+        const bitrate      = attributes.BANDWIDTH;
+        const width        = attributes.RESOLUTION.width;
+        const height       = attributes.RESOLUTION.height;
+  
+        // update actual bitrate
+        if (isNaN(analyticsBitrate) || analyticsBitrate !== bitrate) {
+          const eventObject = {
+            width,
+            height,
+            bitrate,
+            currentTime: this.currentTime()
+          };
+  
+          that.eventCallback(Events.VIDEO_CHANGE, eventObject);
+          analyticsBitrate = bitrate;
+        }
+      }
+  
     });
 
     this.player.on('stalled', function() {
