@@ -37,7 +37,8 @@ class Bitmovin7AnalyticsStateMachine {
       MUTING_READY             : 'MUTING_READY',
       MUTING_PLAY              : 'MUTING_PLAY',
       MUTING_PAUSE             : 'MUTING_PAUSE',
-      CASTING                  : 'CASTING'
+      CASTING                  : 'CASTING',
+      SOURCE_CHANGING          : 'SOURCE_CHANGING',
     };
 
     this.createStateMachine();
@@ -175,7 +176,12 @@ class Bitmovin7AnalyticsStateMachine {
         {name: Events.SEEKED, from: this.States.READY, to: this.States.READY},
         {name: Events.SEEKED, from: this.States.STARTUP, to: this.States.STARTUP},
 
-        {name: Events.SOURCE_LOADED, from: this.getAllStates(), to: this.States.SETUP},
+        {name: Events.SOURCE_UNLOADED, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
+
+        {name: Events.READY, from: this.States.SOURCE_CHANGING, to: this.States.READY },
+
+        //{name: Events.SOURCE_LOADED, from: this.States.SETUP, to: this.States.SETUP},
+        //{name: Events.SOURCE_LOADED, from: this.States.READY, to: this.States.READY},
 
         {name: Events.VIDEO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
         {name: Events.AUDIO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
