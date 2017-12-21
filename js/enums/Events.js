@@ -27,7 +27,8 @@ const Events = {
   SCREEN_RESIZE    : 'resize',
   UNLOAD           : 'unload',
   END              : 'end',
-  METADATA_LOADED  : 'metadataLoaded'
+  METADATA_LOADED  : 'metadataLoaded',
+  SOURCE_UNLOADED  : 'sourceUnloaded'
 };
 
 export default Events

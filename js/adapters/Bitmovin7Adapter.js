@@ -44,6 +44,12 @@ class Bitmovin7Adapter {
         };
       }
     };
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event) => {
+      this.eventCallback(Events.SOURCE_UNLOADED, {
+        currentTime  : this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedFrames()
+      });
+    });
 
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event) => {
       let autoplay = false;

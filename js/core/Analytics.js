@@ -370,6 +370,10 @@ class Analytics {
         this.isCastClient = false;
         this.samplesQueue = [];
         this.isAllowedToSendSamples = true;
+      },
+
+      source_changing: () => {
+        this.sample.impressionId = this.utils.generateUUID();
       }
     };
   }
