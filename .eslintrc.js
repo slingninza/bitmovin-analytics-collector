@@ -5,9 +5,7 @@ module.exports = {
     "commonjs": true,
     "es6": true
   },
-  "parserOptions": {
-    "sourceType": "module"
-  },
+  "parser": "babel-eslint",
   "extends": "eslint:recommended",
   "rules"  : {
     "semi"              : [2, "always"],
