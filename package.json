@@ -40,7 +40,8 @@
     "build:release": "webpack --progress --config webpack.config.release.js",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
-    "precommit": "./precommit.bash"
+    "precommit": "./precommit.bash",
+    "start": "http-server"
   },
   "babel": {
     "presets": [
