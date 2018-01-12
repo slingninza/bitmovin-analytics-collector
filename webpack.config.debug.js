@@ -1,17 +1,18 @@
-let {banner, entry, externals, preLoaders, loaders} = require('./webpack.config.js');
+const path = require('path');
 const webpack = require('webpack');
 const packageProperties = require('./package.json');
+
+const {banner, entry, externals, loaders} = require('./webpack.config.js');
 
 module.exports = {
   entry,
   externals,
   output: {
-    path: './build/debug',
+    path: path.resolve('./build/debug'),
     filename: 'bitmovinanalytics.min.js',
     libraryTarget: 'umd'
   },
   module: {
-    preLoaders,
     loaders
   },
   plugins: [
