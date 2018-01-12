@@ -1,6 +1,6 @@
 # Bitmovin Analytics Collector
 
-# Prerequisites
+## Prerequisites
 
 * Node >= 8.x
 * Yarn package manager: https://yarnpkg.com
