@@ -42,7 +42,7 @@ let loaders = [{
 
 const externals = {
   'hls.js': 'Hls'
-}
+};
 
 module.exports = {
   banner,
