@@ -5,13 +5,13 @@
 * Node >= 8.x
 * Yarn package manager: https://yarnpkg.com
 
-# Setup
+## Setup
 
 ```
 yarn install
 ```
 
-# Build scripts
+## Build scripts
 
 ```
 yarn build:debug
@@ -21,7 +21,7 @@ yarn build:debug
 yarn build:release
 ```
 
-# Dev mode
+## Dev mode
 
 ```
 yarn build:watch // runs webpack in watch mode
