@@ -1,7 +1,7 @@
 /**
  * Created by lkroepfl on 13.09.2016.
  */
-import Events from '../enums/Events'
+import Events from '../enums/Events';
 
 class BitmovinAdapter {
   constructor(player, eventCallback) {
@@ -182,7 +182,7 @@ class BitmovinAdapter {
         });
       }
     };
-  };
+  }
 }
 
-export default BitmovinAdapter
+export default BitmovinAdapter;

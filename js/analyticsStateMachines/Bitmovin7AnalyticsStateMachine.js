@@ -1,9 +1,9 @@
 /**
  * Created by lkroepfl on 12.01.17.
  */
-import logger from '../utils/Logger'
-import StateMachine from 'javascript-state-machine'
-import Events from '../enums/Events'
+import logger from '../utils/Logger';
+import StateMachine from 'javascript-state-machine';
+import Events from '../enums/Events';
 
 class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
@@ -236,8 +236,8 @@ class Bitmovin7AnalyticsStateMachine {
           }
         },
         onenterstate : (event, from, to, timestamp, eventObject) => {
-          if (from === "none" && opts.starttime) {
-            this.onEnterStateTimestamp = opts.starttime
+          if (from === 'none' && opts.starttime) {
+            this.onEnterStateTimestamp = opts.starttime;
           } else {
             this.onEnterStateTimestamp = timestamp || new Date().getTime();
           }
@@ -343,12 +343,12 @@ class Bitmovin7AnalyticsStateMachine {
     } else {
       logger.log('Ignored Event: ' + eventType);
     }
-  };
+  }
 
   static pad(str, length) {
     const padStr = new Array(length).join(' ');
     return (str + padStr).slice(0, length);
-  };
+  }
 }
 
-export default Bitmovin7AnalyticsStateMachine
+export default Bitmovin7AnalyticsStateMachine;

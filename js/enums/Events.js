@@ -31,4 +31,4 @@ const Events = {
   SOURCE_UNLOADED  : 'sourceUnloaded'
 };
 
-export default Events
+export default Events;

@@ -419,13 +419,13 @@ class Analytics {
     this.config = {
       ...this.config,
       ...filterValues(values)
-    }
+    };
     this.setConfigParameters();
   };
 
   register = (player, opts = {}) => {
     if (!opts.starttime) {
-      opts.starttime = this.utils.getCurrentTimestamp()
+      opts.starttime = this.utils.getCurrentTimestamp();
     }
     this.analyticsStateMachine = this.analyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
 
@@ -468,7 +468,7 @@ class Analytics {
 
   setDroppedFrames = (event) => {
     if (this.utils.validNumber(event.droppedFrames)) {
-      this.sample.droppedFrames = 0
+      this.sample.droppedFrames = 0;
     }
   };
 
@@ -660,4 +660,4 @@ class Analytics {
   }
 }
 
-export default Analytics
+export default Analytics;

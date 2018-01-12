@@ -42,21 +42,21 @@ class VideoJsAdapter {
       mpdUrl,
       m3u8Url,
       progUrl
-    }
+    };
   }
 
   getVideoWindowDimensions(player) {
     return {
       width : player.width(),
       height: player.height()
-    }
+    };
   }
 
   getVideoSourceDimensions(tech) {
     return {
       videoWidth : tech.videoWidth(),
       videoHeight: tech.videoHeight()
-    }
+    };
   }
 
   /**
@@ -115,12 +115,12 @@ class VideoJsAdapter {
     this.player.on('play', function() {
       that.eventCallback(Events.PLAY, {
         currentTime: this.currentTime()
-      })
+      });
     });
     this.player.on('pause', function() {
       that.eventCallback(Events.PAUSE, {
         currentTime: this.currentTime()
-      })
+      });
     });
     this.player.on('error', function() {
       const error = this.error();
@@ -135,7 +135,7 @@ class VideoJsAdapter {
       if (muted) {
         that.eventCallback(Events.MUTE, {
           currentTime: this.currentTime()
-        })
+        });
       } else {
         that.eventCallback(Events.UN_MUTE, {
           currentTime: this.currentTime()
@@ -265,4 +265,4 @@ class VideoJsAdapter {
   }
 }
 
-export default VideoJsAdapter
+export default VideoJsAdapter;

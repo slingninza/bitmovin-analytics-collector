@@ -43,4 +43,4 @@ class HttpCall {
   }
 }
 
-export default HttpCall
+export default HttpCall;

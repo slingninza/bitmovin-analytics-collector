@@ -10,4 +10,4 @@ const Players = {
   HLSJS   : 'hlsjs' 
 };
 
-export default Players
+export default Players;
