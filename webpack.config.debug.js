@@ -18,4 +18,4 @@ module.exports = {
     new webpack.BannerPlugin(banner)
   ],
   devtool: 'source-map'
-}
+};

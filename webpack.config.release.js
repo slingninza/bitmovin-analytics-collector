@@ -6,12 +6,12 @@ const packageProperties = require('./package.json');
 const releasePackageJson = {
   name: packageProperties.name,
   version: getGitVersion(),
-  description: "Bitmovin Analytics allows you to collect data about HTML5 Video playback",
+  description: 'Bitmovin Analytics allows you to collect data about HTML5 Video playback',
   main: 'bitmovinanalytics.min.js',
-  readme: "ERROR: No README data found!",
+  readme: 'ERROR: No README data found!',
   maintainers: [{
-    name: "bitadmin",
-    email: "admin@bitmovin.com"
+    name: 'bitadmin',
+    email: 'admin@bitmovin.com'
   }]
 };
 
@@ -43,4 +43,4 @@ module.exports = {
       filename: 'package.json'
     })
   ]
-}
+};

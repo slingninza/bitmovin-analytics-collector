@@ -1,12 +1,12 @@
-const execSync = require('child_process').execSync
+const execSync = require('child_process').execSync;
 const packageProperties = require('./package.json');
 
 const getGitVersion = () => {
-  return execSync('git describe --abbrev=0').toString().trim()
-}
+  return execSync('git describe --abbrev=0').toString().trim();
+};
 const getFullGitVersion = () => {
-  return execSync('git describe').toString().trim()
-}
+  return execSync('git describe').toString().trim();
+};
 const banner =
         '\n' +
         'Copyright (C) ' + new Date().getFullYear() + ', Bitmovin, Inc., All Rights Reserved\n' +
@@ -51,4 +51,4 @@ module.exports = {
   preLoaders,
   loaders,
   getGitVersion
-}
+};
