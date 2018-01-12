@@ -37,7 +37,7 @@ module.exports = {
   externals,
   plugins: [
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(getGitVersion())
+      __VERSION__: JSON.stringify(getGitVersion())
     })
   ],
   loaders,

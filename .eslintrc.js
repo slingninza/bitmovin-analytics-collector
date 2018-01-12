@@ -20,5 +20,8 @@ module.exports = {
     "eol-last"          : 2,
     "no-fallthrough"    : 0,
     "no-debugger"       : 0
+  },
+  "globals": {
+    __VERSION__: true
   }
 };
