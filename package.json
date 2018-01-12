@@ -14,7 +14,9 @@
   },
   "homepage": "https://github.com/bitmovin/bitanalytics-js#readme",
   "dependencies": {
-    "javascript-state-machine": "^2.4.0"
+    "htmlhint": "^0.9.13",
+    "javascript-state-machine": "^2.4.0",
+    "webpack-dev-server": "^2.10.1"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
@@ -36,12 +38,12 @@
   },
   "scripts": {
     "build:debug": "webpack --progress --config webpack.config.debug.js",
-    "build:watch": "webpack --progress --config webpack.config.debug.js --watch",
     "build:release": "webpack --progress --config webpack.config.release.js",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
+    "lint:html": "htmlhint *.html html/*.html",
     "precommit": "./precommit.bash",
-    "start": "http-server"
+    "start": "webpack-dev-server --progress --config webpack.config.debug.js"
   },
   "babel": {
     "presets": [
