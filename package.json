@@ -13,8 +13,13 @@
     "url": "https://github.com/bitmovin/bitanalytics-js/issues"
   },
   "homepage": "https://github.com/bitmovin/bitanalytics-js#readme",
+  "dependencies": {
+    "javascript-state-machine": "^2.4.0"
+  },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "^6.21.0",
+    "babel-eslint": "^8.2.1",
     "babel-loader": "^6.2.10",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
@@ -46,8 +51,5 @@
       "transform-class-properties",
       "transform-object-rest-spread"
     ]
-  },
-  "dependencies": {
-    "babel-cli": "^6.18.0"
   }
 }
