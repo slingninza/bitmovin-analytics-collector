@@ -24,9 +24,5 @@ yarn build:release
 ## Dev mode
 
 ```
-yarn build:watch // runs webpack in watch mode
-```
-
-```
-yarn start // starts local http-server
+yarn start // run webpack-dev-server
 ```
