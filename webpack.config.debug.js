@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const packageProperties = require('./package.json');
 
-const {banner, entry, externals, loaders} = require('./webpack.config.js');
+const {banner, entry, externals, loaders, getGitVersion} = require('./webpack.config.js');
 
 module.exports = {
   entry,
@@ -16,7 +16,10 @@ module.exports = {
     loaders
   },
   plugins: [
-    new webpack.BannerPlugin(banner)
+    new webpack.BannerPlugin(banner),
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(getGitVersion())
+    })
   ],
   devtool: 'source-map'
 };

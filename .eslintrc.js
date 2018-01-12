@@ -22,6 +22,6 @@ module.exports = {
     "no-debugger"       : 0
   },
   "globals": {
-    __VERSION__: true
+    VERSION: true
   }
 };

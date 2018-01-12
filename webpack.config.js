@@ -35,11 +35,6 @@ module.exports = {
   banner,
   entry,
   externals,
-  plugins: [
-    new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(getGitVersion())
-    })
-  ],
   loaders,
   getGitVersion
 };

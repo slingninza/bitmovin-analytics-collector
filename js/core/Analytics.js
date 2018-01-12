@@ -545,7 +545,7 @@ class Analytics {
       videoStartupTime   : 0,
       duration           : 0,
       startupTime        : 0,
-      analyticsVersion   : __VERSION__
+      analyticsVersion   : VERSION
     };
   }
 

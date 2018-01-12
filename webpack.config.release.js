@@ -42,6 +42,9 @@ module.exports = {
       object: releasePackageJson,
       path: '.',
       filename: 'package.json'
+    }),
+    new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify(getGitVersion())
     })
   ]
 };
