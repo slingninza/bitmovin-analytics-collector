@@ -1,3 +1,7 @@
+/**
+ * @author Stephan Hesse <tchakabam@gmail.com>
+ */
+
 import Events from '../enums/Events';
 
 import Hls from 'hls.js';
@@ -413,9 +417,6 @@ export default class HlsjsAdapter {
     const mediaEl = this.mediaEl;
     const hls = this.hls;
 
-    // This is not the currently played level
-    // but the one which we are currently selecting for loading segments.
-    // We dont have a segment-metadata cue track like videojs-contrib-hls has.
     const currentLevelObj = hls.levels[hls.currentLevel];
     if (!currentLevelObj) {
       return;
