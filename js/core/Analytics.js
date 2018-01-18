@@ -23,9 +23,7 @@ class Analytics {
 
     this.licenseCall                  = new LicenseCall();
     this.analyticsCall                = new AnalyticsCall();
-    this.utils                        = new Utils();
-    this.adapterFactory               = new AdapterFactory();
-    this.analyticsStateMachineFactory = new AnalyticsStateMachineFactory();
+    this.utils                        = new Utils(); // wtf
     this.castClient                   = new CastClient();
     this.castReceiver                 = new CastReceiver();
 
@@ -427,9 +425,9 @@ class Analytics {
     if (!opts.starttime) {
       opts.starttime = this.utils.getCurrentTimestamp();
     }
-    this.analyticsStateMachine = this.analyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
+    this.analyticsStateMachine = AnalyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
 
-    this.adapter = this.adapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+    this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
     if (!this.adapter) {
       logger.error('Could not detect player.');
       return;
@@ -550,7 +548,10 @@ class Analytics {
   }
 
   checkLicensing(key) {
-    this.licenseCall.sendRequest(key, this.sample.domain, this.sample.analyticsVersion, ::this.handleLicensingResponse);
+    this.licenseCall.sendRequest(key,
+      this.sample.domain,
+      this.sample.analyticsVersion,
+      this.handleLicensingResponse.bind(this));
   }
 
   handleLicensingResponse(licensingResponse) {
