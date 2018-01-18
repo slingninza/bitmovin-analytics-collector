@@ -1,8 +1,7 @@
-/**
- * Created by lkroepfl on 09.02.17.
- */
 import {MESSAGE_NAMESPACE} from '../utils/Settings';
 import logger from '../utils/Logger';
+
+/* global cast */
 
 class CastReceiver {
   setUp() {

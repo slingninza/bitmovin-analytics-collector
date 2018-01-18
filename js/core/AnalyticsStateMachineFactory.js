@@ -1,9 +1,7 @@
 import PlayerDetector from '../utils/PlayerDetector';
 import {BitmovinAnalyticsStateMachine} from '../analyticsStateMachines/BitmovinAnalyticsStateMachine';
 import {Bitmovin7AnalyticsStateMachine} from '../analyticsStateMachines/Bitmovin7AnalyticsStateMachine';
-import {VideoJsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
-// import HlsjsAnalyticsStateMachine from '../analyticsStateMachines/HlsjsAnalyticsStateMachine';
-// import ShakaAnalyticsStateMachine from '../analyticsStateMachines/ShakaAnalyticsStateMachine'
+import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
 import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 /**
@@ -22,7 +20,7 @@ class AnalyticsStateMachineFactory {
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7AnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (PlayerDetector.isVideoJs(player)) {
-      return new VideoJsAnalyticsStateMachine(stateMachineCallbacks, opts);
+      return new VideojsAnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (
       PlayerDetector.isHlsjs(player) ||
       PlayerDetector.isShaka(player)) {
