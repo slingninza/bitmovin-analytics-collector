@@ -33,7 +33,8 @@
     "string-replace-loader": "^1.0.5",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.0",
-    "write-json-webpack-plugin": "^1.0.0"
+    "write-json-webpack-plugin": "^1.0.0",
+    "xml-beautifier": "^0.3.0"
   },
   "scripts": {
     "build:debug": "webpack --progress --config webpack.config.debug.js",
