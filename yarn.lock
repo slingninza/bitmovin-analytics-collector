@@ -4999,12 +4999,6 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
-xml-beautifier@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/xml-beautifier/-/xml-beautifier-0.3.0.tgz#18325cd567e4662f38b1ba0eaeb55fda4cb91203"
-  dependencies:
-    repeat-string "^1.5.2"
-
 xml@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/xml/-/xml-1.0.0.tgz#de3ee912477be2f250b60f612f34a8c4da616efe"
