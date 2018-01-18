@@ -28,7 +28,7 @@ class AdapterFactory {
     } else if(PlayerDetector.isHlsjs(player)) {
       return new HlsjsAdapter(player, eventCallback, stateMachine);
     } else if(PlayerDetector.isShaka(player)) {
-      return new ShakaAdapter(player, eventCallback, stateMachine)
+      return new ShakaAdapter(player, eventCallback, stateMachine);
     }
   }
 }

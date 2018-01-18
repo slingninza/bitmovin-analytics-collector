@@ -2,7 +2,7 @@
  * Created by lkroepfl on 11.11.16.
  */
 
-const Players = {
+export const Players = {
   BITMOVIN: 'bitmovin',
   JW      : 'jw',
   RADIANT : 'radiant',
@@ -10,5 +10,3 @@ const Players = {
   HLSJS   : 'hlsjs',
   SHAKA   : 'shaka'
 };
-
-export default Players;

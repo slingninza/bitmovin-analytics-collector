@@ -23,7 +23,7 @@ class Analytics {
 
     this.licenseCall                  = new LicenseCall();
     this.analyticsCall                = new AnalyticsCall();
-    this.utils                        = new Utils(); // wtf
+    this.utils                        = new Utils();
     this.castClient                   = new CastClient();
     this.castReceiver                 = new CastReceiver();
 

@@ -6,6 +6,7 @@ import Hls from 'hls.js';
  */
 
 class PlayerDetector {
+
   static isBitmovinVersionPre7 = function(player) {
     if (typeof player.getVersion === 'function') {
       return player.getVersion() < '7';
@@ -35,7 +36,7 @@ class PlayerDetector {
 
     if (!Hls) {
       // Hls.js is not defined installed (must be loaded before analytics module)
-      return false
+      return false;
     }
 
     return (
@@ -47,7 +48,7 @@ class PlayerDetector {
 
     if (!shaka) {
       // Shaka is not defined installed (must be loaded before analytics module)
-      return false
+      return false;
     }
 
     return (

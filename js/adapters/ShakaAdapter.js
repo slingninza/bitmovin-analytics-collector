@@ -30,12 +30,12 @@ export default class HlsjsAdapter {
     /**
      * @member {HTMLMediaElement}
      */
-    this.mediaEl = null
+    this.mediaEl = null;
 
     /**
      * @member {function[]}
      */
-    this.mediaElEventHandlers = []
+    this.mediaElEventHandlers = [];
 
     // privates
     this.analyticsBitrate_ = -1;
@@ -383,7 +383,7 @@ export default class HlsjsAdapter {
 
     const activeVideoTrack = variantTracks
       .filter((track) => track.active)
-      .filter((track) => track.videoCodec || track.videoId !== undefined)[0]
+      .filter((track) => track.videoCodec || track.videoId !== undefined)[0];
 
     if (!activeVideoTrack) {
       // can only happen for audio-only streams
@@ -394,7 +394,7 @@ export default class HlsjsAdapter {
     const width        = activeVideoTrack.width;
     const height       = activeVideoTrack.height;
 
-    const isLive = this.shakaPlayer.isLive()
+    const isLive = this.shakaPlayer.isLive();
 
     if (isLive !== this.isLive_) {
       this.isLive_ = isLive;
