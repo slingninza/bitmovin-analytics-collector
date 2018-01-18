@@ -9,7 +9,8 @@ module.exports = {
   externals,
   output: {
     path: path.resolve('./build/debug'),
-    publicPath: '/build/debug', // for dev-server
+    // for dev-server
+    publicPath: '/build/debug',
     filename: 'bitmovinanalytics.min.js',
     libraryTarget: 'umd'
   },
