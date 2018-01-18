@@ -44,6 +44,7 @@ class Bitmovin7Adapter {
         };
       }
     };
+    /* eslint-disable no-unused-vars */
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event) => {
       this.eventCallback(Events.SOURCE_UNLOADED, {
         currentTime  : this.player.getCurrentTime(),
