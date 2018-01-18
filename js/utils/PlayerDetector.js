@@ -34,7 +34,8 @@ class PlayerDetector {
   static isHlsjs(player) {
 
     if (!Hls) {
-      throw new Error('Hls.js is not defined installed (must be loaded before analytics module)');
+      // Hls.js is not defined installed (must be loaded before analytics module)
+      return false
     }
 
     return (
@@ -45,7 +46,8 @@ class PlayerDetector {
   static isShaka(player) {
 
     if (!shaka) {
-      throw new Error('Hls.js is not defined installed (must be loaded before analytics module)');
+      // Shaka is not defined installed (must be loaded before analytics module)
+      return false
     }
 
     return (
