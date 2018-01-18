@@ -15,8 +15,8 @@ class AdapterFactory {
   /**
    *
    * @param {object} player
-   * @param {EventCallback} eventCallback
-   * @param {StateMachine} stateMachine
+   * @param {AnalyticsEventCallback} eventCallback
+   * @param {AnalyticsStateMachine} stateMachine
    */
   static getAdapter(player, eventCallback, stateMachine) {
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
@@ -24,11 +24,11 @@ class AdapterFactory {
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7Adapter(player, eventCallback);
     } else if (PlayerDetector.isVideoJs(player)) {
-      return new VideoJsAdapter(player, eventCallback, eventMachine);
+      return new VideoJsAdapter(player, eventCallback, stateMachine);
     } else if(PlayerDetector.isHlsjs(player)) {
-      return new HlsjsAdapter(player, eventCallback, eventMachine);
+      return new HlsjsAdapter(player, eventCallback, stateMachine);
     } else if(PlayerDetector.isShaka(player)) {
-      return new ShakaAdapter(player, eventCallback, eventMachine)
+      return new ShakaAdapter(player, eventCallback, stateMachine)
     }
   }
 }
