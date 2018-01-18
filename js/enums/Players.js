@@ -7,7 +7,8 @@ const Players = {
   JW      : 'jw',
   RADIANT : 'radiant',
   VIDEOJS : 'videojs',
-  HLSJS   : 'hlsjs' 
+  HLSJS   : 'hlsjs',
+  SHAKA   : 'shaka'
 };
 
 export default Players;
