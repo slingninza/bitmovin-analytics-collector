@@ -9,6 +9,7 @@ module.exports = {
   externals,
   output: {
     path: path.resolve('./build/debug'),
+    publicPath: '/build/debug', // for dev-server
     filename: 'bitmovinanalytics.min.js',
     libraryTarget: 'umd'
   },
@@ -21,5 +22,5 @@ module.exports = {
       VERSION: JSON.stringify(getGitVersion())
     })
   ],
-  devtool: 'source-map'
+  devtool: 'inline-source-map'
 };
