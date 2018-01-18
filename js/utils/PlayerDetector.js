@@ -1,3 +1,6 @@
+/* global shaka */
+/* global videojs */
+
 import Hls from 'hls.js';
 
 /**
