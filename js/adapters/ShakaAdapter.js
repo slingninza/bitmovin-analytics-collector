@@ -1,3 +1,7 @@
+/**
+ * @author Stephan Hesse <tchakabam@gmail.com>
+ */
+
 import Events from '../enums/Events';
 
 import Hls from 'hls.js';
@@ -23,58 +27,45 @@ export default class HlsjsAdapter {
      */
     this.shakaPlayer = shakaPlayer;
 
-    /*
+    /**
+     * @member {HTMLMediaElement}
+     */
+    this.mediaEl = null
+
+    /**
+     * @member {function[]}
+     */
+    this.mediaElEventHandlers = []
+
     // privates
     this.analyticsBitrate_ = -1;
     this.bufferingTimeout_ = null;
-    this.isBuffering_       = false;
+    this.isBuffering_ = false;
     this.isLive_ = false;
-    this.m3u8Url_ = null;
     this.isPaused_ = false;
     this.previousMediaTime_ = null;
     this.needsReadyEvent_ = true;
     this.needsFirstPlayIntent_ = true;
 
-    this.resetMedia();
     this.register();
-    */
-  }
-
-  resetMedia() {
-    // HTMLMediaElement
-    this.mediaEl = null;
-    this.mediaElEventHandlers = [];
+    this.registerMediaElement();
+    this.onMaybeReady();
   }
 
   register() {
-    const hls = this.hls;
+    const shakaPlayer = this.shakaPlayer;
 
-    if (!Hls) {
-      throw new Error('Hls.js is not defined installed (must be loaded before analytics module)');
-    }
+    this.mediaEl = shakaPlayer.getMediaElement();
 
-    hls.on(Hls.Events.MEDIA_ATTACHING, this.onMediaAttaching.bind(this));
-    hls.on(Hls.Events.MEDIA_DETACHING, this.onMediaDetaching.bind(this));
-    hls.on(Hls.Events.MANIFEST_LOADING, this.onManifestLoading.bind(this));
-
-    // media is already attached, event has been triggered before
-    // or we are in the event handler of this event itself.
-    // we can not know how the stacktrace to this constructor will look like.
-    // therefore we will guard from this case in
-    // the onMediaAttaching method (avoid running it twice)
-    if (hls.media) {
-      this.onMediaAttaching();
-    }
-
-    if (hls.url) {
-      this.onManifestLoading();
+    if (!shaka) {
+      throw new Error('`shaka` lib is not installed (must be loaded before analytics module)');
     }
   }
 
   registerMediaElement() {
 
     const mediaEl = this.mediaEl;
-    const hls = this.hls;
+    const shakaPlayer = this.shakaPlayer;
 
     this.listenToMediaElementEvent('loadedmetadata', () => {
 
@@ -105,11 +96,10 @@ export default class HlsjsAdapter {
       // This is redundant with what we give to updateMetadata method.
       // Not sure if there are good reasons to keep that so or if we should better centralize.
       const info       = {
-        m3u8Url    : this.m3u8Url_,
         isLive     : this.isLive_,
-        version    : Hls.version,
+        version    : shaka.Player.version,
         type       : 'html5',
-        streamType : 'hls',
+        streamType : 'dash',
         duration,
         autoplay,
         // HTMLVideoElement.width and HTMLVideoElement.height
@@ -269,21 +259,6 @@ export default class HlsjsAdapter {
   /**
    * Should only be calld when a mediaEl is attached
    */
-  unregisterMediaElement() {
-    if (!this.mediaEl) {
-      throw new Error('No media attached');
-    }
-
-    this.mediaElEventHandlers.forEach((handler) => {
-      this.mediaEl.removeEventListener(handler);
-    });
-
-    this.resetMedia();
-  }
-
-  /**
-   * Should only be calld when a mediaEl is attached
-   */
   listenToMediaElementEvent(event, handler) {
     if (!this.mediaEl) {
       throw new Error('No media attached');
@@ -295,50 +270,29 @@ export default class HlsjsAdapter {
     this.mediaEl.addEventListener(event, boundHandler, false);
   }
 
-  onMediaAttaching() {
-    // in case we are called again (when we are triggering this ourselves
-    // but from the event handler of MEDIA_ATTACHING) we should not run again.
-    if (this.mediaEl) {
-      return;
-    }
-
-    this.mediaEl = hls.media;
-
-    this.registerMediaElement();
-
-    this.onMaybeReady();
-  }
-
-  onMediaDetaching() {
-    this.unregisterMediaElement();
-  }
-
-  onManifestLoading() {
-    // we don't care how often this gets called, its just a help-out
-    this.m3u8Url_ = this.hls.url;
-
-    this.onMaybeReady();
-  }
-
   onMaybeReady() {
 
-    if (!this.needsReadyEvent_ || !this.mediaEl || !this.m3u8Url_) {
+    if (!this.needsReadyEvent_ || !this.mediaEl) {
       return;
     }
 
     this.needsReadyEvent_ = false;
 
-    const {duration, autoplay,
-      width, height,
-      videoWidth, videoHeight,
-      muted} = this.mediaEl;
+    const {
+      duration,
+      autoplay,
+      width,
+      height,
+      videoWidth,
+      videoHeight,
+      muted
+    } = this.mediaEl;
 
     const info       = {
-      m3u8Url    : this.m3u8Url_,
       isLive     : this.isLive_,
-      version    : Hls.version,
+      version    : shaka.Player.version,
       type       : 'html5',
-      streamType : 'hls',
+      streamType : 'dash',
       duration   : duration,
       autoplay   : autoplay,
       // HTMLVideoElement.width and HTMLVideoElement.height
@@ -424,11 +378,12 @@ export default class HlsjsAdapter {
   checkQualityLevelAttributes(silent = false) {
 
     const mediaEl = this.mediaEl;
+
+    console.log('checkQualityLevelAttributes')
+
+    /*
     const hls = this.hls;
 
-    // This is not the currently played level
-    // but the one which we are currently selecting for loading segments.
-    // We dont have a segment-metadata cue track like videojs-contrib-hls has.
     const currentLevelObj = hls.levels[hls.currentLevel];
     if (!currentLevelObj) {
       return;
@@ -459,5 +414,6 @@ export default class HlsjsAdapter {
       !silent && this.eventCallback(Events.VIDEO_CHANGE, eventObject);
       this.analyticsBitrate_ = bitrate;
     }
+    */
   }
 }
