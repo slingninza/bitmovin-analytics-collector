@@ -14,7 +14,7 @@
 
   "tag-pair": true,
 
-  "tag-self-close": false,
+  "tag-self-close": true,
 
   "spec-char-escape": true,
 
