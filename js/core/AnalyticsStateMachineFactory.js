@@ -12,15 +12,15 @@ import ShakaAnalyticsStateMachine from '../analyticsStateMachines/ShakaAnalytics
 class AnalyticsStateMachineFactory {
   /**
    * @param {object} player
-   * @param {StateMchineCallbacks} stateMachineCallbacks
-   * @param {StateMachineOptions} opts
+   * @param {AnalyticsStateMachineCallbacks} stateMachineCallbacks
+   * @param {AnalyticsStateMachineOptions} opts
    */
   static getAnalyticsStateMachine(player, stateMachineCallbacks, opts = {}) {
-    if (this.playerDetector.isBitmovinVersionPre7(player)) {
+    if (PlayerDetector.isBitmovinVersionPre7(player)) {
       return new BitmovinAnalyticsStateMachine(stateMachineCallbacks, opts);
-    } else if (this.playerDetector.isBitmovinVersion7Plus(player)) {
+    } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7AnalyticsStateMachine(stateMachineCallbacks, opts);
-    } else if (this.playerDetector.isVideoJs(player)) {
+    } else if (PlayerDetector.isVideoJs(player)) {
       return new VideoJsAnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (PlayerDetector.isHlsjs(player)) {
       return new HlsjsAnalyticsStateMachine(stateMachineCallbacks, opts);
