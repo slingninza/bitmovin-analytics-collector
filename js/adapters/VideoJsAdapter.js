@@ -1,3 +1,5 @@
+/* global videojs */
+
 import Events from '../enums/Events';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -157,6 +159,7 @@ class VideoJsAdapter {
 
     let analyticsBitrate;
     let bufferingTimeout;
+    // eslint-disable-next-line
     let lastTimeupdate   = Date.now();
     let isStalling       = false;
 
@@ -170,7 +173,7 @@ class VideoJsAdapter {
       });
 
       // that is not the quality that is currently being played.
-      // for more accuracy one can use the segment-metadata cue tracking: 
+      // for more accuracy one can use the segment-metadata cue tracking:
       // https://github.com/videojs/videojs-contrib-hls#segment-metadata
       const selectedPlaylist = this.tech_.hls.playlists.media();
       if (!selectedPlaylist) {
@@ -212,7 +215,7 @@ class VideoJsAdapter {
 
       const tech = this.tech({IWillNotUseThisInPlugins: true});
       if (tech.hls) {
-  
+
         // From here we are going onto Videojs-HLS source-handler specific API
         //
         const hls = this.tech_.hls;
@@ -233,7 +236,7 @@ class VideoJsAdapter {
         const bitrate      = attributes.BANDWIDTH;
         const width        = attributes.RESOLUTION.width;
         const height       = attributes.RESOLUTION.height;
-  
+
         // update actual bitrate
         if (isNaN(analyticsBitrate) || analyticsBitrate !== bitrate) {
           const eventObject = {
@@ -242,12 +245,12 @@ class VideoJsAdapter {
             bitrate,
             currentTime: this.currentTime()
           };
-  
+
           that.eventCallback(Events.VIDEO_CHANGE, eventObject);
           analyticsBitrate = bitrate;
         }
       }
-  
+
     });
 
     this.player.on('stalled', function() {
