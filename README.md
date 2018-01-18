@@ -5,6 +5,8 @@
 * Node >= 8.x
 * Yarn package manager: https://yarnpkg.com
 
+NOTE: `npm` will also work with the same scripts added the `run ...` command.
+
 ## Setup
 
 ```
