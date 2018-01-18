@@ -379,22 +379,22 @@ export default class HlsjsAdapter {
 
     const mediaEl = this.mediaEl;
 
-    console.log('checkQualityLevelAttributes')
+    const variantTracks = this.shakaPlayer.getVariantTracks();
 
-    /*
-    const hls = this.hls;
+    const activeVideoTrack = variantTracks
+      .filter((track) => track.active)
+      .filter((track) => track.videoCodec || track.videoId !== undefined)[0]
 
-    const currentLevelObj = hls.levels[hls.currentLevel];
-    if (!currentLevelObj) {
+    if (!activeVideoTrack) {
+      // can only happen for audio-only streams
       return;
     }
 
-    const attributes   = currentLevelObj.attrs;
-    const bitrate      = attributes.BANDWIDTH;
-    const width        = attributes.RESOLUTION.width;
-    const height       = attributes.RESOLUTION.height;
+    const bitrate      = activeVideoTrack.videoBandwidth || activeVideoTrack.bandwidth;
+    const width        = activeVideoTrack.width;
+    const height       = activeVideoTrack.height;
 
-    const isLive = currentLevelObj.details.live;
+    const isLive = this.shakaPlayer.isLive()
 
     if (isLive !== this.isLive_) {
       this.isLive_ = isLive;
@@ -411,9 +411,10 @@ export default class HlsjsAdapter {
         currentTime: mediaEl.currentTime
       };
 
+      //console.log(eventObject)
+
       !silent && this.eventCallback(Events.VIDEO_CHANGE, eventObject);
       this.analyticsBitrate_ = bitrate;
     }
-    */
   }
 }
