@@ -2,11 +2,11 @@
  * Created by lkroepfl on 12.01.17.
  */
 
-import PlayerDetector from '../utils/PlayerDetector'
-import BitmovinAdapter from '../adapters/BitmovinAdapter'
-import Bitmovin7Adapter from '../adapters/Bitmovin7Adapter'
-import VideoJsAdapter from '../adapters/VideoJsAdapter'
-import HlsjsAdapter from '../adapters/HlsjsAdapter'
+import PlayerDetector from '../utils/PlayerDetector';
+import BitmovinAdapter from '../adapters/BitmovinAdapter';
+import Bitmovin7Adapter from '../adapters/Bitmovin7Adapter';
+import VideoJsAdapter from '../adapters/VideoJsAdapter';
+import HlsjsAdapter from '../adapters/HlsjsAdapter';
 
 class AdapterFactory {
   constructor() {
@@ -23,7 +23,7 @@ class AdapterFactory {
     } else if(PlayerDetector.isHlsjs(player)) {
       return new HlsjsAdapter(player, eventCallback, eventMachine);
     }
-  };
+  }
 }
 
-export default AdapterFactory
+export default AdapterFactory;

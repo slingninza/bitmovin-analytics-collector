@@ -42,4 +42,4 @@ class PlayerDetector {
   }
 }
 
-export default PlayerDetector
+export default PlayerDetector;

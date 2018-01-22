@@ -2,9 +2,9 @@
  * Created by lkroepfl on 13.09.2016.
  */
 
-import Analytics from './Analytics'
-import Players from '../enums/Players'
-import CdnProviders from '../enums/CDNProviders'
+import Analytics from './Analytics';
+import Players from '../enums/Players';
+import CdnProviders from '../enums/CDNProviders';
 
 let analytics;
 
@@ -23,7 +23,7 @@ const analyticsWrapper = (config) => {
     getCurrentImpressionId: getCurrentImpressionId,
     setCustomData: analytics.setCustomData,
     setCustomDataOnce: analytics.setCustomDataOnce,
-  }
+  };
 };
 
 analyticsWrapper.Players = Players;

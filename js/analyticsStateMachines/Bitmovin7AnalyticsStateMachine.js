@@ -1,9 +1,9 @@
 /**
  * Created by lkroepfl on 12.01.17.
  */
-import logger from '../utils/Logger'
-import StateMachine from 'javascript-state-machine'
-import Events from '../enums/Events'
+import logger from '../utils/Logger';
+import StateMachine from 'javascript-state-machine';
+import Events from '../enums/Events';
 
 class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
@@ -37,7 +37,8 @@ class Bitmovin7AnalyticsStateMachine {
       MUTING_READY             : 'MUTING_READY',
       MUTING_PLAY              : 'MUTING_PLAY',
       MUTING_PAUSE             : 'MUTING_PAUSE',
-      CASTING                  : 'CASTING'
+      CASTING                  : 'CASTING',
+      SOURCE_CHANGING          : 'SOURCE_CHANGING',
     };
 
     this.createStateMachine(opts);
@@ -175,7 +176,12 @@ class Bitmovin7AnalyticsStateMachine {
         {name: Events.SEEKED, from: this.States.READY, to: this.States.READY},
         {name: Events.SEEKED, from: this.States.STARTUP, to: this.States.STARTUP},
 
-        {name: Events.SOURCE_LOADED, from: this.getAllStates(), to: this.States.SETUP},
+        {name: Events.SOURCE_UNLOADED, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
+
+        {name: Events.READY, from: this.States.SOURCE_CHANGING, to: this.States.READY },
+
+        //{name: Events.SOURCE_LOADED, from: this.States.SETUP, to: this.States.SETUP},
+        //{name: Events.SOURCE_LOADED, from: this.States.READY, to: this.States.READY},
 
         {name: Events.VIDEO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
         {name: Events.AUDIO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
@@ -230,8 +236,8 @@ class Bitmovin7AnalyticsStateMachine {
           }
         },
         onenterstate : (event, from, to, timestamp, eventObject) => {
-          if (from === "none" && opts.starttime) {
-            this.onEnterStateTimestamp = opts.starttime
+          if (from === 'none' && opts.starttime) {
+            this.onEnterStateTimestamp = opts.starttime;
           } else {
             this.onEnterStateTimestamp = timestamp || new Date().getTime();
           }
@@ -337,12 +343,12 @@ class Bitmovin7AnalyticsStateMachine {
     } else {
       logger.log('Ignored Event: ' + eventType);
     }
-  };
+  }
 
   static pad(str, length) {
     const padStr = new Array(length).join(' ');
     return (str + padStr).slice(0, length);
-  };
+  }
 }
 
-export default Bitmovin7AnalyticsStateMachine
+export default Bitmovin7AnalyticsStateMachine;

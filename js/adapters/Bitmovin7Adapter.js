@@ -1,7 +1,7 @@
 /**
  * Created by lkroepfl on 12.01.2017.
  */
-import Events from '../enums/Events'
+import Events from '../enums/Events';
 
 class Bitmovin7Adapter {
   constructor(player, eventCallback) {
@@ -44,6 +44,12 @@ class Bitmovin7Adapter {
         };
       }
     };
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event) => {
+      this.eventCallback(Events.SOURCE_UNLOADED, {
+        currentTime  : this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedFrames()
+      });
+    });
 
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event) => {
       let autoplay = false;
@@ -267,7 +273,7 @@ class Bitmovin7Adapter {
         });
       }
     };
-  };
+  }
 }
 
-export default Bitmovin7Adapter
+export default Bitmovin7Adapter;

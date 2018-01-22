@@ -370,6 +370,10 @@ class Analytics {
         this.isCastClient = false;
         this.samplesQueue = [];
         this.isAllowedToSendSamples = true;
+      },
+
+      source_changing: () => {
+        this.sample.impressionId = this.utils.generateUUID();
       }
     };
   }
@@ -415,13 +419,13 @@ class Analytics {
     this.config = {
       ...this.config,
       ...filterValues(values)
-    }
+    };
     this.setConfigParameters();
   };
 
   register = (player, opts = {}) => {
     if (!opts.starttime) {
-      opts.starttime = this.utils.getCurrentTimestamp()
+      opts.starttime = this.utils.getCurrentTimestamp();
     }
     this.analyticsStateMachine = this.analyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
 
@@ -464,7 +468,7 @@ class Analytics {
 
   setDroppedFrames = (event) => {
     if (this.utils.validNumber(event.droppedFrames)) {
-      this.sample.droppedFrames = 0
+      this.sample.droppedFrames = 0;
     }
   };
 
@@ -541,7 +545,7 @@ class Analytics {
       videoStartupTime   : 0,
       duration           : 0,
       startupTime        : 0,
-      analyticsVersion   : '{{VERSION}}'
+      analyticsVersion   : VERSION
     };
   }
 
@@ -552,7 +556,7 @@ class Analytics {
   handleLicensingResponse(licensingResponse) {
     if (licensingResponse.status === 'granted') {
       this.licensing = 'granted';
-    } else if (licensingResponse.status = 'skip') {
+    } else if (licensingResponse.status === 'skip') {
       this.licensing = 'denied';
       logger.log('Impression should not be sampled');
     } else {
@@ -656,4 +660,4 @@ class Analytics {
   }
 }
 
-export default Analytics
+export default Analytics;

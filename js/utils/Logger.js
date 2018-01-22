@@ -9,7 +9,7 @@ class Logger {
 
   setLogging(logging) {
     this.showLogs = logging;
-  };
+  }
 
   isLogging() {
     return this.showLogs;

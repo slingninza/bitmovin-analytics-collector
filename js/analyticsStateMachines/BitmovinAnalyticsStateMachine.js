@@ -2,9 +2,9 @@
  * Created by lkroepfl on 22.11.16.
  */
 
-import logger from '../utils/Logger'
-import StateMachine from 'javascript-state-machine'
-import Events from '../enums/Events'
+import logger from '../utils/Logger';
+import StateMachine from 'javascript-state-machine';
+import Events from '../enums/Events';
 
 class BitmovinAnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 60;
@@ -129,23 +129,23 @@ class BitmovinAnalyticsStateMachine {
 
         {
           name           : Events.ERROR, from: [
-          this.States.SETUP,
-          this.States.STARTUP,
-          this.States.READY,
-          this.States.PLAYING,
-          this.States.REBUFFERING,
-          this.States.PAUSE,
-          this.States.QUALITYCHANGE,
-          this.States.PAUSED_SEEKING,
-          this.States.PLAY_SEEKING,
-          this.States.END_PLAY_SEEKING,
-          this.States.QUALITYCHANGE_PAUSE,
-          'FINISH_PLAY_SEEKING',
-          'PLAY_SEEK',
-          'FINISH_QUALITYCHANGE_PAUSE',
-          'FINISH_QUALITYCHANGE',
-          this.States.END,
-          this.States.ERROR], to: this.States.ERROR
+            this.States.SETUP,
+            this.States.STARTUP,
+            this.States.READY,
+            this.States.PLAYING,
+            this.States.REBUFFERING,
+            this.States.PAUSE,
+            this.States.QUALITYCHANGE,
+            this.States.PAUSED_SEEKING,
+            this.States.PLAY_SEEKING,
+            this.States.END_PLAY_SEEKING,
+            this.States.QUALITYCHANGE_PAUSE,
+            'FINISH_PLAY_SEEKING',
+            'PLAY_SEEK',
+            'FINISH_QUALITYCHANGE_PAUSE',
+            'FINISH_QUALITYCHANGE',
+            this.States.END,
+            this.States.ERROR], to: this.States.ERROR
         },
 
         {name: Events.SEEK, from: this.States.END_PLAY_SEEKING, to: this.States.PLAY_SEEKING},
@@ -294,12 +294,12 @@ class BitmovinAnalyticsStateMachine {
     } else {
       logger.log('Ignored Event: ' + eventType);
     }
-  };
+  }
 
   static pad(str, length) {
     const padStr = new Array(length).join(' ');
     return (str + padStr).slice(0, length);
-  };
+  }
 }
 
-export default BitmovinAnalyticsStateMachine
+export default BitmovinAnalyticsStateMachine;

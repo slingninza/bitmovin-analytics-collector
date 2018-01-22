@@ -2,11 +2,11 @@
  * Created by lkroepfl on 12.01.17.
  */
 
-import PlayerDetector from '../utils/PlayerDetector'
-import BitmovinAnalyticsStateMachine from '../analyticsStateMachines/BitmovinAnalyticsStateMachine'
-import Bitmovin7AnalyticsStateMachine from '../analyticsStateMachines/Bitmovin7AnalyticsStateMachine'
-import VideoJsAnalyticsStateMachine from '../analyticsStateMachines/VideoJsAnalyticsStateMachine'
-import HlsjsAnalyticsStateMachine from '../analyticsStateMachines/HlsjsAnalyticsStateMachine'
+import PlayerDetector from '../utils/PlayerDetector';
+import BitmovinAnalyticsStateMachine from '../analyticsStateMachines/BitmovinAnalyticsStateMachine';
+import Bitmovin7AnalyticsStateMachine from '../analyticsStateMachines/Bitmovin7AnalyticsStateMachine';
+import VideoJsAnalyticsStateMachine from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
+import HlsjsAnalyticsStateMachine from '../analyticsStateMachines/HlsjsAnalyticsStateMachine';
 
 class AnalyticsStateMachineFactory {
   constructor() {
@@ -23,7 +23,7 @@ class AnalyticsStateMachineFactory {
     } else if (PlayerDetector.isHlsjs(player)) {
       return new HlsjsAnalyticsStateMachine(stateMachineCallbacks, opts);
     }
-  };
+  }
 }
 
-export default AnalyticsStateMachineFactory
+export default AnalyticsStateMachineFactory;

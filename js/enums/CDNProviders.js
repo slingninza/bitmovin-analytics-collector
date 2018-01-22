@@ -12,4 +12,4 @@ const CdnProviders = {
   BITGRAVITY: 'bitgravity'
 };
 
-export default CdnProviders
+export default CdnProviders;

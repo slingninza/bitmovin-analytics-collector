@@ -20,4 +20,4 @@ class AnalyticsCall extends HttpCall{
   }
 }
 
-export default AnalyticsCall
+export default AnalyticsCall;

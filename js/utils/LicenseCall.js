@@ -18,4 +18,4 @@ class LicenseCall extends HttpCall {
   };
 }
 
-export default LicenseCall
+export default LicenseCall;

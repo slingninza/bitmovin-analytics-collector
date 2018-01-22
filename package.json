@@ -13,8 +13,13 @@
     "url": "https://github.com/bitmovin/bitanalytics-js/issues"
   },
   "homepage": "https://github.com/bitmovin/bitanalytics-js#readme",
+  "dependencies": {
+    "javascript-state-machine": "^2.4.0"
+  },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "^6.21.0",
+    "babel-eslint": "^8.2.1",
     "babel-loader": "^6.2.10",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-object-rest-spread": "^6.19.0",
@@ -22,18 +27,22 @@
     "babel-preset-es2016": "^6.16.0",
     "babel-preset-es2017": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
-    "eslint": "^4.4.1",
-    "javascript-state-machine": "^2.4.0",
+    "eslint": "^4.15.0",
+    "htmlhint": "^0.9.13",
+    "husky": "^0.14.3",
     "string-replace-loader": "^1.0.5",
-    "webpack": "^1.14.0",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.0",
     "write-json-webpack-plugin": "^1.0.0"
   },
   "scripts": {
-    "release": "webpack --config=webpack.config.release.js",
-    "debug": "webpack --config=webpack.config.debug.js",
-    "debug:watch": "webpack --config=webpack.config.debug.js --watch",
-    "lint": "eslint *.js js",
-    "lint:fix": "eslint *.js js --fix"
+    "build:debug": "webpack --progress --config webpack.config.debug.js",
+    "build:release": "webpack --progress --config webpack.config.release.js",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "lint:html": "htmlhint --config .htmlhintrc.json *.html html/*.html",
+    "precommit": "./precommit.bash",
+    "start": "webpack-dev-server --progress --config webpack.config.debug.js"
   },
   "babel": {
     "presets": [
@@ -46,8 +55,5 @@
       "transform-class-properties",
       "transform-object-rest-spread"
     ]
-  },
-  "dependencies": {
-    "babel-cli": "^6.18.0"
   }
 }

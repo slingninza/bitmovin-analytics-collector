@@ -5,9 +5,7 @@ module.exports = {
     "commonjs": true,
     "es6": true
   },
-  "parserOptions": {
-    "sourceType": "module"
-  },
+  "parser": "babel-eslint",
   "extends": "eslint:recommended",
   "rules"  : {
     "semi"              : [2, "always"],
@@ -22,5 +20,8 @@ module.exports = {
     "eol-last"          : 2,
     "no-fallthrough"    : 0,
     "no-debugger"       : 0
+  },
+  "globals": {
+    VERSION: true
   }
 };
