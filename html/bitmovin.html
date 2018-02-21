@@ -18,7 +18,7 @@
 
   <title>Bitdash Analytics</title>
 
-  <script type="text/javascript" src="//bitmovin-a.akamaihd.net/bitmovin-player/stable/7.4.7/bitmovinplayer.js"></script>
+  <script type="text/javascript" src="//bitmovin-a.akamaihd.net/bitmovin-player/stable/7.5/bitmovinplayer.js"></script>
   <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
 </head>
 <body>
@@ -67,11 +67,11 @@
       analytics.setCustomDataOnce({ customData1: 'after-click' });
     };
 
-  window.setTimeout(function () {
-    player.load({
-        hls:  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-    });
-  }, 5000)
+  // window.setTimeout(function () {
+  //   player.load({
+  //       hls:  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+  //   });
+  // }, 5000)
 
   </script>
 </body>
