@@ -5,7 +5,7 @@ import logger from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
-class Bitmovin7AnalyticsStateMachine {
+export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
 
@@ -350,5 +350,3 @@ class Bitmovin7AnalyticsStateMachine {
     return (str + padStr).slice(0, length);
   }
 }
-
-export default Bitmovin7AnalyticsStateMachine;

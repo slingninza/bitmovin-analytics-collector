@@ -16,21 +16,25 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous">
   </script>
 
-  <title>Bitdash Analytics</title>
+  <title>Shaka Analytics</title>
 
-  <script type="text/javascript" src="//bitmovin-a.akamaihd.net/bitmovin-player/stable/7.5/bitmovinplayer.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/2.3.0/shaka-player.compiled.js"></script>
   <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
+
 </head>
 <body>
 <div id="player" style="width: 400px"></div>
-    <a href="bitmovin.html">Click</a>
-    <a href="#" id="click">Click</a>
+
+  <video id="my-video" preload="none" width="640" height="264" controls muted></video>
+
+  <p><a href="shaka.html">Click</a></p>
+
   <script type="text/javascript">
 
     var config = {
       key: "e73a3577-d91c-4214-9e6d-938fb936818a", //Your bitmovin analytics key
       playerKey: "a6e31908-550a-4f75-b4bc-a9d89880a733", //Your player key (bitmovin, jw, ..) (optional)
-      player: bitmovin.analytics.Players.BITMOVIN,
+      player: bitmovin.analytics.Players.SHAKA,
       cdnProvider: bitmovin.analytics.CdnProviders.AKAMAI,
       debug: true,
       customData1: {
@@ -39,40 +43,70 @@
       },
       customData2: 'customData2',
       experimentName: 'bitmovinanalytics-local',
-      videoId: 'Sintel',
+      videoId: 'ShakaTestAngelOne',
       userId: 'customer#1'
     };
+
     var analytics = bitmovin.analytics(config);
 
-    var conf = {
-      key: "a6e31908-550a-4f75-b4bc-a9d89880a733",
-      playback: {
-        autoplay: true
-      },
-      source:    {
-        dash: "http://bitdash-a.akamaihd.net/content/sintel/sintel.mpd",
-        hls:  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-        progressive:  [{
-          url:  "https://bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4",
-          type: "video/mp4"
-        }]
+    /* Following is sample code from Shaka documentation */
+
+    var manifestUri = '//storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd';
+
+    // FIXME: Error loading subtitles, fails to load
+    // manifestUri = 'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8'
+
+    function initApp() {
+      // Install built-in polyfills to patch browser incompatibilities.
+      shaka.polyfill.installAll();
+
+      // Check to see if the browser supports the basic APIs Shaka needs.
+      if (shaka.Player.isBrowserSupported()) {
+        // Everything looks good!
+        initPlayer();
+      } else {
+        // This browser does not have the minimum set of APIs we need.
+        console.error('Browser not supported!');
       }
-    };
-    var player = bitmovin.player('player');
-    player.setup(conf);
+    }
 
-    analytics.register(player);
+    function initPlayer() {
 
-    document.getElementById('click').onclick = function () {
-      analytics.setCustomDataOnce({ customData1: 'after-click' });
-    };
+      var startTime = new Date().getTime();
 
-  // window.setTimeout(function () {
-  //   player.load({
-  //       hls:  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-  //   });
-  // }, 5000)
+      // Create a Player instance.
+      var video = document.getElementById('my-video');
+      var player = new shaka.Player(video);
+
+      analytics.register(player, {starttime: startTime});
+
+      // Attach player to the window to make it easy to access in the JS console.
+      window.player = player;
+
+      // Listen for error events.
+      player.addEventListener('error', onErrorEvent);
+
+      // Try to load a manifest.
+      // This is an asynchronous process.
+      player.load(manifestUri).then(function() {
+        // This runs if the asynchronous load is successful.
+        console.log('The video has now been loaded!');
+      }).catch(onError);  // onError is executed if the asynchronous load fails.
+    }
+
+    function onErrorEvent(event) {
+      // Extract the shaka.util.Error object from the event.
+      onError(event.detail);
+    }
+
+    function onError(error) {
+      // Log the error.
+      console.error('Error code', error.code, 'object', error);
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
 
   </script>
+
 </body>
 </html>

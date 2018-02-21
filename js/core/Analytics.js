@@ -23,9 +23,6 @@ class Analytics {
 
     this.licenseCall                  = new LicenseCall();
     this.analyticsCall                = new AnalyticsCall();
-    this.utils                        = new Utils();
-    this.adapterFactory               = new AdapterFactory();
-    this.analyticsStateMachineFactory = new AnalyticsStateMachineFactory();
     this.castClient                   = new CastClient();
     this.castReceiver                 = new CastReceiver();
 
@@ -83,14 +80,14 @@ class Analytics {
 
   setPageLoadType() {
     window.setTimeout(() => {
-      if (document[this.utils.getHiddenProp()] === true) {
+      if (document[Utils.getHiddenProp()] === true) {
         this.pageLoadType = Analytics.PAGE_LOAD_TYPE.BACKGROUND;
       }
     }, Analytics.PAGE_LOAD_TYPE_TIMEOUT);
   }
 
   init() {
-    if (!this.isCastReceiver && (this.config.key == '' || !this.utils.validString(this.config.key))) {
+    if (!this.isCastReceiver && (this.config.key == '' || !Utils.validString(this.config.key))) {
       console.error('Invalid analytics license key provided');
       return;
     }
@@ -116,20 +113,20 @@ class Analytics {
     sample.videoId      = config.videoId;
     sample.customUserId = config.userId;
 
-    sample.customData1 = this.utils.getCustomDataString(config.customData1);
-    sample.customData2 = this.utils.getCustomDataString(config.customData2);
-    sample.customData3 = this.utils.getCustomDataString(config.customData3);
-    sample.customData4 = this.utils.getCustomDataString(config.customData4);
-    sample.customData5 = this.utils.getCustomDataString(config.customData5);
+    sample.customData1 = Utils.getCustomDataString(config.customData1);
+    sample.customData2 = Utils.getCustomDataString(config.customData2);
+    sample.customData3 = Utils.getCustomDataString(config.customData3);
+    sample.customData4 = Utils.getCustomDataString(config.customData4);
+    sample.customData5 = Utils.getCustomDataString(config.customData5);
 
     sample.experimentName = config.experimentName;
   }
 
   setUserId() {
-    const userId = this.utils.getCookie('bitmovin_analytics_uuid');
+    const userId = Utils.getCookie('bitmovin_analytics_uuid');
     if (!userId || userId === '') {
-      document.cookie = 'bitmovin_analytics_uuid=' + this.utils.generateUUID();
-      this.sample.userId   = this.utils.getCookie('bitmovin_analytics_uuid');
+      document.cookie = 'bitmovin_analytics_uuid=' + Utils.generateUUID();
+      this.sample.userId   = Utils.getCookie('bitmovin_analytics_uuid');
     } else {
       this.sample.userId = userId;
     }
@@ -141,7 +138,7 @@ class Analytics {
       // So it's the last sample
       setup: (time, state, event) => {
         if (!this.isCastReceiver) {
-          this.sample.impressionId = this.utils.generateUUID();
+          this.sample.impressionId = Utils.generateUUID();
         }
         logger.log('Setup bitmovin analytics ' + this.sample.analyticsVersion + ' with impressionId: ' + this.sample.impressionId);
 
@@ -151,7 +148,7 @@ class Analytics {
         this.sample.pageLoadType      = this.pageLoadType;
 
         if (window.performance && window.performance.timing) {
-          const loadTime           = this.utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
+          const loadTime           = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
           this.sample.pageLoadTime = loadTime;
           logger.log('Page loaded in ' + loadTime + 'ms');
         }
@@ -166,7 +163,7 @@ class Analytics {
         this.sample.pageLoadTime = 0;
       },
 
-      ready: this.utils.noOp,
+      ready: Utils.noOp,
 
       startup: (time, state) => {
         this.setDuration(time);
@@ -266,7 +263,7 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      'play_seeking': this.utils.noOp,
+      'play_seeking': Utils.noOp,
 
       'end_play_seeking': (time, state, event) => {
         this.setState(state);
@@ -301,7 +298,7 @@ class Analytics {
       },
 
       end: (time, state, event) => {
-        this.sample.impressionId = this.utils.generateUUID();
+        this.sample.impressionId = Utils.generateUUID();
       },
 
       ad: (time, state, event) => {
@@ -322,19 +319,19 @@ class Analytics {
         this.sample.isMuted = false;
       },
 
-      muting_ready: this.utils.noOp,
-      muting_play: this.utils.noOp,
-      muting_pause: this.utils.noOp,
+      muting_ready: Utils.noOp,
+      muting_play: Utils.noOp,
+      muting_pause: Utils.noOp,
 
       setVideoTimeEndFromEvent: (event) => {
-        if (this.utils.validNumber(event.currentTime)) {
-          this.sample.videoTimeEnd = this.utils.calculateTime(event.currentTime);
+        if (Utils.validNumber(event.currentTime)) {
+          this.sample.videoTimeEnd = Utils.calculateTime(event.currentTime);
         }
       },
 
       setVideoTimeStartFromEvent: (event) => {
-        if (this.utils.validNumber(event.currentTime)) {
-          this.sample.videoTimeStart = this.utils.calculateTime(event.currentTime);
+        if (Utils.validNumber(event.currentTime)) {
+          this.sample.videoTimeStart = Utils.calculateTime(event.currentTime);
         }
       },
 
@@ -373,7 +370,7 @@ class Analytics {
       },
 
       source_changing: () => {
-        this.sample.impressionId = this.utils.generateUUID();
+        this.sample.impressionId = Utils.generateUUID();
       }
     };
   }
@@ -425,11 +422,11 @@ class Analytics {
 
   register = (player, opts = {}) => {
     if (!opts.starttime) {
-      opts.starttime = this.utils.getCurrentTimestamp();
+      opts.starttime = Utils.getCurrentTimestamp();
     }
-    this.analyticsStateMachine = this.analyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
+    this.analyticsStateMachine = AnalyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
 
-    this.adapter = this.adapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+    this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
     if (!this.adapter) {
       logger.error('Could not detect player.');
       return;
@@ -443,7 +440,7 @@ class Analytics {
   record = (eventType, eventObject) => {
     eventObject = eventObject || {};
 
-    this.analyticsStateMachine.callEvent(eventType, eventObject, this.utils.getCurrentTimestamp());
+    this.analyticsStateMachine.callEvent(eventType, eventObject, Utils.getCurrentTimestamp());
   };
 
   setDuration(duration) {
@@ -455,58 +452,58 @@ class Analytics {
   }
 
   setPlaybackVideoPropertiesFromEvent(event) {
-    if (this.utils.validNumber(event.width)) {
+    if (Utils.validNumber(event.width)) {
       this.sample.videoPlaybackWidth = event.width;
     }
-    if (this.utils.validNumber(event.height)) {
+    if (Utils.validNumber(event.height)) {
       this.sample.videoPlaybackHeight = event.height;
     }
-    if (this.utils.validNumber(event.bitrate)) {
+    if (Utils.validNumber(event.bitrate)) {
       this.sample.videoBitrate = event.bitrate;
     }
   }
 
   setDroppedFrames = (event) => {
-    if (this.utils.validNumber(event.droppedFrames)) {
+    if (Utils.validNumber(event.droppedFrames)) {
       this.sample.droppedFrames = 0;
     }
   };
 
   setPlaybackSettingsFromLoadedEvent(loadedEvent) {
-    if (this.utils.validBoolean(loadedEvent.isLive)) {
+    if (Utils.validBoolean(loadedEvent.isLive)) {
       this.sample.isLive = loadedEvent.isLive;
     }
-    if (this.utils.validString(loadedEvent.version)) {
+    if (Utils.validString(loadedEvent.version)) {
       this.sample.version = this.sample.player + '-' + loadedEvent.version;
     }
-    if (this.utils.validString(loadedEvent.type)) {
+    if (Utils.validString(loadedEvent.type)) {
       this.sample.playerTech = loadedEvent.type;
     }
-    if (this.utils.validNumber(loadedEvent.duration)) {
-      this.sample.videoDuration = this.utils.calculateTime(loadedEvent.duration);
+    if (Utils.validNumber(loadedEvent.duration)) {
+      this.sample.videoDuration = Utils.calculateTime(loadedEvent.duration);
     }
-    if (this.utils.validString(loadedEvent.streamType)) {
+    if (Utils.validString(loadedEvent.streamType)) {
       this.sample.streamFormat = loadedEvent.streamType;
     }
-    if (this.utils.validString(loadedEvent.mpdUrl)) {
+    if (Utils.validString(loadedEvent.mpdUrl)) {
       this.sample.mpdUrl = loadedEvent.mpdUrl;
     }
-    if (this.utils.validString(loadedEvent.m3u8Url)) {
+    if (Utils.validString(loadedEvent.m3u8Url)) {
       this.sample.m3u8Url = loadedEvent.m3u8Url;
     }
-    if (this.utils.validString(loadedEvent.progUrl)) {
+    if (Utils.validString(loadedEvent.progUrl)) {
       this.sample.progUrl = loadedEvent.progUrl;
     }
-    if (this.utils.validNumber(loadedEvent.videoWindowWidth)) {
+    if (Utils.validNumber(loadedEvent.videoWindowWidth)) {
       this.sample.videoWindowWidth = loadedEvent.videoWindowWidth;
     }
-    if (this.utils.validNumber(loadedEvent.videoWindowHeight)) {
+    if (Utils.validNumber(loadedEvent.videoWindowHeight)) {
       this.sample.videoWindowHeight = loadedEvent.videoWindowHeight;
     }
-    if (this.utils.validBoolean(loadedEvent.isMuted)) {
+    if (Utils.validBoolean(loadedEvent.isMuted)) {
       this.sample.isMuted = loadedEvent.isMuted;
     }
-    if (this.utils.validBoolean(loadedEvent.autoplay)) {
+    if (Utils.validBoolean(loadedEvent.autoplay)) {
       this.autoplay = loadedEvent.autoplay;
     }
 
@@ -517,8 +514,8 @@ class Analytics {
 
   setupSample() {
     this.sample = {
-      domain             : this.utils.sanitizePath(window.location.hostname),
-      path               : this.utils.sanitizePath(window.location.pathname),
+      domain             : Utils.sanitizePath(window.location.hostname),
+      path               : Utils.sanitizePath(window.location.pathname),
       language           : navigator.language || navigator.userLanguage,
       userAgent          : navigator.userAgent,
       screenWidth        : screen.width,
@@ -550,7 +547,10 @@ class Analytics {
   }
 
   checkLicensing(key) {
-    this.licenseCall.sendRequest(key, this.sample.domain, this.sample.analyticsVersion, ::this.handleLicensingResponse);
+    this.licenseCall.sendRequest(key,
+      this.sample.domain,
+      this.sample.analyticsVersion,
+      this.handleLicensingResponse.bind(this));
   }
 
   handleLicensingResponse(licensingResponse) {
@@ -571,10 +571,10 @@ class Analytics {
     }
 
     if (this.licensing === 'granted') {
-      this.sample.time = this.utils.getCurrentTimestamp();
+      this.sample.time = Utils.getCurrentTimestamp();
 
       if (!this.isCastClient && !this.isCastReceiver) {
-        this.analyticsCall.sendRequest(this.sample, this.utils.noOp);
+        this.analyticsCall.sendRequest(this.sample, Utils.noOp);
         return;
       }
 
@@ -583,21 +583,21 @@ class Analytics {
         this.samplesQueue.push(copySample);
       } else {
         for (let i = 0; i < this.samplesQueue.length; i++) {
-          this.analyticsCall.sendRequest(this.samplesQueue[i], this.utils.noOp);
+          this.analyticsCall.sendRequest(this.samplesQueue[i], Utils.noOp);
         }
         this.samplesQueue = [];
 
-        this.analyticsCall.sendRequest(this.sample, this.utils.noOp);
+        this.analyticsCall.sendRequest(this.sample, Utils.noOp);
       }
     } else if (this.licensing === 'waiting') {
-      this.sample.time = this.utils.getCurrentTimestamp();
+      this.sample.time = Utils.getCurrentTimestamp();
 
       logger.log('Licensing callback still pending, waiting...');
 
       const copySample = {...this.sample};
 
       window.setTimeout(() => {
-        this.analyticsCall.sendRequest(copySample, this.utils.noOp);
+        this.analyticsCall.sendRequest(copySample, Utils.noOp);
       }, Analytics.LICENSE_CALL_PENDING_TIMEOUT);
     }
   }
@@ -629,7 +629,7 @@ class Analytics {
       return;
     }
 
-    this.analyticsCall.sendRequestSynchronous(this.sample, this.utils.noOp);
+    this.analyticsCall.sendRequestSynchronous(this.sample, Utils.noOp);
   }
 
   clearValues() {

@@ -2,7 +2,7 @@ import logger from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
-class AnalyticsStateMachineFactory {
+export class VideojsAnalyticsStateMachine {
   constructor(stateMachineCallbacks, opts = {}) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
@@ -317,5 +317,3 @@ class AnalyticsStateMachineFactory {
     return (str + padStr).slice(0, length);
   }
 }
-
-export default AnalyticsStateMachineFactory;

@@ -3,7 +3,7 @@
  */
 
 import Analytics from './Analytics';
-import Players from '../enums/Players';
+import {Players} from '../enums/Players';
 import CdnProviders from '../enums/CDNProviders';
 
 let analytics;
