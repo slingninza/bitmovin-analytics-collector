@@ -31,8 +31,8 @@
   <script type="text/javascript">
 
     var config = {
-      key: "e73a3577-d91c-4214-9e6d-938fb936818a", //Your bitmovin analytics key
-      playerKey: "a6e31908-550a-4f75-b4bc-a9d89880a733", //Your player key (bitmovin, jw, ..) (optional)
+      key: 'e73a3577-d91c-4214-9e6d-938fb936818a', //Your bitmovin analytics key
+      playerKey: 'a6e31908-550a-4f75-b4bc-a9d89880a733', //Your player key (bitmovin, jw, ..) (optional)
       player: bitmovin.analytics.Players.HLSJS,
       cdnProvider: bitmovin.analytics.CdnProviders.AKAMAI,
       debug: true,
@@ -59,7 +59,7 @@
       analytics.register(hls, {starttime: time});
 
       hls.attachMedia(video);
-      hls.loadSource("https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8");
+      hls.loadSource('https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8');
 
       video.addEventListener('play', function() {
         hls.startLoad(); // needed for when preload disabled

@@ -28,8 +28,8 @@
   <script type="text/javascript">
 
     var config = {
-      key: "e73a3577-d91c-4214-9e6d-938fb936818a", //Your bitmovin analytics key
-      playerKey: "a6e31908-550a-4f75-b4bc-a9d89880a733", //Your player key (bitmovin, jw, ..) (optional)
+      key: 'e73a3577-d91c-4214-9e6d-938fb936818a', //Your bitmovin analytics key
+      playerKey: 'a6e31908-550a-4f75-b4bc-a9d89880a733', //Your player key (bitmovin, jw, ..) (optional)
       player: bitmovin.analytics.Players.BITMOVIN,
       cdnProvider: bitmovin.analytics.CdnProviders.AKAMAI,
       debug: true,
@@ -45,16 +45,16 @@
     var analytics = bitmovin.analytics(config);
 
     var conf = {
-      key: "a6e31908-550a-4f75-b4bc-a9d89880a733",
+      key: 'a6e31908-550a-4f75-b4bc-a9d89880a733',
       playback: {
         autoplay: true
       },
       source:    {
-        dash: "http://bitdash-a.akamaihd.net/content/sintel/sintel.mpd",
-        hls:  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+        dash: 'http://bitdash-a.akamaihd.net/content/sintel/sintel.mpd',
+        hls:  'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
         progressive:  [{
-          url:  "https://bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4",
-          type: "video/mp4"
+          url:  'https://bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
+          type: 'video/mp4'
         }]
       }
     };
@@ -67,11 +67,11 @@
       analytics.setCustomDataOnce({ customData1: 'after-click' });
     };
 
-  // window.setTimeout(function () {
-  //   player.load({
-  //       hls:  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-  //   });
-  // }, 5000)
+// window.setTimeout(function () {
+//   player.load({
+//       hls:  "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+//   });
+// }, 5000)
 
   </script>
 </body>
