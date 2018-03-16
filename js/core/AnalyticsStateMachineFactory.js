@@ -23,6 +23,7 @@ class AnalyticsStateMachineFactory {
       return new VideojsAnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (
       PlayerDetector.isHlsjs(player) ||
+      PlayerDetector.isDashjs(player) ||
       PlayerDetector.isShaka(player)) {
       return new HTML5AnalyticsStateMachine(stateMachineCallbacks, opts);
     } else {
