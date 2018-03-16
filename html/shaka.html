@@ -30,10 +30,13 @@
   <p><a href="shaka.html">Click</a></p>
 
   <script type="text/javascript">
+    /* global bitmovin shaka */
 
     var config = {
-      key: 'e73a3577-d91c-4214-9e6d-938fb936818a', //Your bitmovin analytics key
-      playerKey: 'a6e31908-550a-4f75-b4bc-a9d89880a733', //Your player key (bitmovin, jw, ..) (optional)
+      // Your bitmovin analytics key
+      key: 'e73a3577-d91c-4214-9e6d-938fb936818a',
+      // Your player key (bitmovin, jw, ..) (optional)
+      playerKey: 'a6e31908-550a-4f75-b4bc-a9d89880a733',
       player: bitmovin.analytics.Players.SHAKA,
       cdnProvider: bitmovin.analytics.CdnProviders.AKAMAI,
       debug: true,
@@ -91,7 +94,8 @@
       player.load(manifestUri).then(function() {
         // This runs if the asynchronous load is successful.
         console.log('The video has now been loaded!');
-      }).catch(onError);  // onError is executed if the asynchronous load fails.
+      // onError is executed if the asynchronous load fails.
+      }).catch(onError);
     }
 
     function onErrorEvent(event) {
