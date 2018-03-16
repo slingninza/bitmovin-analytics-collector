@@ -28,6 +28,7 @@
     "babel-preset-es2017": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "eslint": "^4.15.0",
+    "eslint-plugin-html": "^4.0.2",
     "htmlhint": "^0.9.13",
     "husky": "^0.14.3",
     "string-replace-loader": "^1.0.5",
@@ -38,7 +39,7 @@
   "scripts": {
     "build:debug": "webpack --progress --config webpack.config.debug.js",
     "build:release": "webpack --progress --config webpack.config.release.js",
-    "lint": "eslint .",
+    "lint": "eslint . html/**/*.html",
     "lint:fix": "npm run lint -- --fix",
     "lint:html": "htmlhint --config .htmlhintrc.json *.html html/*.html",
     "precommit": "./precommit.bash",
