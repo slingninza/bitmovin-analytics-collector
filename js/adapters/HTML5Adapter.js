@@ -29,7 +29,6 @@ export class HTML5Adapter {
    * @param {AnalyticsStateMachine} stateMachine
    */
   constructor(mediaElement, eventCallback, stateMachine) {
-
     /**
      * @public
      * @member {AnalyticsEventCallback}
@@ -101,6 +100,58 @@ export class HTML5Adapter {
      * @member {boolean}
      */
     this.needsFirstPlayIntent_ = true;
+
+    /**
+     * @private
+     * @member {boolean}
+     */
+    this.mediaElementSet_ = false;
+
+    if (mediaElement) {
+      this.setMediaElement();
+    }
+  }
+
+  /**
+   * Used to setup against the media element.
+   * We need this method to desynchronize construction of this class
+   * and the actual initialization against the media element.
+   * That is because at construction some media engine
+   * may not already have the media element attached, for example
+   * when passing in the DOM element is happening at once with passing the source URL
+   * and can not be decoupled.
+   * We are then awaiting an event from the engine and calling this with the media element
+   * as argument from our sub-class.
+   *
+   * This method can also be called without arguments and then it will perform
+   * initialization against the existing media element (should only be called once, will throw an error otherwise)
+   *
+   * It can also be used to replace the element.
+   *
+   *
+   * @param {HTMLMediaElement} mediaElement
+   */
+  setMediaElement(mediaElement = null) {
+    // replace previously existing, if calld with args
+    if (mediaElement && this.mediaEl) {
+      this.unregisterMediaElement();
+      this.mediaElementSet_ = false;
+    }
+
+    // if called without args we assume it's already there
+    // we can also be called with args but without any being there before
+    if (mediaElement) {
+      this.mediaEl = mediaElement;
+    }
+
+    if (!this.mediaEl) {
+      throw new Error('No media element owned');
+    }
+
+    if (this.mediaElementSet_) {
+      throw new Error('Media element already set (only call this once)');
+    }
+    this.mediaElementSet_ = true;
 
     this.registerMediaElement();
     this.onMaybeReady();
