@@ -10,17 +10,36 @@ import {MIMETypes} from '../enums/MIMETypes';
 export class DashjsAdapter extends HTML5Adapter {
 
   constructor(mediaPlayer, eventCallback, stateMachine) {
-    super(mediaPlayer.getVideoContainer(), eventCallback, stateMachine);
+    super(null, eventCallback, stateMachine);
 
-    if (!mediaPlayer) {
-      throw new Error('`MediaPlayer` lib is not installed (must be loaded before analytics module)');
+    let videoEl = null;
+    let canPlay = false;
+    try {
+      videoEl = mediaPlayer.getVideoElement();
+    } catch(e) { /* eslint-disable-line no-empty */ }
+    if (!videoEl) {
+      mediaPlayer.on(dashjs.MediaPlayer.events.CAN_PLAY, () => {
+        if (canPlay) {
+          return;
+        }
+        videoEl = mediaPlayer.getVideoElement();
+        console.log('CAN_PLAY');
+        canPlay = true;
+        this._initialize(mediaPlayer, videoEl);
+      }, this);
+    } else {
+      this._initialize(mediaPlayer, videoEl);
     }
+  }
 
+  _initialize(mediaPlayer, videoEl) {
     /**
      * @public
      * @member {dashjs.MediaPlayer}
      */
     this.mediaPlayer = mediaPlayer;
+
+    this.setMediaElement(videoEl);
   }
 
   getPlayerVersion() {
