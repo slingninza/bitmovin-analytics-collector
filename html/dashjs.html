@@ -58,6 +58,8 @@
 
     var dashjsPlayer = dashjs.MediaPlayer().create();
 
+    dashjsPlayer.getDebug().setLogToBrowserConsole(false);
+
     analytics.register(dashjsPlayer, {starttime: time});
 
     var url = 'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
