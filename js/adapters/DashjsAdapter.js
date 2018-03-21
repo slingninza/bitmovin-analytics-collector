@@ -43,12 +43,11 @@ export class DashjsAdapter extends HTML5Adapter {
   }
 
   getPlayerVersion() {
-    // FIXME: could not find anything for this Dash.js API
     return this.mediaPlayer.getVersion();
   }
 
   isLive() {
-    // FIXME: could not find anything for this Dash.js API
+    // FIXME: Maybe use http://cdn.dashjs.org/latest/jsdoc/module-MediaPlayer.html#getLiveDelay__anchor
     return false;
   }
 
