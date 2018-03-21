@@ -12,9 +12,8 @@ import Hls from 'hls.js';
 class PlayerDetector {
 
   static isBitmovinVersionPre7 = function(player) {
-
-    if (dashjs) {
-      return;
+    if (PlayerDetector.isDashjs(player)) {
+      return false;
     }
 
     if (typeof player.getVersion === 'function') {
@@ -25,11 +24,6 @@ class PlayerDetector {
   };
 
   static isBitmovinVersion7Plus = function(player) {
-
-    if (dashjs) {
-      return;
-    }
-
     if (typeof player.version === 'string') {
       return player.version >= '7';
     }
@@ -72,12 +66,7 @@ class PlayerDetector {
   }
 
   static isDashjs(player) {
-    if (!window.dashjs) {
-      return false;
-    }
-
-    return typeof dashjs.MediaPlayer === 'function';
-    // && typeof player.addABRCustomRule === 'function'
+    return typeof player.addABRCustomRule === 'function';
   }
 }
 
