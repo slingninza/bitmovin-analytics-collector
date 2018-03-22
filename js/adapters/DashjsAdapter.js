@@ -72,6 +72,17 @@ export class DashjsAdapter extends HTML5Adapter {
    * @returns {QualityLevelInfo}
    */
   getCurrentQualityLevelInfo() {
+    if (this.mediaPlayer) {
+      const videoBitrateInfoList = this.mediaPlayer.getBitrateInfoListFor('video');
+      const currentVideoQualityIndex = this.mediaPlayer.getQualityFor('video');
+      const currentVideoQuality = videoBitrateInfoList[currentVideoQualityIndex];
+      const {width, height, bitrate} = currentVideoQuality;
+      return {
+        width,
+        height,
+        bitrate
+      };
+    }
     return null;
   }
 }
