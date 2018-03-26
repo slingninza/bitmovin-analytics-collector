@@ -43,6 +43,7 @@
     "lint:fix": "npm run lint -- --fix",
     "lint:html": "htmlhint --config .htmlhintrc.json *.html html/*.html",
     "precommit": "./precommit.bash",
+    "pretest": "npm run lint && npm run lint:html",
     "start": "webpack-dev-server --progress --config webpack.config.debug.js"
   },
   "babel": {
