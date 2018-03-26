@@ -38,12 +38,15 @@
       key: 'e73a3577-d91c-4214-9e6d-938fb936818a',
       player: bitmovin.analytics.Players.DASHJS,
       cdnProvider: bitmovin.analytics.CdnProviders.AKAMAI,
-      debug: true, // relevant for development only  - don't set this to true in production
+      // relevant for development only  - don't set this to true in production
+      debug: true,
       customData1: 'some custom data',
       customData2: 'customData2',
       experimentName: 'bitmovinanalytics-local',
-      videoId: 'Sintel', // replace this with your own asset id
-      userId: 'customer#1' // add a customer id that maps for example to a subscriber id
+      // replace this with your own asset id
+      videoId: 'Sintel',
+      // add a customer id that maps for example to a subscriber id
+      userId: 'customer#1'
     };
 
     var analytics = bitmovin.analytics(config);
