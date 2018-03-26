@@ -7,11 +7,9 @@ const mapping = {
   [WEBM]: 'progressive',
   [HLS]: 'hls',
   [DASH]: 'dash' 
-}
+};
 
 export function getStreamTypeFromMIMEType(mimeType) {
-  const val = mapping[mimeType];
-  debugger;
-  return val;
+  return mapping[mimeType];
 }
 
