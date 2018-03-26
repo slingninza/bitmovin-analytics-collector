@@ -36,19 +36,14 @@
     var config = {
       // Your bitmovin analytics key
       key: 'e73a3577-d91c-4214-9e6d-938fb936818a',
-      // Your player key (bitmovin, jw, ..) (optional)
-      playerKey: 'a6e31908-550a-4f75-b4bc-a9d89880a733',
       player: bitmovin.analytics.Players.DASHJS,
       cdnProvider: bitmovin.analytics.CdnProviders.AKAMAI,
-      debug: true,
-      customData1: {
-        json: 'jsonTest',
-        json42: 42
-      },
+      debug: true, // relevant for development only  - don't set this to true in production
+      customData1: 'some custom data',
       customData2: 'customData2',
       experimentName: 'bitmovinanalytics-local',
-      videoId: 'Sintel',
-      userId: 'customer#1'
+      videoId: 'Sintel', // replace this with your own asset id
+      userId: 'customer#1' // add a customer id that maps for example to a subscriber id
     };
 
     var analytics = bitmovin.analytics(config);
