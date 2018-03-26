@@ -4,6 +4,7 @@
 
 import Events from '../enums/Events';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
+import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -189,6 +190,14 @@ export class HTML5Adapter {
   }
 
   /**
+   * Can be overriden by sub-classes
+   * @returns {string}
+   */
+  getStreamType() {
+    return getStreamTypeFromMIMEType(this.getMIMEType());
+  }
+
+  /**
    * @abstract
    * @returns {string}
    */
@@ -258,7 +267,7 @@ export class HTML5Adapter {
         type       : 'html5',
         isLive     : this.isLive(),
         version    : this.getPlayerVersion(),
-        streamType : this.getMIMEType(),
+        streamType : this.getStreamType(),
         streamUrl  : this.getStreamURL(),
         duration,
         autoplay,
@@ -452,7 +461,7 @@ export class HTML5Adapter {
       type       : 'html5',
       isLive     : this.isLive(),
       version    : this.getPlayerVersion(),
-      streamType : this.getMIMEType(),
+      streamType : this.getStreamType(),
       streamUrl  : this.getStreamURL(),
       duration   : duration,
       autoplay   : autoplay,
