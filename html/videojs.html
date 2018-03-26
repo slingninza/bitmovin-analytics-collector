@@ -33,8 +33,11 @@
   </video>
   <script type="text/javascript">
 
+    /* global bitmovin videojs */
+
     var config = {
-      key: "e73a3577-d91c-4214-9e6d-938fb936818a", //Your bitmovin analytics key
+      // Your bitmovin analytics key
+      key: 'e73a3577-d91c-4214-9e6d-938fb936818a',
       player: bitmovin.analytics.Players.VIDEOJS,
       cdnProvider: bitmovin.analytics.CdnProviders.AKAMAI,
       experimentName: 'bitmovinanalytics-local',

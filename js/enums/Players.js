@@ -8,5 +8,6 @@ export const Players = {
   RADIANT : 'radiant',
   VIDEOJS : 'videojs',
   HLSJS   : 'hlsjs',
-  SHAKA   : 'shaka'
+  SHAKA   : 'shaka',
+  DASHJS  : 'dashjs'
 };

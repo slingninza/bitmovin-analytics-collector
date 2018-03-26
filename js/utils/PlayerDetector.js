@@ -1,5 +1,6 @@
 /* global shaka */
 /* global videojs */
+/* global dashjs */
 
 import Hls from 'hls.js';
 
@@ -11,6 +12,10 @@ import Hls from 'hls.js';
 class PlayerDetector {
 
   static isBitmovinVersionPre7 = function(player) {
+    if (PlayerDetector.isDashjs(player)) {
+      return false;
+    }
+
     if (typeof player.getVersion === 'function') {
       return player.getVersion() < '7';
     }
@@ -49,7 +54,7 @@ class PlayerDetector {
 
   static isShaka(player) {
 
-    if (!shaka) {
+    if (!window.shaka) {
       // Shaka is not defined installed (must be loaded before analytics module)
       return false;
     }
@@ -58,6 +63,10 @@ class PlayerDetector {
       typeof shaka.Player === 'function' && player.constructor === shaka.Player
     );
 
+  }
+
+  static isDashjs(player) {
+    return typeof player.addABRCustomRule === 'function';
   }
 }
 

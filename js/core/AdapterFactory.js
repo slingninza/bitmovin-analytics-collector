@@ -6,6 +6,7 @@ import VideoJsAdapter from '../adapters/VideoJsAdapter';
 
 import {HlsjsAdapter} from '../adapters/HlsjsAdapter';
 import {ShakaAdapter} from '../adapters/ShakaAdapter';
+import {DashjsAdapter} from '../adapters/DashjsAdapter';
 
 /**
  * Stateless. Auto-maps given player instance to new adapter instances.
@@ -28,6 +29,8 @@ class AdapterFactory {
       return new HlsjsAdapter(player, eventCallback, stateMachine);
     } else if(PlayerDetector.isShaka(player)) {
       return new ShakaAdapter(player, eventCallback, stateMachine);
+    } else if (PlayerDetector.isDashjs(player)) {
+      return new DashjsAdapter(player, eventCallback, stateMachine);
     }
   }
 }

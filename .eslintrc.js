@@ -6,6 +6,9 @@ module.exports = {
     "es6": true
   },
   "parser": "babel-eslint",
+  "plugins": [
+    "html"
+  ],
   "extends": "eslint:recommended",
   "rules"  : {
     "semi"              : [2, "always"],
