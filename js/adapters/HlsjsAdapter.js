@@ -2,7 +2,7 @@
  * @author Stephan Hesse <tchakabam@gmail.com>
  */
 
-import Hls from 'hls.js';
+/* global Hls */
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';

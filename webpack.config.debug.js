@@ -20,7 +20,7 @@ module.exports = {
   plugins: [
     new webpack.BannerPlugin(banner),
     new webpack.DefinePlugin({
-      VERSION: JSON.stringify(getGitVersion())
+      __VERSION__: JSON.stringify(getGitVersion())
     })
   ],
   devtool: 'inline-source-map'

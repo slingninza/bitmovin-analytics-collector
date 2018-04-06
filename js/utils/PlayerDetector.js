@@ -1,8 +1,7 @@
 /* global shaka */
 /* global videojs */
 /* global dashjs */
-
-import Hls from 'hls.js';
+/* global Hls */
 
 /**
  * Stateless. Functions that detect players somehow.
