@@ -9,8 +9,15 @@ const releasePackageJson = {
   name: packageProperties.name,
   version: getGitVersion(),
   description: 'Bitmovin Analytics allows you to collect data about HTML5 Video playback',
+  license: 'MIT',
+  repository: {
+    type: 'git',
+    url: 'git+https://github.com/bitmovin/bitmovin-analytics-collector.git'
+  },
   main: 'bitmovinanalytics.min.js',
   readme: 'ERROR: No README data found!',
+  author: 'Bitmovin Inc',
+  homepage: 'https://bitmovin.com/video-analytics/',
   maintainers: [{
     name: 'bitadmin',
     email: 'admin@bitmovin.com'

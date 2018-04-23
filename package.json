@@ -7,8 +7,8 @@
     "type": "git",
     "url": "git+https://github.com/bitmovin/bitanalytics-js.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Bitmovin Inc",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/bitmovin/bitanalytics-js/issues"
   },
