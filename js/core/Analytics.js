@@ -1,6 +1,4 @@
-/**
- * Created by lkroepfl on 13.09.2016.
- */
+/* global __VERSION__ */
 import LicenseCall from '../utils/LicenseCall';
 import AnalyticsCall from '../utils/AnalyticsCall';
 import Utils from '../utils/Utils';
