@@ -11,18 +11,20 @@ module.exports = {
   ],
   "extends": "eslint:recommended",
   "rules"  : {
+    // custom error config
+    "indent"            : [2, 2, {"SwitchCase": 1}],
+    "one-var"           : [2, "never"],
+    "no-debugger"       : 2,
     "semi"              : [2, "always"],
     "quotes"            : [2, "single"],
     "curly"             : 2,
     "no-undef"          : 2,
-    "no-console"        : 1,
-    "no-unused-vars"    : 1,
-    "indent"            : [2, 2, {"SwitchCase": 1}],
-    "one-var"           : [2, "never"],
     "no-inline-comments": 2,
     "eol-last"          : 2,
+    // custom warning config
+    "no-console"        : 1,
+    "no-unused-vars"    : 1,
     "no-fallthrough"    : 1,
-    "no-debugger"       : 1
   },
   "globals": {
     VERSION: true
