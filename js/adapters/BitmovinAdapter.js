@@ -1,6 +1,3 @@
-/**
- * Created by lkroepfl on 13.09.2016.
- */
 import Events from '../enums/Events';
 
 class BitmovinAdapter {

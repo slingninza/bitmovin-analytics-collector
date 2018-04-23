@@ -1,7 +1,3 @@
-/**
- * @author Stephan Hesse <tchakabam@gmail.com>
- */
-
 import Events from '../enums/Events';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
 import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';

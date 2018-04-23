@@ -1,7 +1,3 @@
-/**
- * Created by lkroepfl on 01.12.16.
- */
-
 class Logger {
   constructor(showLogs = false) {
     this.showLogs = showLogs;

@@ -1,7 +1,3 @@
-/**
- * Created by lkroepfl on 29.11.16.
- */
-
 const CdnProviders = {
   CLOUDFLARE: 'cloudflare',
   AKAMAI: 'akamai',

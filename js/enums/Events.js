@@ -1,7 +1,3 @@
-/**
- * Created by lkroepfl on 11.11.16.
- */
-
 const Events = {
   READY            : 'ready',
   SOURCE_LOADED    : 'sourceLoaded',

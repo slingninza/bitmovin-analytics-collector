@@ -1,7 +1,3 @@
-/**
- * Created by lkroepfl on 11.11.16.
- */
-
 export const Players = {
   BITMOVIN: 'bitmovin',
   JW      : 'jw',

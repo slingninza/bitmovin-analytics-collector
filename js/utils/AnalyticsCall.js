@@ -1,6 +1,3 @@
-/**
- * Created by lkroepfl on 11.11.16.
- */
 import HttpCall from './HttpCall';
 import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
 

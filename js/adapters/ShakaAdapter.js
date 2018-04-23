@@ -1,7 +1,3 @@
-/**
- * @author Stephan Hesse <tchakabam@gmail.com>
- */
-
 /* global shaka */
 
 import {HTML5Adapter} from './HTML5Adapter';

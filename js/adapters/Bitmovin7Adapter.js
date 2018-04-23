@@ -1,6 +1,3 @@
-/**
- * Created by lkroepfl on 12.01.2017.
- */
 import Events from '../enums/Events';
 
 class Bitmovin7Adapter {

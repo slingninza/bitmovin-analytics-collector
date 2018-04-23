@@ -1,7 +1,3 @@
-/**
- * Created by lkroepfl on 13.01.17.
- */
-
 class HttpCall {
   post(url, body, callback, async = true) {
     let xhttp;

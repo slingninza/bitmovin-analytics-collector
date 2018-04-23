@@ -1,7 +1,3 @@
-/**
- * Created by lkroepfl on 22.11.16.
- */
-
 import logger from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
