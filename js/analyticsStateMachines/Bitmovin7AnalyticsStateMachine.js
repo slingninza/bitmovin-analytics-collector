@@ -1,12 +1,6 @@
-import logger from '../utils/Logger';
+import logger, { pad } from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
-
-
-const pad = (str, length) => {
-  const padStr = new Array(length).join(' ');
-  return (str + padStr).slice(0, length);
-};
 
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
@@ -316,7 +310,6 @@ export class Bitmovin7AnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            logger.log('Sending heartbeat');
             this.stateMachineCallbacks.heartbeat(stateDuration, from.toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
