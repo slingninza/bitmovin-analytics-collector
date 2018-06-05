@@ -1,4 +1,4 @@
-import logger from '../utils/Logger';
+import logger, { pad } from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
@@ -190,7 +190,7 @@ export class BitmovinAnalyticsStateMachine {
           }
         },
         onafterevent : (event, from, to, timestamp)  => {
-          logger.log(BitmovinAnalyticsStateMachine.pad(timestamp, 20) + 'EVENT: ' + BitmovinAnalyticsStateMachine.pad(event, 20) + ' from ' + BitmovinAnalyticsStateMachine.pad(from, 14) + '-> ' + BitmovinAnalyticsStateMachine.pad(to, 14));
+          logger.log('[ENTER] ' + pad(to, 20) + 'EVENT: ' + pad(event, 20) + ' from ' + pad(from, 14));
           if (to === this.States.QUALITYCHANGE_PAUSE) {
             this.stateMachine.FINISH_QUALITYCHANGE_PAUSE(timestamp);
           }
@@ -204,7 +204,6 @@ export class BitmovinAnalyticsStateMachine {
         onenterstate : (event, from, to, timestamp, eventObject) => {
           this.onEnterStateTimestamp = timestamp || new Date().getTime();
 
-          logger.log('Entering State ' + to + ' with ' + event);
           if (eventObject && to !== this.States.PAUSED_SEEKING) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
@@ -215,7 +214,6 @@ export class BitmovinAnalyticsStateMachine {
           }
 
           const stateDuration = timestamp - this.onEnterStateTimestamp;
-          logger.log('State ' + from + ' was ' + stateDuration + ' ms event:' + event);
 
           if (eventObject && to !== this.States.PAUSED_SEEKING) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
@@ -225,7 +223,6 @@ export class BitmovinAnalyticsStateMachine {
           if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
             const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
-            logger.log('Seek was ' + seekDuration + 'ms');
           } else if (event === Events.UNLOAD && from === this.States.PLAYING) {
             this.stateMachineCallbacks.playingAndBye(stateDuration, fnName, eventObject);
           } else if (from === this.States.PAUSE && to !== this.States.PAUSED_SEEKING) {
@@ -249,10 +246,8 @@ export class BitmovinAnalyticsStateMachine {
           } else if (event === Events.AUDIO_CHANGE) {
             this.stateMachineCallbacks.audioChange(eventObject);
           } else if (event === Events.MUTE) {
-            logger.log('Setting sample to muted');
             this.stateMachineCallbacks.mute();
           } else if (event === Events.UN_MUTE) {
-            logger.log('Setting sample to unmuted');
             this.stateMachineCallbacks.unMute();
           }
         },
@@ -268,7 +263,6 @@ export class BitmovinAnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            logger.log('Sending heartbeat');
             this.stateMachineCallbacks.heartbeat(stateDuration, from.toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
@@ -290,10 +284,5 @@ export class BitmovinAnalyticsStateMachine {
     } else {
       logger.log('Ignored Event: ' + eventType);
     }
-  }
-
-  static pad(str, length) {
-    const padStr = new Array(length).join(' ');
-    return (str + padStr).slice(0, length);
   }
 }
