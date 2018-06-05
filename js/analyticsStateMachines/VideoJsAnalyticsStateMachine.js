@@ -1,4 +1,4 @@
-import logger from '../utils/Logger';
+import logger, { pad } from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
@@ -196,10 +196,9 @@ export class VideojsAnalyticsStateMachine {
             this.onEnterStateTimestamp = timestamp || new Date().getTime();
           }
 
-          logger.log('[' + from + '] => ' + event + ' => [' + to + ']');
+          logger.log('[ENTER] ' + pad(to, 20) + 'EVENT: ' + pad(event, 20) + ' from ' + pad(from, 14));
           //logger.log('Entering State ' + to + ' with ' + event + ' from ' + from);
           if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
-            //logger.log('Setting video time start to ' + eventObject.currentTime + ', going to ' + to);
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
@@ -225,10 +224,8 @@ export class VideojsAnalyticsStateMachine {
           }
 
           const stateDuration = timestamp - this.onEnterStateTimestamp;
-          //logger.log('State ' + from + ' was ' + stateDuration + ' ms event:' + event);
 
           if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
-            //logger.log('Setting video time end to ' + eventObject.currentTime + ', going to ' + to);
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
@@ -240,7 +237,6 @@ export class VideojsAnalyticsStateMachine {
           if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
             const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
-            //logger.log('Seek was ' + seekDuration + 'ms');
           } else if (event === Events.UNLOAD && from === this.States.PLAYING) {
             this.stateMachineCallbacks.playingAndBye(stateDuration, fnName, eventObject);
           } else if (from === this.States.PAUSE && to !== this.States.PAUSED_SEEKING) {
@@ -256,7 +252,6 @@ export class VideojsAnalyticsStateMachine {
           }
 
           if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
-            //logger.log('Setting video time start to ' + eventObject.currentTime + ', going to ' + to);
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
@@ -265,10 +260,8 @@ export class VideojsAnalyticsStateMachine {
           } else if (event === Events.AUDIO_CHANGE) {
             this.stateMachineCallbacks.audioChange(eventObject);
           } else if (event === Events.MUTE) {
-            //logger.log('Setting sample to muted');
             this.stateMachineCallbacks.mute();
           } else if (event === Events.UN_MUTE) {
-            //logger.log('Setting sample to unmuted');
             this.stateMachineCallbacks.unMute();
           }
         },
@@ -284,7 +277,6 @@ export class VideojsAnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            //logger.log('Sending heartbeat');
             this.stateMachineCallbacks.heartbeat(stateDuration, from.toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
