@@ -51,6 +51,10 @@ export class Bitmovin7AnalyticsStateMachine {
       'FINISH_QUALITYCHANGE_REBUFFERING'];
   }
 
+  sourceChange = (config, timestamp) => {
+    this.callEvent(Events.MANUAL_SOURCE_CHANGE, config, timestamp);
+  }
+
   createStateMachine(opts = {}) {
     this.stateMachine = StateMachine.create({
       initial  : this.States.SETUP,
@@ -173,6 +177,7 @@ export class Bitmovin7AnalyticsStateMachine {
         {name: Events.SEEKED, from: this.States.READY, to: this.States.READY},
         {name: Events.SEEKED, from: this.States.STARTUP, to: this.States.STARTUP},
 
+        {name: Events.MANUAL_SOURCE_CHANGE, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
         {name: Events.SOURCE_UNLOADED, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
 
         {name: Events.READY, from: this.States.SOURCE_CHANGING, to: this.States.READY },

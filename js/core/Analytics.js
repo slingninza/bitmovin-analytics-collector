@@ -167,7 +167,9 @@ class Analytics {
         this.sample.videoStartupTime = time;
         this.setState(state);
 
-        this.startupTime += time;
+        if (this.startupTime > 0) {
+          this.startupTime += time;
+        }
         this.sample.startupTime = this.startupTime;
         this.sample.autoplay = this.autoplay;
 
@@ -376,6 +378,22 @@ class Analytics {
     const oldConfig = this.config;
     this.setCustomData(values);
     this.setCustomData(oldConfig);
+  }
+
+  sourceChange = (config) => {
+    logger.log('Processing Source Change for Analytics', config);
+    this.sendAnalyticsRequestAndClearValues();
+    this.setupSample();
+    this.startupTime = 0;
+    this.init();
+
+    const newConfig = {
+      ...this.config,
+      ...config
+    };
+    this.setConfigParameters(this.sample, newConfig);
+    
+    this.analyticsStateMachine.sourceChange(Utils.getCurrentTimestamp());
   }
 
   setCustomData = (values) => {
