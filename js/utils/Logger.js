@@ -36,7 +36,7 @@ class Logger {
   }
 }
 
-export const pad = (str, length) => {
+export const padRight = (str, length) => {
   const padStr = new Array(length).join(' ');
   return (str + padStr).slice(0, length);
 };
