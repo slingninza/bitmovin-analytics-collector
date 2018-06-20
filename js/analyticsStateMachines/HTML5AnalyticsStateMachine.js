@@ -1,4 +1,4 @@
-import logger from '../utils/Logger';
+import logger, { padRight } from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
@@ -175,10 +175,8 @@ export class HTML5AnalyticsStateMachine {
             this.onEnterStateTimestamp = timestamp || new Date().getTime();
           }
 
-          logger.log('[' + from + '] => ' + event + ' => [' + to + '] (timestamp: ' + timestamp + ')');
-          //logger.log('Entering State ' + to + ' with ' + event + ' from ' + from);
+          logger.log('[ENTER] ' + padRight(to, 20) + 'EVENT: ' + padRight(event, 20) + ' from ' + padRight(from, 14));
           if (eventObject && to !== this.States.PAUSED_SEEKING) {
-            logger.log('Setting video time start to ' + eventObject.currentTime + ', going to ' + to);
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
@@ -200,10 +198,8 @@ export class HTML5AnalyticsStateMachine {
           }
 
           const stateDuration = timestamp - this.onEnterStateTimestamp;
-          //logger.log('State ' + from + ' was ' + stateDuration + ' ms event:' + event);
 
           if (eventObject && to !== this.States.PAUSED_SEEKING) {
-            //logger.log('Setting video time end to ' + eventObject.currentTime + ', going to ' + to);
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
@@ -212,7 +208,6 @@ export class HTML5AnalyticsStateMachine {
             const seekDuration = timestamp - this.seekStartedAt;
             this.seekStartedAt = null;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
-            //logger.log('Seek was ' + seekDuration + 'ms');
           } else if (event === Events.UNLOAD && from === this.States.PLAYING) {
             this.stateMachineCallbacks.playingAndBye(stateDuration, fnName, eventObject);
           } else if (from === this.States.PAUSE && to !== this.States.PAUSED_SEEKING) {
@@ -228,7 +223,6 @@ export class HTML5AnalyticsStateMachine {
           }
 
           if (eventObject && to !== this.States.PAUSED_SEEKING) {
-            //logger.log('Setting video time start to ' + eventObject.currentTime + ', going to ' + to);
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
@@ -237,10 +231,8 @@ export class HTML5AnalyticsStateMachine {
           } else if (event === Events.AUDIO_CHANGE) {
             this.stateMachineCallbacks.audioChange(eventObject);
           } else if (event === Events.MUTE) {
-            //logger.log('Setting sample to muted');
             this.stateMachineCallbacks.mute();
           } else if (event === Events.UN_MUTE) {
-            //logger.log('Setting sample to unmuted');
             this.stateMachineCallbacks.unMute();
           }
         },
@@ -253,7 +245,6 @@ export class HTML5AnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            //logger.log('Sending heartbeat');
             this.stateMachineCallbacks.heartbeat(stateDuration, from.toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
@@ -279,10 +270,5 @@ export class HTML5AnalyticsStateMachine {
 
   updateMetadata(metadata) {
     this.stateMachineCallbacks.updateSample(metadata);
-  }
-
-  static pad(str, length) {
-    const padStr = new Array(length).join(' ');
-    return (str + padStr).slice(0, length);
   }
 }

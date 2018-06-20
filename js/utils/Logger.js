@@ -36,5 +36,10 @@ class Logger {
   }
 }
 
+export const padRight = (str, length) => {
+  const padStr = new Array(length).join(' ');
+  return (str + padStr).slice(0, length);
+};
+
 const logger = new Logger();
 export default logger;
