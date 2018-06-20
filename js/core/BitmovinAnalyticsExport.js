@@ -18,7 +18,11 @@ analyticsWrapper.augment = (player) => {
   const originalSetup = player.setup;
   let loadedAnalytics;
   player.setup = function () {
-    const retVal = originalSetup.apply(player, arguments);
+    const playerSetupPromise = originalSetup.apply(player, arguments);
+
+    if (arguments.length === 0) {
+      return playerSetupPromise;
+    }
 
     const analyticsConfig = arguments[0].analytics;
     if (analyticsConfig) {
@@ -27,7 +31,7 @@ analyticsWrapper.augment = (player) => {
       // assign the analytics object to the player
       player.analytics = loadedAnalytics;
     }
-    return retVal;
+    return playerSetupPromise;
   };
 
   const originalLoad = player.load;
@@ -36,8 +40,7 @@ analyticsWrapper.augment = (player) => {
     // we reset the analytics and reload with a new config
     loadedAnalytics.sourceChange(analyticsConfig);
 
-    const retVal = originalLoad.apply(player, arguments);
-    return retVal;
+    return originalLoad.apply(player, arguments);
   };
 };
 
