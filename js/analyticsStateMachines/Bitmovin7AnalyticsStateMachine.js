@@ -1,4 +1,4 @@
-import logger, { pad } from '../utils/Logger';
+import logger, { padRight } from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
@@ -238,7 +238,7 @@ export class Bitmovin7AnalyticsStateMachine {
             this.onEnterStateTimestamp = timestamp || new Date().getTime();
           }
 
-          logger.log('[ENTER] ' + pad(to, 20) + 'EVENT: ' + pad(event, 20) + ' from ' + pad(from, 14));
+          logger.log('[ENTER] ' + padRight(to, 20) + 'EVENT: ' + padRight(event, 20) + ' from ' + padRight(from, 14));
           if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }

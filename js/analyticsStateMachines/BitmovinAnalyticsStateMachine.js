@@ -1,4 +1,4 @@
-import logger, { pad } from '../utils/Logger';
+import logger, { padRight } from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
@@ -190,7 +190,7 @@ export class BitmovinAnalyticsStateMachine {
           }
         },
         onafterevent : (event, from, to, timestamp)  => {
-          logger.log('[ENTER] ' + pad(to, 20) + 'EVENT: ' + pad(event, 20) + ' from ' + pad(from, 14));
+          logger.log('[ENTER] ' + padRight(to, 20) + 'EVENT: ' + padRight(event, 20) + ' from ' + padRight(from, 14));
           if (to === this.States.QUALITYCHANGE_PAUSE) {
             this.stateMachine.FINISH_QUALITYCHANGE_PAUSE(timestamp);
           }
