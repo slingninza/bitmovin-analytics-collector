@@ -18,21 +18,23 @@ analyticsWrapper.augment = (player) => {
   const originalSetup = player.setup;
   let loadedAnalytics;
   player.setup = function () {
-    const { analytics } = arguments[0];
-    // TODO: Check that the config is actually present
     const retVal = originalSetup.apply(player, arguments);
-    loadedAnalytics = analyticsWrapper(analytics);
-    loadedAnalytics.register(player);
-    // assign the analytics object to the player
-    player.analytics = loadedAnalytics;
+
+    const analyticsConfig = arguments[0].analytics;
+    if (analyticsConfig) {
+      loadedAnalytics = analyticsWrapper(analyticsConfig);
+      loadedAnalytics.register(player);
+      // assign the analytics object to the player
+      player.analytics = loadedAnalytics;
+    }
     return retVal;
   };
 
   const originalLoad = player.load;
   player.load = function () {
-    const { analytics } = arguments[0];
+    const analyticsConfig = arguments[0].analytics;
     // we reset the analytics and reload with a new config
-    loadedAnalytics.sourceChange(analytics);
+    loadedAnalytics.sourceChange(analyticsConfig);
 
     const retVal = originalLoad.apply(player, arguments);
     return retVal;
