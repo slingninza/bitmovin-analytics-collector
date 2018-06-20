@@ -36,9 +36,11 @@ analyticsWrapper.augment = (player) => {
 
   const originalLoad = player.load;
   player.load = function () {
-    const analyticsConfig = arguments[0].analytics;
-    // we reset the analytics and reload with a new config
-    loadedAnalytics.sourceChange(analyticsConfig);
+    if (arguments.length > 0) {
+      const analyticsConfig = arguments[0].analytics;
+      // we reset the analytics and reload with a new config
+      loadedAnalytics.sourceChange(analyticsConfig);
+    }
 
     return originalLoad.apply(player, arguments);
   };
