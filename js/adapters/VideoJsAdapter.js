@@ -1,6 +1,7 @@
 /* global videojs */
 
 import Events from '../enums/Events';
+import {Players} from '../enums/Players';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -11,6 +12,10 @@ class VideoJsAdapter {
     this.eventCallback = eventCallback;
     this.stateMachine = stateMachine;
     this.register();
+  }
+
+  getPlayerName() {
+    return Players.VIDEOJS;
   }
 
   getStreamType(url) {

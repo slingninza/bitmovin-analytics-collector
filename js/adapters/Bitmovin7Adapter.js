@@ -1,4 +1,5 @@
 import Events from '../enums/Events';
+import {Players} from '../enums/Players';
 
 class Bitmovin7Adapter {
   constructor(player, eventCallback) {
@@ -6,6 +7,10 @@ class Bitmovin7Adapter {
     this.player = player;
     this.eventCallback = eventCallback;
     this.register();
+  }
+
+  getPlayerName() {
+    return Players.BITMOVIN;
   }
 
   register() {

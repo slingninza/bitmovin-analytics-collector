@@ -2,6 +2,7 @@
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
+import {Players} from '../enums/Players';
 
 export class ShakaAdapter extends HTML5Adapter {
 
@@ -17,6 +18,10 @@ export class ShakaAdapter extends HTML5Adapter {
      * @member {shaka.Player}
      */
     this.shakaPlayer = shakaPlayer;
+  }
+
+  getPlayerName() {
+    return Players.SHAKA;
   }
 
   getPlayerVersion() {

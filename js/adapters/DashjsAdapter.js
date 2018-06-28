@@ -2,6 +2,7 @@
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
+import {Players} from '../enums/Players';
 
 export class DashjsAdapter extends HTML5Adapter {
 
@@ -36,6 +37,10 @@ export class DashjsAdapter extends HTML5Adapter {
     this.mediaPlayer = mediaPlayer;
 
     this.setMediaElement(videoEl);
+  }
+
+  getPlayerName() {
+    return Players.DASHJS;
   }
 
   getPlayerVersion() {
