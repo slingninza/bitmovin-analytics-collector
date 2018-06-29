@@ -1,6 +1,7 @@
 import Events from '../enums/Events';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
 import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
+import {Players} from '../enums/Players';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -107,6 +108,10 @@ export class HTML5Adapter {
     if (mediaElement) {
       this.setMediaElement();
     }
+  }
+
+  getPlayerName() {
+    return Players.HTML5;
   }
 
   /**

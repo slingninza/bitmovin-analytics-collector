@@ -41,7 +41,7 @@ class PlayerDetector {
 
   static isHlsjs(player) {
 
-    if (!Hls) {
+    if (!window.Hls) {
       // Hls.js is not defined installed (must be loaded before analytics module)
       return false;
     }

@@ -5,5 +5,6 @@ export const Players = {
   VIDEOJS : 'videojs',
   HLSJS   : 'hlsjs',
   SHAKA   : 'shaka',
-  DASHJS  : 'dashjs'
+  DASHJS  : 'dashjs',
+  HTML5   : 'html5'
 };

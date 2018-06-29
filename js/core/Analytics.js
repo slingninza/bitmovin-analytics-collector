@@ -446,6 +446,9 @@ class Analytics {
       logger.error('Could not detect player.');
       return;
     }
+    if (!this.sample.player) {
+      this.sample.player = this.adapter.getPlayerName();
+    }
   };
 
   getCurrentImpressionId = () => {

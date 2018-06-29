@@ -2,6 +2,7 @@
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
+import {Players} from '../enums/Players';
 
 /**
  * @class
@@ -29,6 +30,11 @@ export class HlsjsAdapter extends HTML5Adapter {
     this.resetMedia();
     this.registerHlsEvents();
   }
+
+  getPlayerName() {
+    return Players.HLSJS;
+  }
+
 
   /**
    * Implemented by sub-class to deliver current quality-level info
