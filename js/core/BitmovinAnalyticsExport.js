@@ -13,36 +13,46 @@ const analyticsWrapper = (config) => {
   };
 };
 
+analyticsWrapper._module = (config, player) => {
+  const analyticsConfig = config.analytics;
+  if (!analyticsConfig) {
+    return;
+  }
+
+  const analytics = analyticsWrapper(analyticsConfig);
+  analytics.register(player);
+  // assign the analytics object to the player
+  player.analytics = analytics;
+  wrapPlayerLoad(player, analytics);
+};
+
+const wrapPlayerLoad = (player, analytics) => {
+  const originalLoad = player.load;
+  return function () {
+    if (arguments.length > 0) {
+      const analyticsConfig = arguments[0].analytics;
+      // we reset the analytics and reload with a new config
+      analytics.sourceChange(analyticsConfig);
+    }
+
+    return originalLoad.apply(player, arguments);
+  };
+};
+
 analyticsWrapper.augment = (player) => {
   //decorate player to intercept setup
   const originalSetup = player.setup;
-  let loadedAnalytics;
+
   player.setup = function () {
     const playerSetupPromise = originalSetup.apply(player, arguments);
 
     if (arguments.length === 0) {
       return playerSetupPromise;
     }
+    const config = arguments[0];
+    analyticsWrapper._module(config, player);
 
-    const analyticsConfig = arguments[0].analytics;
-    if (analyticsConfig) {
-      loadedAnalytics = analyticsWrapper(analyticsConfig);
-      loadedAnalytics.register(player);
-      // assign the analytics object to the player
-      player.analytics = loadedAnalytics;
-    }
     return playerSetupPromise;
-  };
-
-  const originalLoad = player.load;
-  player.load = function () {
-    if (arguments.length > 0) {
-      const analyticsConfig = arguments[0].analytics;
-      // we reset the analytics and reload with a new config
-      loadedAnalytics.sourceChange(analyticsConfig);
-    }
-
-    return originalLoad.apply(player, arguments);
   };
 };
 
