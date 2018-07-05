@@ -30,22 +30,7 @@
 
     /* global bitmovin */
     
-    bitmovin.player.addModule({
-      name: 'analytics',
-      module: {
-        Analytics: bitmovin.analytics
-      },
-      hooks: {
-        setup: (module, player) => {
-          const Analytics = module.Analytics;
-          const config = player.getConfig();
-          // Init analytics with player instance
-          Analytics._module(config, player);
-
-          return Promise.resolve();
-        },
-      }
-    });
+    bitmovin.player.addModule(bitmovin.analytics.PlayerModule);
 
     var player = bitmovin.player('player');
     //bitmovin.analytics.augment(player);

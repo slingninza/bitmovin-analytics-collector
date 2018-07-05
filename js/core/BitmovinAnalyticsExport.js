@@ -56,8 +56,25 @@ analyticsWrapper.augment = (player) => {
   };
 };
 
+const AnalyticsModule = {
+  name: 'analytics',
+  module: {
+    Analytics: analyticsWrapper,
+  },
+  hooks: {
+    setup: (module, player) => {
+      const analytics = module.Analytics;
+      const config = player.getConfig();
+
+      analytics._module(config, player);
+      return Promise.resolve();
+    },
+  }
+};
+
 analyticsWrapper.Players = Players;
 analyticsWrapper.CdnProviders = CdnProviders;
+analyticsWrapper.PlayerModule = AnalyticsModule;
 
 window.bitmovin = window.bitmovin || {};
 window.bitmovin.analytics = analyticsWrapper;
