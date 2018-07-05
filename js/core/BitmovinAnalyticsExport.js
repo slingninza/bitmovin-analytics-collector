@@ -13,41 +13,68 @@ const analyticsWrapper = (config) => {
   };
 };
 
-analyticsWrapper.augment = (player) => {
-  //decorate player to intercept setup
-  const originalSetup = player.setup;
-  let loadedAnalytics;
-  player.setup = function () {
-    const playerSetupPromise = originalSetup.apply(player, arguments);
+analyticsWrapper._module = (config, player) => {
+  const analyticsConfig = config.analytics;
+  if (!analyticsConfig) {
+    return;
+  }
 
-    if (arguments.length === 0) {
-      return playerSetupPromise;
-    }
+  const analytics = analyticsWrapper(analyticsConfig);
+  analytics.register(player);
+  // assign the analytics object to the player
+  player.analytics = analytics;
+  wrapPlayerLoad(player, analytics);
+};
 
-    const analyticsConfig = arguments[0].analytics;
-    if (analyticsConfig) {
-      loadedAnalytics = analyticsWrapper(analyticsConfig);
-      loadedAnalytics.register(player);
-      // assign the analytics object to the player
-      player.analytics = loadedAnalytics;
-    }
-    return playerSetupPromise;
-  };
-
+const wrapPlayerLoad = (player, analytics) => {
   const originalLoad = player.load;
-  player.load = function () {
+  return function () {
     if (arguments.length > 0) {
       const analyticsConfig = arguments[0].analytics;
       // we reset the analytics and reload with a new config
-      loadedAnalytics.sourceChange(analyticsConfig);
+      analytics.sourceChange(analyticsConfig);
     }
 
     return originalLoad.apply(player, arguments);
   };
 };
 
+analyticsWrapper.augment = (player) => {
+  //decorate player to intercept setup
+  const originalSetup = player.setup;
+
+  player.setup = function () {
+    const playerSetupPromise = originalSetup.apply(player, arguments);
+
+    if (arguments.length === 0) {
+      return playerSetupPromise;
+    }
+    const config = arguments[0];
+    analyticsWrapper._module(config, player);
+
+    return playerSetupPromise;
+  };
+};
+
+const AnalyticsModule = {
+  name: 'analytics',
+  module: {
+    Analytics: analyticsWrapper,
+  },
+  hooks: {
+    setup: (module, player) => {
+      const analytics = module.Analytics;
+      const config = player.getConfig();
+
+      analytics._module(config, player);
+      return Promise.resolve();
+    },
+  }
+};
+
 analyticsWrapper.Players = Players;
 analyticsWrapper.CdnProviders = CdnProviders;
+analyticsWrapper.PlayerModule = AnalyticsModule;
 
 window.bitmovin = window.bitmovin || {};
 window.bitmovin.analytics = analyticsWrapper;

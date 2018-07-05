@@ -23,11 +23,14 @@ class PlayerDetector {
   };
 
   static isBitmovinVersion7Plus = function(player) {
-    if (typeof player.version === 'string') {
-      return player.version >= '7';
+    const functionsToCheck = ['getAvailableLicenseServers', 'getMaxTimeShift', 'getAvailableSubtitles'];
+    for (const fun of functionsToCheck) {
+      if (!(typeof player[fun] === 'function')) {
+        return false;
+      }
     }
 
-    return false;
+    return true;
   };
 
   static isVideoJs = function(player) {
