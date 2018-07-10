@@ -1,6 +1,6 @@
 import {Bitmovin7AnalyticsStateMachine} from '../js/analyticsStateMachines/Bitmovin7AnalyticsStateMachine';
 import each from 'jest-each';
-import statesFromFile from './test.json';
+import statesFromFile from './seekingpausingmutingunmuting.json';
 
 
 const stateMachine = new Bitmovin7AnalyticsStateMachine();

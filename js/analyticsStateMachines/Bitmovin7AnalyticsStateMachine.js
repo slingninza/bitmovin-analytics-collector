@@ -352,7 +352,10 @@ export class Bitmovin7AnalyticsStateMachine {
   addStatesToLog(event,from,to,timestamp,eventObject,enabled){
     if(enabled){
       states.push(new _event(event,from,to,timestamp,eventObject));
-    }        
+      if(event==='end'){
+        console.log(JSON.stringify(states));  
+      }
+    }    
   }
 
   getStates(){
