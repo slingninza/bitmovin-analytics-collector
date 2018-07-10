@@ -2,6 +2,17 @@ import logger, { padRight } from '../utils/Logger';
 import StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
+var states=[];
+var enabled=true;
+
+function _event(event, from, to, timestamp, eventObject){
+  this.event=event;
+  this.from=from;
+  this.to=to;
+  this.timestamp=timestamp;
+  this.eventObject=eventObject;
+}
+
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
@@ -260,7 +271,7 @@ export class Bitmovin7AnalyticsStateMachine {
           if (!timestamp) {
             return;
           }
-
+          this.addStatesToLog(event,from,to,timestamp,eventObject,enabled);
           const stateDuration = timestamp - this.onEnterStateTimestamp;
 
           if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
@@ -336,5 +347,15 @@ export class Bitmovin7AnalyticsStateMachine {
     } else {
       logger.log('Ignored Event: ' + eventType);
     }
+  }
+
+  addStatesToLog(event,from,to,timestamp,eventObject,enabled){
+    if(enabled){
+      states.push(new _event(event,from,to,timestamp,eventObject));
+    }        
+  }
+
+  getStates(){
+    return states;
   }
 }

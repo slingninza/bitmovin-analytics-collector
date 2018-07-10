@@ -31,6 +31,8 @@
     "eslint-plugin-html": "^4.0.2",
     "htmlhint": "^0.9.13",
     "husky": "^0.14.3",
+    "jest": "^23.3.0",
+    "jest-each": "^23.2.0",
     "string-replace-loader": "^1.0.5",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.0",
@@ -44,7 +46,8 @@
     "lint:html": "htmlhint --config .htmlhintrc.json *.html html/*.html",
     "precommit": "./precommit.bash",
     "pretest": "npm run lint && npm run lint:html",
-    "start": "webpack-dev-server --progress --config webpack.config.debug.js"
+    "start": "webpack-dev-server --progress --config webpack.config.debug.js",
+    "test": "jest"
   },
   "babel": {
     "presets": [
