@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "sourceMap": true,
+      "allowJs": true,
+      "module": "commonjs",
+      "target": "ES5",
+      "strict": true,
+      "lib": [
+        "dom",
+        "es2015",
+        "es6"
+      ]
+    },
+    "include": [
+      "js/**/*"
+    ],
+    "exclude": [
+      "node_modules",
+      "**/*.spec.*"
+    ]
+  }
