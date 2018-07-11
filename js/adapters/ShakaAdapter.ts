@@ -6,10 +6,11 @@ import {Players} from '../enums/Players';
 
 export class ShakaAdapter extends HTML5Adapter {
 
-  constructor(shakaPlayer, eventCallback, stateMachine) {
+  shakaPlayer :any;
+  constructor(shakaPlayer: any , eventCallback: any, stateMachine:any) {
     super(shakaPlayer.getMediaElement(), eventCallback, stateMachine);
 
-    if (!shaka) {
+    if (!(window as any).shaka) {
       throw new Error('`shaka` lib is not installed (must be loaded before analytics module)');
     }
 
@@ -25,7 +26,7 @@ export class ShakaAdapter extends HTML5Adapter {
   }
 
   getPlayerVersion() {
-    return shaka.Player.version;
+    return (window as any).shaka.Player.version;
   }
 
   isLive() {
@@ -57,8 +58,8 @@ export class ShakaAdapter extends HTML5Adapter {
     const variantTracks = this.shakaPlayer.getVariantTracks();
 
     const activeVideoTrack = variantTracks
-      .filter((track) => track.active)
-      .filter((track) => track.videoCodec || track.videoId !== undefined)[0];
+      .filter((track: any) => track.active)
+      .filter((track: any) => track.videoCodec || track.videoId !== undefined)[0];
 
     if (!activeVideoTrack) {
       // can only happen for audio-only streams

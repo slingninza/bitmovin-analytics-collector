@@ -9,7 +9,7 @@ const mapping = {
   [DASH]: 'dash' 
 };
 
-export function getStreamTypeFromMIMEType(mimeType) {
+export function getStreamTypeFromMIMEType(mimeType :any) {
   return mapping[mimeType];
 }
 

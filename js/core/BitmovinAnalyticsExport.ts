@@ -1,19 +1,20 @@
 import Analytics from './Analytics';
 import {Players} from '../enums/Players';
 import CdnProviders from '../enums/CDNProviders';
+import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
 
-const analyticsWrapper = (config) => {
+const analyticsWrapper = (config:any) => {
   const analytics = new Analytics(config);
   return {
-    register: (player, opts = {}) => { return analytics.register(player, opts); },
+    register: (player:any, opts?  :AnalyticsStateMachineOptions) => { return analytics.register(player, opts); },
     getCurrentImpressionId: () => { return analytics.getCurrentImpressionId(); },
     setCustomData: analytics.setCustomData,
     setCustomDataOnce: analytics.setCustomDataOnce,
-    sourceChange: (config) => { analytics.sourceChange(config); }
+    sourceChange: (config:any) => { analytics.sourceChange(config); }
   };
 };
 
-analyticsWrapper._module = (config, player) => {
+(analyticsWrapper as any)._module = (config:any, player:any) => {
   const analyticsConfig = config.analytics;
   if (!analyticsConfig) {
     return;
@@ -26,7 +27,7 @@ analyticsWrapper._module = (config, player) => {
   wrapPlayerLoad(player, analytics);
 };
 
-const wrapPlayerLoad = (player, analytics) => {
+const wrapPlayerLoad = (player:any, analytics:any) => {
   const originalLoad = player.load;
   return function () {
     if (arguments.length > 0) {
@@ -39,7 +40,7 @@ const wrapPlayerLoad = (player, analytics) => {
   };
 };
 
-analyticsWrapper.augment = (player) => {
+(analyticsWrapper as any).augment = (player:any) => {
   //decorate player to intercept setup
   const originalSetup = player.setup;
 
@@ -50,7 +51,7 @@ analyticsWrapper.augment = (player) => {
       return playerSetupPromise;
     }
     const config = arguments[0];
-    analyticsWrapper._module(config, player);
+    (analyticsWrapper as any)._module(config, player);
 
     return playerSetupPromise;
   };
@@ -62,7 +63,7 @@ const AnalyticsModule = {
     Analytics: analyticsWrapper,
   },
   hooks: {
-    setup: (module, player) => {
+    setup: (module:any, player:any) => {
       const analytics = module.Analytics;
       const config = player.getConfig();
 
@@ -72,11 +73,11 @@ const AnalyticsModule = {
   }
 };
 
-analyticsWrapper.Players = Players;
-analyticsWrapper.CdnProviders = CdnProviders;
-analyticsWrapper.PlayerModule = AnalyticsModule;
+(analyticsWrapper as any).Players = Players;
+(analyticsWrapper as any).CdnProviders = CdnProviders;
+(analyticsWrapper as any).PlayerModule = AnalyticsModule;
 
-window.bitmovin = window.bitmovin || {};
-window.bitmovin.analytics = analyticsWrapper;
+(window as any).bitmovin = (window as any).bitmovin || {};
+(window as any).bitmovin.analytics = analyticsWrapper;
 
-module.exports = analyticsWrapper;
+export default analyticsWrapper;

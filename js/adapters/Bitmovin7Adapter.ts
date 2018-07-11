@@ -2,7 +2,11 @@ import Events from '../enums/Events';
 import {Players} from '../enums/Players';
 
 class Bitmovin7Adapter {
-  constructor(player, eventCallback) {
+  onBeforeUnLoadEvent :boolean;
+  player :any;
+  eventCallback:any;
+
+    constructor(player: any, eventCallback: any) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -15,7 +19,7 @@ class Bitmovin7Adapter {
 
   register() {
 
-    const getProgConfigFromProgressiveConfig = (progressive) => {
+    const getProgConfigFromProgressiveConfig = (progressive: any) => {
       if (!progressive) {
         return {
           progUrl: undefined,
@@ -47,28 +51,33 @@ class Bitmovin7Adapter {
       }
     };
     /* eslint-disable no-unused-vars */
-    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event) => {
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event: any) => {
       this.eventCallback(Events.SOURCE_UNLOADED, {
         currentTime  : this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames()
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event) => {
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event: any) => {
       let autoplay = false;
       if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
         autoplay = this.player.getConfig().playback.autoplay;
       }
 
       const config = this.player.getConfig();
-      let source = {};
+      let source = {
+        mpdUrl : '',
+        m3u8Url: '',
+        progUrl: undefined,
+        progBitrate:undefined
+      };
       const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
       if (config.source) {
         source = {
           mpdUrl : config.source.dash,
           m3u8Url: config.source.hls,
-          progUrl: progConf.progUrl,
-          progBitrate: progConf.progBitrate
+          progUrl: progConf===undefined ? null :progConf.progUrl,
+          progBitrate: progConf===undefined ? null :progConf.progBitrate
         };
       }
 
@@ -96,7 +105,14 @@ class Bitmovin7Adapter {
       }
 
       const config = this.player.getConfig();
-      let source = {};
+      let source = {
+        videoId:'',
+        userId: '',
+        mpdUrl: '',
+        m3u8Url: '',
+        progUrl: undefined,
+        progBitrate:undefined
+      };
       const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
       if (config.source) {
         source = {
@@ -104,10 +120,11 @@ class Bitmovin7Adapter {
           userId : config.source.userId,
           mpdUrl : config.source.dash,
           m3u8Url: config.source.hls,
-          progUrl: progConf.progUrl,
-          progBitrate: progConf.progBitrate
+          progUrl: progConf===undefined ? null :progConf.progUrl,
+          progBitrate: progConf===undefined ? null :progConf.progBitrate
         };
       }
+      
 
       this.eventCallback(Events.READY, {
         isLive           : this.player.isLive(),
@@ -128,7 +145,7 @@ class Bitmovin7Adapter {
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_CAST_STARTED, (event) => {
+    this.player.addEventHandler(this.player.EVENT.ON_CAST_STARTED, (event: any) => {
       this.eventCallback(Events.START_CAST, event);
     });
 
@@ -252,7 +269,7 @@ class Bitmovin7Adapter {
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_ERROR, (event) => {
+    this.player.addEventHandler(this.player.EVENT.ON_ERROR, (event: any) => {
       this.eventCallback(Events.ERROR, {
         code   : event.code,
         message: event.message,

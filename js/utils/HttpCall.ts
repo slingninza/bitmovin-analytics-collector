@@ -1,14 +1,14 @@
 class HttpCall {
-  post(url, body, callback, async = true) {
-    let xhttp;
+  post(url :string, body :any, callback :any, async = true) {
+    let xhttp :any;
     let legacyMode = false;
 
-    if (window.XDomainRequest) {
+    if ((window as any).XDomainRequest) {
       legacyMode = true;
     }
 
     if (legacyMode) {
-      xhttp = new window.XDomainRequest();
+      xhttp = new (window as any).XDomainRequest();
     } else {
       xhttp = new XMLHttpRequest();
     }

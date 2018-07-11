@@ -4,9 +4,10 @@ import logger from '../utils/Logger';
 /* global cast */
 
 class CastClient {
+  castSession :any;
   setUp() {
     logger.log('setting up cast session');
-    this.castSession = cast.framework.CastContext.getInstance().getCurrentSession();
+    this.castSession = (window as any).cast.framework.CastContext.getInstance().getCurrentSession();
     this.addMessageListener();
   }
 
@@ -18,7 +19,7 @@ class CastClient {
     }
 
     logger.log('adding message listener');
-    this.castSession.addMessageListener(MESSAGE_NAMESPACE, (ns, message) => {
+    this.castSession.addMessageListener(MESSAGE_NAMESPACE, (ns: any, message: any) => {
       logger.log('Received: ' + ns + ' ' + message);
 
       try {
@@ -31,11 +32,11 @@ class CastClient {
     });
   }
 
-  handleReceiverMessage(message) {
+  handleReceiverMessage(message: string) {
     logger.log(message);
   }
 
-  sendMessage(message) {
+  sendMessage(message: any) {
     const applicationMetadata = this.castSession.getApplicationMetadata();
     if (!applicationMetadata || applicationMetadata.namespaces.indexOf(MESSAGE_NAMESPACE) < 0) {
       logger.log('No analytics on chrome cast receiver enabled!');

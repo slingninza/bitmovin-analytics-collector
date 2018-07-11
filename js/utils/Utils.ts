@@ -1,20 +1,20 @@
-const validString = function(string) {
+const validString = function(string: any) {
   return (string != undefined && typeof string == 'string');
 };
 
-const validBoolean = function(boolean) {
+const validBoolean = function(boolean: any) {
   return (boolean != undefined && typeof boolean == 'boolean');
 };
 
-const validNumber = function(number) {
+const validNumber = function(number: any) {
   return (number != undefined && typeof number == 'number');
 };
 
-const sanitizePath = function(path) {
+const sanitizePath = function(path: any) {
   return path.replace(/\/$/g, '');
 };
 
-const calculateTime = function(time) {
+const calculateTime = function(time: any) {
   time = time * 1000;
   return Math.round(time);
 };
@@ -23,7 +23,7 @@ const getCurrentTimestamp = function() {
   return new Date().getTime();
 };
 
-const getDurationFromTimestampToNow = function(timestamp) {
+const getDurationFromTimestampToNow = function(timestamp: any) {
   return getCurrentTimestamp() - timestamp;
 };
 
@@ -35,7 +35,7 @@ const generateUUID = function() {
   });
 };
 
-const getCookie = function(cname) {
+const getCookie = function(cname: string) {
   const name = cname + '=';
   const ca   = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
@@ -55,9 +55,9 @@ const noOp = function() {
 
 };
 
-const times = function (fn, times) {
+const times = function (fn: any, times: any) {
   let count = 0;
-  let retVal;
+  let retVal: any;
   return function () {
     if (count >= times) {
       return retVal;
@@ -68,7 +68,7 @@ const times = function (fn, times) {
   };
 };
 
-const once = function (fn) {
+const once = function (fn: any) {
   return times(fn, 1);
 };
 
@@ -83,7 +83,7 @@ const getHiddenProp = function() {
   return null;
 };
 
-const getCustomDataString = function(customData) {
+const getCustomDataString = function(customData: any): any {
   if (typeof customData === 'object') {
     return JSON.stringify(customData);
   } else if (typeof customData === 'function') {

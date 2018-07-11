@@ -14,8 +14,10 @@
   },
   "homepage": "https://github.com/bitmovin/bitanalytics-js#readme",
   "dependencies": {
+    "@types/javascript-state-machine": "^2.4.1",
     "cross-env": "^5.2.0",
-    "javascript-state-machine": "^2.4.0",
+    "javascript-state-machine": "2.4.0",
+    "jest": "^23.4.0",
     "string.prototype.endswith": "^0.2.0"
   },
   "devDependencies": {
@@ -32,9 +34,11 @@
     "webpack": "^4.11.1",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4",
+    "write-file-webpack-plugin": "^4.3.2",
     "write-json-webpack-plugin": "^1.0.0"
   },
   "scripts": {
+    "test": "jest",
     "build": "npm-run-all build:*",
     "build:debug": "cross-env NODE_ENV=development webpack --progress",
     "build:release": "cross-env NODE_ENV=production webpack --progress",

@@ -10,7 +10,7 @@
 
 class PlayerDetector {
 
-  static isBitmovinVersionPre7 = function(player) {
+  static isBitmovinVersionPre7 = function(player: any) {
     if (PlayerDetector.isDashjs(player)) {
       return false;
     }
@@ -22,7 +22,7 @@ class PlayerDetector {
     return false;
   };
 
-  static isBitmovinVersion7Plus = function(player) {
+  static isBitmovinVersion7Plus = function(player: any) {
     const functionsToCheck = ['getAvailableLicenseServers', 'getMaxTimeShift', 'getAvailableSubtitles'];
     for (const fun of functionsToCheck) {
       if (!(typeof player[fun] === 'function')) {
@@ -33,41 +33,41 @@ class PlayerDetector {
     return true;
   };
 
-  static isVideoJs = function(player) {
-    if (typeof videojs === 'function') {
-      if (videojs(player.id_) === player) {
+  static isVideoJs = function(player: any) {
+    if (typeof (window as any).videojs === 'function') {
+      if ((window as any).videojs(player.id_) === player) {
         return true;
       }
     }
     return false;
   }
 
-  static isHlsjs(player) {
+  static isHlsjs(player :any) {
 
-    if (!window.Hls) {
+    if (!(window as any).Hls) {
       // Hls.js is not defined installed (must be loaded before analytics module)
       return false;
     }
 
     return (
-      typeof Hls === 'function' && player.constructor === Hls
+      typeof (window as any).Hls === 'function' && player.constructor === (window as any).Hls
     );
   }
 
-  static isShaka(player) {
+  static isShaka(player: any) {
 
-    if (!window.shaka) {
+    if (!(window as any).shaka) {
       // Shaka is not defined installed (must be loaded before analytics module)
       return false;
     }
 
     return (
-      typeof shaka.Player === 'function' && player.constructor === shaka.Player
+      typeof (window as any).shaka.Player === 'function' && player.constructor === (window as any).shaka.Player
     );
 
   }
 
-  static isDashjs(player) {
+  static isDashjs(player: any) {
     return typeof player.addABRCustomRule === 'function';
   }
 }

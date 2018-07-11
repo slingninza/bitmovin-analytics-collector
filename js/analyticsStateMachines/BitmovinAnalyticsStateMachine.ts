@@ -1,12 +1,21 @@
 import logger, { padRight } from '../utils/Logger';
-import StateMachine from 'javascript-state-machine';
+import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
 export class BitmovinAnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 60;
   static SEEKED_PAUSE_DELAY = 120;
 
-  constructor(stateMachineCallbacks) {
+  States: any;
+  stateMachineCallbacks: any;
+  pausedTimestamp: any;
+  seekTimestamp: number; 
+  seekedTimestamp: number;
+  seekedTimeout: number;
+  onEnterStateTimestamp: number;
+  stateMachine: any;
+
+  constructor(stateMachineCallbacks: any) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
     this.pausedTimestamp       = null;
@@ -219,7 +228,7 @@ export class BitmovinAnalyticsStateMachine {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
-          const fnName = from.toLowerCase();
+          const fnName = (from as string).toLowerCase();
           if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
             const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
@@ -263,7 +272,7 @@ export class BitmovinAnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            this.stateMachineCallbacks.heartbeat(stateDuration, from.toLowerCase(), eventObject);
+            this.stateMachineCallbacks.heartbeat(stateDuration, (from as string).toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
@@ -276,7 +285,7 @@ export class BitmovinAnalyticsStateMachine {
     });
   }
 
-  callEvent(eventType, eventObject, timestamp) {
+  callEvent(eventType: any, eventObject: any, timestamp:number) {
     const exec = this.stateMachine[eventType];
 
     if (exec) {

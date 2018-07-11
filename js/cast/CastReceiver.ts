@@ -4,16 +4,18 @@ import logger from '../utils/Logger';
 /* global cast */
 
 class CastReceiver {
+  messageBus :any;
+  callback :any;
   setUp() {
-    const castReceiverManager = cast.receiver.CastReceiverManager.getInstance();
+    const castReceiverManager = (window as any).cast.receiver.CastReceiverManager.getInstance();
     this.messageBus = castReceiverManager.getCastMessageBus(
       MESSAGE_NAMESPACE,
-      cast.receiver.CastMessageBus.MessageType.JSON
+      (window as any).cast.receiver.CastMessageBus.MessageType.JSON
     );
 
     logger.log(this.messageBus);
 
-    this.messageBus.onMessage = (message) => {
+    this.messageBus.onMessage = (message: any) => {
       logger.log('Received message from cast client: ' + JSON.stringify(message));
 
       const castClientMessage = message.data;
@@ -21,15 +23,15 @@ class CastReceiver {
     };
   }
 
-  setCallback(callback) {
+  setCallback(callback: any) {
     this.callback = callback;
   }
 
-  handleClientMessage(event) {
+  handleClientMessage(event: any) {
     this.callback(event);
   }
 
-  sendMessage(message) {
+  sendMessage(message: any) {
     this.messageBus.broadcast(message);
   }
 }

@@ -14,9 +14,9 @@ class AnalyticsStateMachineFactory {
    * @param {AnalyticsStateMachineCallbacks} stateMachineCallbacks
    * @param {AnalyticsStateMachineOptions} opts
    */
-  static getAnalyticsStateMachine(player, stateMachineCallbacks, opts = {}) {
+  static getAnalyticsStateMachine(player :any, stateMachineCallbacks :any, opts :any ) {
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
-      return new BitmovinAnalyticsStateMachine(stateMachineCallbacks, opts);
+      return new BitmovinAnalyticsStateMachine(stateMachineCallbacks);
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7AnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (PlayerDetector.isVideoJs(player)) {

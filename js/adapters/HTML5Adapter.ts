@@ -26,83 +26,48 @@ export class HTML5Adapter {
    * @param {function} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  constructor(mediaElement, eventCallback, stateMachine) {
-    /**
-     * @public
-     * @member {AnalyticsEventCallback}
-     */
+  eventCallback:any;
+  stateMachine:any
+  mediaEl:any;
+  mediaElEventHandlers :any;
+  analyticsBitrate_: number;
+  bufferingTimeout_ :any;
+  isBuffering_:any;
+  isLive_:boolean;
+  isPaused_:boolean;
+  previousMediaTime_:any;
+  needsReadyEvent_ :any;
+  needsFirstPlayIntent_:boolean;
+  mediaElementSet_:boolean;
+
+  constructor(mediaElement: any, eventCallback: any, stateMachine: any) {
     this.eventCallback = eventCallback;
 
-    /**
-     * @member {AnalyticsStateMachine}
-     */
     this.stateMachine = stateMachine;
 
-    /**
-     * @public
-     * @member {HTMLMediaElement}
-     */
     this.mediaEl = mediaElement;
 
-    /**
-     * @public
-     * @member {function[]}
-     */
+   
     this.mediaElEventHandlers = [];
 
-    /**
-     * @private
-     * @member {number}
-     */
     this.analyticsBitrate_ = -1;
 
-    /**
-     * @private
-     * @member {number}
-     */
     this.bufferingTimeout_ = null;
 
-    /**
-     * @private
-     * @member {boolean}
-     */
+   
     this.isBuffering_ = false;
 
-    /**
-     * @private
-     * @member {boolean}
-     */
     this.isLive_ = false;
 
-    /**
-     * @private
-     * @member {boolean}
-     */
     this.isPaused_ = false;
 
-    /**
-     * @private
-     * @member {number}
-     */
     this.previousMediaTime_ = null;
 
 
-    /**
-     * @private
-     * @member {boolean}
-     */
     this.needsReadyEvent_ = true;
 
-    /**
-     * @private
-     * @member {boolean}
-     */
     this.needsFirstPlayIntent_ = true;
 
-    /**
-     * @private
-     * @member {boolean}
-     */
     this.mediaElementSet_ = false;
 
     if (mediaElement) {
@@ -131,7 +96,7 @@ export class HTML5Adapter {
    * It can also be used to replace the element.
    *
    *
-   * @param {HTMLMediaElement} mediaElement
+   
    */
   setMediaElement(mediaElement = null) {
     // replace previously existing, if calld with args
@@ -159,29 +124,17 @@ export class HTML5Adapter {
     this.onMaybeReady();
   }
 
-  /**
-   * Implemented by sub-class to deliver current quality-level info
-   * specific to media-engine.
-   * @returns {QualityLevelInfo}
-   * @abstract
-   */
-  getCurrentQualityLevelInfo() {
+  getCurrentQualityLevelInfo():any {
     return null;
   }
 
-  /**
-   * @abstract
-   * @returns {boolean}
-   */
+ 
   isLive() {
     return false;
   }
 
-  /**
-   * Can be overriden by sub-classes
-   * @returns {string}
-   */
-  getMIMEType() {
+ 
+  getMIMEType() :any {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
       return;
@@ -190,26 +143,15 @@ export class HTML5Adapter {
     return getMIMETypeFromFileExtension(mediaEl.src);
   }
 
-  /**
-   * Can be overriden by sub-classes
-   * @returns {string}
-   */
   getStreamType() {
     return getStreamTypeFromMIMEType(this.getMIMEType());
   }
 
-  /**
-   * @abstract
-   * @returns {string}
-   */
   getPlayerVersion() {
     return null;
   }
 
-  /**
-   * Can be overriden by subclasses.
-   * @returns {string}
-   */
+
   getStreamURL() {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
@@ -429,7 +371,7 @@ export class HTML5Adapter {
   /**
    * Should only be calld when a mediaEl is attached
    */
-  listenToMediaElementEvent(event, handler) {
+  listenToMediaElementEvent(event: any, handler: any) {
     if (!this.mediaEl) {
       throw new Error('No media attached');
     }
@@ -497,7 +439,7 @@ export class HTML5Adapter {
       throw new Error('No media attached');
     }
 
-    this.mediaElEventHandlers.forEach((handler) => {
+    this.mediaElEventHandlers.forEach((handler: any) => {
       this.mediaEl.removeEventListener(handler);
     });
 

@@ -5,8 +5,8 @@ import {MIMETypes} from '../enums/MIMETypes';
 import {Players} from '../enums/Players';
 
 export class DashjsAdapter extends HTML5Adapter {
-
-  constructor(mediaPlayer, eventCallback, stateMachine) {
+  mediaPlayer:any;
+  constructor(mediaPlayer: any, eventCallback: any, stateMachine: any) {
     super(null, eventCallback, stateMachine);
 
     let videoEl = null;
@@ -15,7 +15,7 @@ export class DashjsAdapter extends HTML5Adapter {
       videoEl = mediaPlayer.getVideoElement();
     } catch(e) { /* eslint-disable-line no-empty */ }
     if (!videoEl) {
-      mediaPlayer.on(dashjs.MediaPlayer.events.CAN_PLAY, () => {
+      mediaPlayer.on((window as any).dashjs.MediaPlayer.events.CAN_PLAY, () => {
         if (canPlay) {
           return;
         }
@@ -29,11 +29,8 @@ export class DashjsAdapter extends HTML5Adapter {
     }
   }
 
-  _initialize(mediaPlayer, videoEl) {
-    /**
-     * @public
-     * @member {dashjs.MediaPlayer}
-     */
+  _initialize(mediaPlayer: any, videoEl: any) {
+  
     this.mediaPlayer = mediaPlayer;
 
     this.setMediaElement(videoEl);
@@ -52,26 +49,17 @@ export class DashjsAdapter extends HTML5Adapter {
     return false;
   }
 
-  /**
-   * @override
-   */
+
   getMIMEType() {
     return MIMETypes.DASH;
   }
 
-  /**
-   * @override
-   */
+
   getStreamURL() {
     return this.mediaPlayer ? this.mediaPlayer.getSource() : null;
   }
 
-  /**
-   * Implemented by sub-class to deliver current quality-level info
-   * specific to media-engine.
-   * @override
-   * @returns {QualityLevelInfo}
-   */
+
   getCurrentQualityLevelInfo() {
     if (this.mediaPlayer) {
       const videoBitrateInfoList = this.mediaPlayer.getBitrateInfoListFor('video');

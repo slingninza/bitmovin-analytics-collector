@@ -2,7 +2,11 @@ import Events from '../enums/Events';
 import {Players} from '../enums/Players';
 
 class BitmovinAdapter {
-  constructor(player, eventCallback) {
+  onBeforeUnLoadEvent :any;
+  player :any;
+  eventCallback :any;
+
+  constructor(player: any, eventCallback: any) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -161,7 +165,7 @@ class BitmovinAdapter {
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_ERROR, (event) => {
+    this.player.addEventHandler(this.player.EVENT.ON_ERROR, (event: any) => {
       this.eventCallback(Events.ERROR, {
         code   : event.code,
         message: event.message

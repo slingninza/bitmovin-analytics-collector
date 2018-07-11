@@ -10,7 +10,7 @@ export const MIMETypes = {
   DASH
 };
 
-export function getMIMETypeFromFileExtension(path) {
+export function getMIMETypeFromFileExtension(path: string) {
 
   path = path.toLowerCase();
 

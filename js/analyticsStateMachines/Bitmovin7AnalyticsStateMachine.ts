@@ -1,14 +1,49 @@
 import logger, { padRight } from '../utils/Logger';
-import StateMachine from 'javascript-state-machine';
+import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
+import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
 
-export class HTML5AnalyticsStateMachine {
-  constructor(stateMachineCallbacks, opts = {}) {
+var states :_event[]=[];
+var enabled=true;
+
+class _event{
+
+  event: any;
+  from: any;
+  to: any;
+  timestamp: number;
+  eventObject: any;
+  constructor(event: any, from: any, to: any, timestamp: number, eventObject: any){
+    this.event=event;
+    this.from=from;
+    this.to=to;
+    this.timestamp=timestamp;
+    this.eventObject=eventObject;
+  }
+  
+}
+
+export class Bitmovin7AnalyticsStateMachine {
+  static PAUSE_SEEK_DELAY = 200;
+  static SEEKED_PAUSE_DELAY = 300;
+
+  States:any;
+  stateMachineCallbacks:any;
+  pausedTimestamp:any;
+  seekTimestamp: number; 
+  seekedTimestamp: number;
+  seekedTimeout: number;
+  onEnterStateTimestamp: number;
+  stateMachine:any;
+
+
+  constructor(stateMachineCallbacks: any, opts : AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
-
     this.pausedTimestamp       = null;
+    this.seekTimestamp         = 0;
+    this.seekedTimestamp       = 0;
+    this.seekedTimeout         = 0;
     this.onEnterStateTimestamp = 0;
-    this.seekStartedAt         = null;
 
     this.States = {
       SETUP                    : 'SETUP',
@@ -19,14 +54,18 @@ export class HTML5AnalyticsStateMachine {
       PAUSE                    : 'PAUSE',
       QUALITYCHANGE            : 'QUALITYCHANGE',
       PAUSED_SEEKING           : 'PAUSED_SEEKING',
+      PLAY_SEEKING             : 'PLAY_SEEKING',
+      END_PLAY_SEEKING         : 'END_PLAY_SEEKING',
       QUALITYCHANGE_PAUSE      : 'QUALITYCHANGE_PAUSE',
       QUALITYCHANGE_REBUFFERING: 'QUALITYCHANGE_REBUFFERING',
       END                      : 'END',
       ERROR                    : 'ERROR',
+      AD                       : 'AD',
       MUTING_READY             : 'MUTING_READY',
       MUTING_PLAY              : 'MUTING_PLAY',
       MUTING_PAUSE             : 'MUTING_PAUSE',
-      CASTING                  : 'CASTING'
+      CASTING                  : 'CASTING',
+      SOURCE_CHANGING          : 'SOURCE_CHANGING',
     };
 
     this.createStateMachine(opts);
@@ -35,51 +74,42 @@ export class HTML5AnalyticsStateMachine {
   getAllStates() {
     return [
       ...Object.keys(this.States).map(key => this.States[key]),
+      'FINISH_PLAY_SEEKING',
+      'PLAY_SEEK',
       'FINISH_QUALITYCHANGE_PAUSE',
       'FINISH_QUALITYCHANGE',
       'FINISH_QUALITYCHANGE_REBUFFERING'];
   }
 
-  createStateMachine(opts = {}) {
+  sourceChange = (config: any, timestamp: number) => {
+    this.callEvent(Events.MANUAL_SOURCE_CHANGE, config, timestamp);
+  }
+
+  createStateMachine(opts : AnalyticsStateMachineOptions) {
     this.stateMachine = StateMachine.create({
       initial  : this.States.SETUP,
       error: (eventName, from, to, args, errorCode, errorMessage) => {
         logger.error('Error in statemachine: ' + errorMessage);
       },
       events   : [
-        {name: Events.TIMECHANGED, from: this.States.SETUP, to: this.States.SETUP},
         {name: Events.READY, from: [this.States.SETUP, this.States.ERROR], to: this.States.READY},
-
         {name: Events.PLAY, from: this.States.READY, to: this.States.STARTUP},
 
         {name: Events.START_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
         {name: Events.END_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
         {name: Events.VIDEO_CHANGE, from: this.States.STARTUP, to: this.States.STARTUP},
         {name: Events.AUDIO_CHANGE, from: this.States.STARTUP, to: this.States.STARTUP},
-
         {name: Events.TIMECHANGED, from: this.States.STARTUP, to: this.States.PLAYING},
+
         {name: Events.TIMECHANGED, from: this.States.PLAYING, to: this.States.PLAYING},
-        {name: Events.TIMECHANGED, from: this.States.PAUSE, to: this.States.PAUSE},
-        {name: Events.TIMECHANGED, from: this.States.PAUSE, to: this.States.PAUSE},
-
-        {name: Events.SEEKED, from: this.States.PAUSE, to: this.States.PAUSE},
-
         {name: Events.END_BUFFERING, from: this.States.PLAYING, to: this.States.PLAYING},
         {name: Events.START_BUFFERING, from: this.States.PLAYING, to: this.States.REBUFFERING},
-        {name: Events.START_BUFFERING, from: this.States.REBUFFERING, to: this.States.REBUFFERING},
-
-        {name: Events.PLAY, from: this.States.REBUFFERING, to: this.States.PLAYING},
-        {name: Events.TIMECHANGED, from: this.States.REBUFFERING, to: this.States.PLAYING},
-
-        // Ignoring since it's pushed in a live stream
-        {name: Events.SEEK, from: this.States.STARTUP, to: this.States.STARTUP},
-        {name: Events.PLAY, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING },
+        {name: Events.END_BUFFERING, from: this.States.REBUFFERING, to: this.States.PLAYING},
+        {name: Events.TIMECHANGED, from: this.States.REBUFFERING, to: this.States.REBUFFERING},
 
         {name: Events.PAUSE, from: this.States.PLAYING, to: this.States.PAUSE},
         {name: Events.PAUSE, from: this.States.REBUFFERING, to: this.States.PAUSE},
-
         {name: Events.PLAY, from: this.States.PAUSE, to: this.States.PLAYING},
-        {name: Events.TIMECHANGED, from: this.States.PAUSE, to: this.States.PLAYING},
 
         {name: Events.VIDEO_CHANGE, from: this.States.PLAYING, to: this.States.QUALITYCHANGE},
         {name: Events.AUDIO_CHANGE, from: this.States.PLAYING, to: this.States.QUALITYCHANGE},
@@ -108,9 +138,28 @@ export class HTML5AnalyticsStateMachine {
         {name: Events.START_BUFFERING, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
         {name: Events.END_BUFFERING, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
         {name: Events.SEEKED, from: this.States.PAUSED_SEEKING, to: this.States.PAUSE},
-        {name: Events.TIMECHANGED, from: this.States.PAUSED_SEEKING, to: this.States.PLAYING},
+        {name: Events.PLAY, from: this.States.PAUSED_SEEKING, to: this.States.PLAYING},
         {name: Events.PAUSE, from: this.States.PAUSED_SEEKING, to: this.States.PAUSE},
 
+        {name: 'PLAY_SEEK', from: this.States.PAUSE, to: this.States.PLAY_SEEKING},
+        {name: 'PLAY_SEEK', from: this.States.PAUSED_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: 'PLAY_SEEK', from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Events.SEEK, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Events.AUDIO_CHANGE, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Events.VIDEO_CHANGE, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Events.START_BUFFERING, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Events.END_BUFFERING, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Events.SEEKED, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+
+        // We are ending the seek
+        {name: Events.PLAY, from: this.States.PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+
+        {name: Events.START_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Events.END_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Events.SEEKED, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Events.TIMECHANGED, from: this.States.END_PLAY_SEEKING, to: this.States.PLAYING},
+
+        {name: Events.END, from: this.States.PLAY_SEEKING, to: this.States.END},
         {name: Events.END, from: this.States.PAUSED_SEEKING, to: this.States.END},
         {name: Events.END, from: this.States.PLAYING, to: this.States.END},
         {name: Events.END, from: this.States.PAUSE, to: this.States.END},
@@ -121,13 +170,12 @@ export class HTML5AnalyticsStateMachine {
         {name: Events.START_BUFFERING, from: this.States.END, to: this.States.END},
         {name: Events.END, from: this.States.END, to: this.States.END},
 
-        //Ignored - Livestreams do a Seek during startup and SEEKED once playback started
-        {name: Events.SEEKED, from: this.States.PLAYING, to: this.States.PLAYING},
-
         {name: Events.PLAY, from: this.States.END, to: this.States.PLAYING},
 
         {name: Events.ERROR, from: this.getAllStates(), to: this.States.ERROR},
-        {name: Events.PAUSE, from: this.States.ERROR, to: this.States.ERROR},
+
+        {name: Events.SEEK, from: this.States.END_PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: 'FINISH_PLAY_SEEKING', from: this.States.END_PLAY_SEEKING, to: this.States.PLAYING},
 
         {name: Events.UNLOAD, from: this.getAllStates(), to: this.States.END},
 
@@ -159,7 +207,13 @@ export class HTML5AnalyticsStateMachine {
         {name: Events.SEEKED, from: this.States.READY, to: this.States.READY},
         {name: Events.SEEKED, from: this.States.STARTUP, to: this.States.STARTUP},
 
-        {name: Events.SOURCE_LOADED, from: this.getAllStates(), to: this.States.SETUP},
+        {name: Events.MANUAL_SOURCE_CHANGE, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
+        {name: Events.SOURCE_UNLOADED, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
+
+        {name: Events.READY, from: this.States.SOURCE_CHANGING, to: this.States.READY },
+
+        //{name: Events.SOURCE_LOADED, from: this.States.SETUP, to: this.States.SETUP},
+        //{name: Events.SOURCE_LOADED, from: this.States.READY, to: this.States.READY},
 
         {name: Events.VIDEO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
         {name: Events.AUDIO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
@@ -168,7 +222,51 @@ export class HTML5AnalyticsStateMachine {
         {name: 'FINISH_QUALITYCHANGE_REBUFFERING', from: this.States.QUALITYCHANGE_REBUFFERING, to: this.States.REBUFFERING},
       ],
       callbacks: {
-        onenterstate : (event, from, to, timestamp, eventObject) => {
+        onpause      : (event, from, to, timestamp) => {
+          if (from === this.States.PLAYING) {
+            this.pausedTimestamp = timestamp;
+          }
+        },
+        onbeforeevent: (event, from, to, timestamp, eventObject) => {
+          if (event === Events.SEEK && from === this.States.PAUSE) {
+            this.seekTimestamp = timestamp;
+            if (timestamp - this.pausedTimestamp < Bitmovin7AnalyticsStateMachine.PAUSE_SEEK_DELAY) {
+              this.stateMachine.PLAY_SEEK(timestamp);
+              return false;
+            }
+          }
+
+          if (event === Events.SEEK) {
+            window.clearTimeout(this.seekedTimeout);
+          }
+
+          if (event === Events.SEEKED && from === this.States.PAUSED_SEEKING) {
+            this.seekedTimestamp = timestamp;
+            this.seekedTimeout   = window.setTimeout(() => {
+              this.stateMachine.pause(timestamp, eventObject);
+            }, Bitmovin7AnalyticsStateMachine.SEEKED_PAUSE_DELAY);
+            return false;
+          }
+
+          if (from === this.States.REBUFFERING && to === this.States.QUALITYCHANGE_REBUFFERING) {
+            return false;
+          }
+        },
+        onafterevent : (event, from, to, timestamp) => {
+          if (to === this.States.QUALITYCHANGE_PAUSE) {
+            this.stateMachine.FINISH_QUALITYCHANGE_PAUSE(timestamp);
+          }
+          if (to === this.States.QUALITYCHANGE) {
+            this.stateMachine.FINISH_QUALITYCHANGE(timestamp);
+          }
+          if (to === this.States.QUALITYCHANGE_REBUFFERING) {
+            this.stateMachine.FINISH_QUALITYCHANGE_REBUFFERING(timestamp);
+          }
+          if (to === this.States.MUTING_READY || to === this.States.MUTING_PLAY || to === this.States.MUTING_PAUSE) {
+            this.stateMachine.FINISH_MUTING(timestamp);
+          }
+        },
+        onenterstate : (event: any, from: any, to: any, timestamp: number, eventObject: any) => {
           if (from === 'none' && opts.starttime) {
             this.onEnterStateTimestamp = opts.starttime;
           } else {
@@ -176,37 +274,36 @@ export class HTML5AnalyticsStateMachine {
           }
 
           logger.log('[ENTER] ' + padRight(to, 20) + 'EVENT: ' + padRight(event, 20) + ' from ' + padRight(from, 14));
-          if (eventObject && to !== this.States.PAUSED_SEEKING) {
+          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
+          }
+
+          if (event === 'PLAY_SEEK' && to === this.States.PLAY_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+            this.seekTimestamp = this.onEnterStateTimestamp;
           }
 
           if (event === Events.START_CAST && to === this.States.CASTING) {
             this.stateMachineCallbacks.startCasting(timestamp, eventObject);
           }
         },
-        onafterevent : (event, from, to, timestamp) => {
-          if (to === this.States.QUALITYCHANGE) {
-            this.stateMachine.FINISH_QUALITYCHANGE(timestamp);
-          }
-          if (to === this.States.MUTING_READY || to === this.States.MUTING_PLAY || to === this.States.MUTING_PAUSE) {
-            this.stateMachine.FINISH_MUTING(timestamp);
-          }
-        },
         onleavestate : (event, from, to, timestamp, eventObject) => {
           if (!timestamp) {
             return;
           }
-
+          this.addStatesToLog(event,from,to,timestamp,eventObject,enabled);
           const stateDuration = timestamp - this.onEnterStateTimestamp;
 
-          if (eventObject && to !== this.States.PAUSED_SEEKING) {
+          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
-          const fnName = from.toLowerCase();
-          if (from === this.States.PAUSED_SEEKING) {
-            const seekDuration = timestamp - this.seekStartedAt;
-            this.seekStartedAt = null;
+          if (event === 'PLAY_SEEK' && from === this.States.PAUSE) {
+            return true;
+          }
+
+          const fnName = (from as string).toLowerCase();
+          if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
+            const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
           } else if (event === Events.UNLOAD && from === this.States.PLAYING) {
             this.stateMachineCallbacks.playingAndBye(stateDuration, fnName, eventObject);
@@ -222,7 +319,7 @@ export class HTML5AnalyticsStateMachine {
             }
           }
 
-          if (eventObject && to !== this.States.PAUSED_SEEKING) {
+          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
@@ -236,8 +333,11 @@ export class HTML5AnalyticsStateMachine {
             this.stateMachineCallbacks.unMute();
           }
         },
-        onseek: (event, from, to, timestamp) => {
-          this.seekStartedAt = this.seekStartedAt || timestamp;
+        onseek       : (event, from, to, timestamp) => {
+          this.seekTimestamp = timestamp;
+        },
+        onseeked     : (event, from, to, timestamp) => {
+          this.seekedTimestamp = timestamp;
         },
         ontimechanged: (event, from, to, timestamp, eventObject) => {
           const stateDuration = timestamp - this.onEnterStateTimestamp;
@@ -245,7 +345,7 @@ export class HTML5AnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            this.stateMachineCallbacks.heartbeat(stateDuration, from.toLowerCase(), eventObject);
+            this.stateMachineCallbacks.heartbeat(stateDuration, (from as string).toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
@@ -258,7 +358,7 @@ export class HTML5AnalyticsStateMachine {
     });
   }
 
-  callEvent(eventType, eventObject, timestamp) {
+  callEvent(eventType: any, eventObject: any, timestamp: number) {
     const exec = this.stateMachine[eventType];
 
     if (exec) {
@@ -268,7 +368,16 @@ export class HTML5AnalyticsStateMachine {
     }
   }
 
-  updateMetadata(metadata) {
-    this.stateMachineCallbacks.updateSample(metadata);
+  addStatesToLog(event: any,from: any,to: any,timestamp: any,eventObject: any,enabled: boolean){
+    if(enabled){
+      states.push(new _event(event,from,to,timestamp,eventObject));
+      if(event==='end'){
+        console.log(JSON.stringify(states));  
+      }
+    }    
+  }
+
+  getStates(){
+    return states;
   }
 }

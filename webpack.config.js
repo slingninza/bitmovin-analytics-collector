@@ -3,6 +3,7 @@ const packageJson = require('./package.json');
 const path = require('path');
 const webpack = require('webpack');
 const WriteJsonPlugin = require('write-json-webpack-plugin');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 const getGitVersion = () => execSync('git describe --abbrev=0').toString().trim();
 
@@ -39,7 +40,7 @@ const BANNER =
         packageJson.name + ' version ' + FULL_GIT_VERSION + '\n';
 
 const BASE_BUILD_FOLDER = 'build';
-const BASE_LIB_NAME = 'bitmovinanalytics';
+const BASE_LIB_NAME = 'bitmovinanalytics.min';
 
 const API_EXPORT_MODULE = './js/core/BitmovinAnalyticsExport';
 
@@ -49,9 +50,7 @@ function isDevMode() { return mode === 'development'; }
 
 function makeConfig() {
   const buildFolder = path.resolve(isDevMode() ? path.join(BASE_BUILD_FOLDER, 'debug') : path.join(BASE_BUILD_FOLDER, 'release'));
-
-  //execSync('rm -Rf ' + buildFolder);
-
+  
   const config = {
     mode,
     devtool: isDevMode() ? 'inline-source-map' : 'source-map',
@@ -81,6 +80,7 @@ function makeConfig() {
     },
     plugins: [
       new webpack.BannerPlugin(BANNER),
+      new WriteFilePlugin(),
       new webpack.DefinePlugin({
         __VERSION__: JSON.stringify(getGitVersion())
       })

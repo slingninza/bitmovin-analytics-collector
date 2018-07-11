@@ -10,13 +10,11 @@ import {Players} from '../enums/Players';
  */
 export class HlsjsAdapter extends HTML5Adapter {
 
-  /**
-   * @constructs
-   * @param {Hls} hls
-   * @param {AnalyticsEventCallback} eventCallback
-   * @param {AnalyticsStateMachine} stateMachine
-   */
-  constructor(hls, eventCallback, stateMachine) {
+   hls: any;
+   eventCallback: any;
+   stateMachine: any;
+ 
+  constructor(hls :any, eventCallback: any, stateMachine: any) {
 
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
@@ -36,12 +34,6 @@ export class HlsjsAdapter extends HTML5Adapter {
   }
 
 
-  /**
-   * Implemented by sub-class to deliver current quality-level info
-   * specific to media-engine.
-   * @override
-   * @returns {QualityLevelInfo}
-   */
   getCurrentQualityLevelInfo() {
     const hls = this.hls;
     const currentLevelObj = hls.levels[hls.currentLevel];
@@ -61,9 +53,7 @@ export class HlsjsAdapter extends HTML5Adapter {
     };
   }
 
-  /**
-   * @override
-   */
+
   isLive() {
     const hls = this.hls;
     if (hls.currentLevel < 0) {
@@ -76,16 +66,11 @@ export class HlsjsAdapter extends HTML5Adapter {
     return currentLevelObj.details.live;
   }
 
-  /**
-   * @override
-   */
+
   getPlayerVersion() {
-    return Hls.version;
+    return (window as any).hls.version;
   }
 
-  /**
-   * @override
-   */
   getMIMEType() {
     return MIMETypes.HLS;
   }
@@ -100,13 +85,13 @@ export class HlsjsAdapter extends HTML5Adapter {
   registerHlsEvents() {
     const hls = this.hls;
 
-    if (!Hls) {
+    if (!(window as any).hls) {
       throw new Error('Hls.js is not defined installed (must be loaded before analytics module)');
     }
 
-    hls.on(Hls.Events.MEDIA_ATTACHING, this.onMediaAttaching.bind(this));
-    hls.on(Hls.Events.MEDIA_DETACHING, this.onMediaDetaching.bind(this));
-    hls.on(Hls.Events.MANIFEST_LOADING, this.onManifestLoading.bind(this));
+    hls.on((window as any).Hls.Events.MEDIA_ATTACHING, this.onMediaAttaching.bind(this));
+    hls.on((window as any).Hls.Events.MEDIA_DETACHING, this.onMediaDetaching.bind(this));
+    hls.on((window as any).Hls.Events.MANIFEST_LOADING, this.onManifestLoading.bind(this));
 
     // media is already attached, event has been triggered before
     // or we are in the event handler of this event itself.
