@@ -464,11 +464,12 @@ class Analytics {
   };
 
   register = (player: any, opts? :AnalyticsStateMachineOptions) => {
-    if(opts !== undefined)
+    if(opts === undefined)
     {
-      if (!opts.starttime) {
-        opts.starttime = Utils.getCurrentTimestamp();
-      }
+      opts =new AnalyticsStateMachineOptions;
+    }
+    if (!opts.starttime) {
+      opts.starttime = Utils.getCurrentTimestamp();
     }
     this.analyticsStateMachine = AnalyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
 

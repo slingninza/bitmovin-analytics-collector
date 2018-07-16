@@ -4,7 +4,7 @@ import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
 
 var states :_event[]=[];
-var enabled=true;
+var enabled=false;
 
 class _event{
 

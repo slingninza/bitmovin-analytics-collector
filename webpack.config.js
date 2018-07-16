@@ -4,6 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const WriteJsonPlugin = require('write-json-webpack-plugin');
 const WriteFilePlugin = require('write-file-webpack-plugin');
+import * as process from 'process';
 
 const getGitVersion = () => execSync('git describe --abbrev=0').toString().trim();
 
