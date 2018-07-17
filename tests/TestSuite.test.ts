@@ -6,6 +6,7 @@ import * as statesFromFile from './seekingpausingmutingunmuting.json';
 
 //@ts-ignore
 const stateMachine = new Bitmovin7AnalyticsStateMachine();
+stateMachine.setEnabledDebugging(true);
 let statesfromStateMachine=[];
 
 //@ts-ignore

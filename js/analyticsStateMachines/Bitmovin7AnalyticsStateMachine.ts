@@ -3,9 +3,6 @@ import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
 
-var states: _event[] = [];
-var enabled = false;
-
 class _event {
   event: any;
   from: any;
@@ -24,7 +21,8 @@ class _event {
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
-
+  private states: _event[] = [];
+  private enabledDebugging = false;
   States: any;
   stateMachineCallbacks: any;
   pausedTimestamp: any;
@@ -310,7 +308,7 @@ export class Bitmovin7AnalyticsStateMachine {
           if (!timestamp) {
             return;
           }
-          this.addStatesToLog(event, from, to, timestamp, eventObject, enabled);
+          this.addStatesToLog(event, from, to, timestamp, eventObject, this.enabledDebugging);
           const stateDuration = timestamp - this.onEnterStateTimestamp;
 
           if (
@@ -398,16 +396,17 @@ export class Bitmovin7AnalyticsStateMachine {
     }
   }
 
-  addStatesToLog(event: any, from: any, to: any, timestamp: any, eventObject: any, enabled: boolean) {
-    if (enabled) {
-      states.push(new _event(event, from, to, timestamp, eventObject));
-      if (event === 'end') {
-        console.log(JSON.stringify(states));
-      }
+  addStatesToLog(event: any, from: any, to: any, timestamp: any, eventObject: any, debuggerEnabled: boolean) {
+    if (debuggerEnabled) {
+      this.states.push(new _event(event, from, to, timestamp, eventObject));
     }
   }
 
   getStates() {
-    return states;
+    return this.states;
+  }
+
+  setEnabledDebugging(enabled: boolean) {
+    this.enabledDebugging = enabled;
   }
 }
