@@ -1,13 +1,12 @@
-import logger, { padRight } from '../utils/Logger';
+import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 
 export class VideojsAnalyticsStateMachine {
-
   States: any;
   stateMachineCallbacks: any;
   pausedTimestamp: any;
-  seekTimestamp: number; 
+  seekTimestamp: number;
   seekedTimestamp: number;
   seekedTimeout: number;
   onEnterStateTimestamp: number;
@@ -16,31 +15,31 @@ export class VideojsAnalyticsStateMachine {
   constructor(stateMachineCallbacks: any, opts = {}) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
-    this.pausedTimestamp       = null;
-    this.seekTimestamp         = 0;
-    this.seekedTimestamp       = 0;
-    this.seekedTimeout         = 0;
+    this.pausedTimestamp = null;
+    this.seekTimestamp = 0;
+    this.seekedTimestamp = 0;
+    this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
     this.States = {
-      SETUP                    : 'SETUP',
-      STARTUP                  : 'STARTUP',
-      READY                    : 'READY',
-      PLAYING                  : 'PLAYING',
-      REBUFFERING              : 'REBUFFERING',
-      PAUSE                    : 'PAUSE',
-      QUALITYCHANGE            : 'QUALITYCHANGE',
-      PAUSED_SEEKING           : 'PAUSED_SEEKING',
-      PLAY_SEEKING             : 'PLAY_SEEKING',
-      END_PLAY_SEEKING         : 'END_PLAY_SEEKING',
-      QUALITYCHANGE_PAUSE      : 'QUALITYCHANGE_PAUSE',
+      SETUP: 'SETUP',
+      STARTUP: 'STARTUP',
+      READY: 'READY',
+      PLAYING: 'PLAYING',
+      REBUFFERING: 'REBUFFERING',
+      PAUSE: 'PAUSE',
+      QUALITYCHANGE: 'QUALITYCHANGE',
+      PAUSED_SEEKING: 'PAUSED_SEEKING',
+      PLAY_SEEKING: 'PLAY_SEEKING',
+      END_PLAY_SEEKING: 'END_PLAY_SEEKING',
+      QUALITYCHANGE_PAUSE: 'QUALITYCHANGE_PAUSE',
       QUALITYCHANGE_REBUFFERING: 'QUALITYCHANGE_REBUFFERING',
-      END                      : 'END',
-      ERROR                    : 'ERROR',
-      MUTING_READY             : 'MUTING_READY',
-      MUTING_PLAY              : 'MUTING_PLAY',
-      MUTING_PAUSE             : 'MUTING_PAUSE',
-      CASTING                  : 'CASTING'
+      END: 'END',
+      ERROR: 'ERROR',
+      MUTING_READY: 'MUTING_READY',
+      MUTING_PLAY: 'MUTING_PLAY',
+      MUTING_PAUSE: 'MUTING_PAUSE',
+      CASTING: 'CASTING'
     };
 
     this.createStateMachine(opts);
@@ -53,16 +52,17 @@ export class VideojsAnalyticsStateMachine {
       'PLAY_SEEK',
       'FINISH_QUALITYCHANGE_PAUSE',
       'FINISH_QUALITYCHANGE',
-      'FINISH_QUALITYCHANGE_REBUFFERING'];
+      'FINISH_QUALITYCHANGE_REBUFFERING'
+    ];
   }
 
   createStateMachine(opts = {}) {
     this.stateMachine = StateMachine.create({
-      initial  : this.States.SETUP,
+      initial: this.States.SETUP,
       error: (eventName, from, to, args, errorCode, errorMessage) => {
         logger.error('Error in statemachine: ' + errorMessage);
       },
-      events   : [
+      events: [
         {name: Events.TIMECHANGED, from: this.States.SETUP, to: this.States.SETUP},
         {name: Events.READY, from: [this.States.SETUP, this.States.ERROR], to: this.States.READY},
         {name: Events.PLAY, from: this.States.READY, to: this.States.STARTUP},
@@ -81,9 +81,9 @@ export class VideojsAnalyticsStateMachine {
 
         // Ignoring since it's pushed in a live stream
         {name: Events.SEEK, from: this.States.STARTUP, to: this.States.STARTUP},
-        {name: Events.SEEK, from: this.States.PLAYING, to: this.States.PLAY_SEEKING },
-        {name: Events.TIMECHANGED, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING },
-        {name: Events.TIMECHANGED, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING },
+        {name: Events.SEEK, from: this.States.PLAYING, to: this.States.PLAY_SEEKING},
+        {name: Events.TIMECHANGED, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Events.TIMECHANGED, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
 
         {name: Events.PAUSE, from: this.States.PLAYING, to: this.States.PAUSE},
         {name: Events.PAUSE, from: this.States.REBUFFERING, to: this.States.PAUSE},
@@ -101,12 +101,12 @@ export class VideojsAnalyticsStateMachine {
         {
           name: Events.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to  : this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE
         },
         {
           name: Events.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to  : this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE
         },
         {name: 'FINISH_QUALITYCHANGE_PAUSE', from: this.States.QUALITYCHANGE_PAUSE, to: this.States.PAUSE},
 
@@ -194,12 +194,24 @@ export class VideojsAnalyticsStateMachine {
 
         {name: Events.VIDEO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
         {name: Events.AUDIO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
-        {name: Events.VIDEO_CHANGE, from: this.States.QUALITYCHANGE_REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
-        {name: Events.AUDIO_CHANGE, from: this.States.QUALITYCHANGE_REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
-        {name: 'FINISH_QUALITYCHANGE_REBUFFERING', from: this.States.QUALITYCHANGE_REBUFFERING, to: this.States.REBUFFERING},
+        {
+          name: Events.VIDEO_CHANGE,
+          from: this.States.QUALITYCHANGE_REBUFFERING,
+          to: this.States.QUALITYCHANGE_REBUFFERING
+        },
+        {
+          name: Events.AUDIO_CHANGE,
+          from: this.States.QUALITYCHANGE_REBUFFERING,
+          to: this.States.QUALITYCHANGE_REBUFFERING
+        },
+        {
+          name: 'FINISH_QUALITYCHANGE_REBUFFERING',
+          from: this.States.QUALITYCHANGE_REBUFFERING,
+          to: this.States.REBUFFERING
+        }
       ],
       callbacks: {
-        onenterstate : (event, from, to, timestamp, eventObject) => {
+        onenterstate: (event, from, to, timestamp, eventObject) => {
           //@ts-ignore
           if (from === 'none' && opts.starttime) {
             //@ts-ignore
@@ -210,11 +222,21 @@ export class VideojsAnalyticsStateMachine {
 
           logger.log('[ENTER] ' + padRight(to, 20) + 'EVENT: ' + padRight(event, 20) + ' from ' + padRight(from, 14));
           //logger.log('Entering State ' + to + ' with ' + event + ' from ' + from);
-          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            eventObject &&
+            to !== this.States.PAUSED_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
-          if (event === 'PLAY_SEEK' && to === this.States.PLAY_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            event === 'PLAY_SEEK' &&
+            to === this.States.PLAY_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.seekTimestamp = this.onEnterStateTimestamp;
           }
 
@@ -222,7 +244,7 @@ export class VideojsAnalyticsStateMachine {
             this.stateMachineCallbacks.startCasting(timestamp, eventObject);
           }
         },
-        onafterevent : (event, from, to, timestamp) => {
+        onafterevent: (event, from, to, timestamp) => {
           if (to === this.States.QUALITYCHANGE) {
             this.stateMachine.FINISH_QUALITYCHANGE(timestamp);
           }
@@ -230,14 +252,19 @@ export class VideojsAnalyticsStateMachine {
             this.stateMachine.FINISH_MUTING(timestamp);
           }
         },
-        onleavestate : (event, from, to, timestamp, eventObject) => {
+        onleavestate: (event, from, to, timestamp, eventObject) => {
           if (!timestamp) {
             return;
           }
 
           const stateDuration = timestamp - this.onEnterStateTimestamp;
 
-          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            eventObject &&
+            to !== this.States.PAUSED_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
@@ -263,7 +290,12 @@ export class VideojsAnalyticsStateMachine {
             }
           }
 
-          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            eventObject &&
+            to !== this.States.PAUSED_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
@@ -277,10 +309,10 @@ export class VideojsAnalyticsStateMachine {
             this.stateMachineCallbacks.unMute();
           }
         },
-        onseek       : (event, from, to, timestamp) => {
+        onseek: (event, from, to, timestamp) => {
           this.seekTimestamp = timestamp;
         },
-        onseeked     : (event, from, to, timestamp) => {
+        onseeked: (event, from, to, timestamp) => {
           this.seekedTimestamp = timestamp;
         },
         ontimechanged: (event, from, to, timestamp, eventObject) => {

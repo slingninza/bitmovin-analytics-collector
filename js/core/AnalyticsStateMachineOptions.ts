@@ -1,3 +1,3 @@
-export default class AnalyticsStateMachineOptions{
-    starttime :any;
+export default class AnalyticsStateMachineOptions {
+  starttime: any;
 }

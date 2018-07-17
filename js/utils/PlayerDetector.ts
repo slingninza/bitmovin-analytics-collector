@@ -9,7 +9,6 @@
  */
 
 class PlayerDetector {
-
   static isBitmovinVersionPre7 = function(player: any) {
     if (PlayerDetector.isDashjs(player)) {
       return false;
@@ -40,31 +39,24 @@ class PlayerDetector {
       }
     }
     return false;
-  }
+  };
 
-  static isHlsjs(player :any) {
-
+  static isHlsjs(player: any) {
     if (!(window as any).Hls) {
       // Hls.js is not defined installed (must be loaded before analytics module)
       return false;
     }
 
-    return (
-      typeof (window as any).Hls === 'function' && player.constructor === (window as any).Hls
-    );
+    return typeof (window as any).Hls === 'function' && player.constructor === (window as any).Hls;
   }
 
   static isShaka(player: any) {
-
     if (!(window as any).shaka) {
       // Shaka is not defined installed (must be loaded before analytics module)
       return false;
     }
 
-    return (
-      typeof (window as any).shaka.Player === 'function' && player.constructor === (window as any).shaka.Player
-    );
-
+    return typeof (window as any).shaka.Player === 'function' && player.constructor === (window as any).shaka.Player;
   }
 
   static isDashjs(player: any) {

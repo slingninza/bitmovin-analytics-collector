@@ -1,10 +1,11 @@
+'use strict';
 const execSync = require('child_process').execSync;
 const packageJson = require('./package.json');
 const path = require('path');
 const webpack = require('webpack');
 const WriteJsonPlugin = require('write-json-webpack-plugin');
 const WriteFilePlugin = require('write-file-webpack-plugin');
-import * as process from 'process';
+const process = require('process');
 
 const getGitVersion = () => execSync('git describe --abbrev=0').toString().trim();
 
@@ -103,8 +104,3 @@ function makeConfig() {
 }
 
 module.exports = makeConfig();
-
-
-
-
-

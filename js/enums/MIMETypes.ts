@@ -11,7 +11,6 @@ export const MIMETypes = {
 };
 
 export function getMIMETypeFromFileExtension(path: string) {
-
   path = path.toLowerCase();
 
   if (path.endsWith('.m3u8')) {

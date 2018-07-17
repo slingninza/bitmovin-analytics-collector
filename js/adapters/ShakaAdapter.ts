@@ -5,9 +5,8 @@ import {MIMETypes} from '../enums/MIMETypes';
 import {Players} from '../enums/Players';
 
 export class ShakaAdapter extends HTML5Adapter {
-
-  shakaPlayer :any;
-  constructor(shakaPlayer: any , eventCallback: any, stateMachine:any) {
+  shakaPlayer: any;
+  constructor(shakaPlayer: any, eventCallback: Function, stateMachine: any) {
     super(shakaPlayer.getMediaElement(), eventCallback, stateMachine);
 
     if (!(window as any).shaka) {

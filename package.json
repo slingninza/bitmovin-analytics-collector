@@ -9,7 +9,7 @@
     "transform": {
       "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "\/tests\/.*\\.(ts|tsx|js)$"
+    "testRegex": "/tests/.*\\.(ts|tsx|js)$"
   },
   "version": "1.5.0-b1",
   "description": "",
@@ -28,18 +28,27 @@
     "@types/javascript-state-machine": "^2.4.1",
     "babel-eslint": "^8.2.6",
     "cross-env": "^5.2.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.50.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jest": "^21.17.0",
+    "eslint-plugin-prettier": "^2.6.2",
     "javascript-state-machine": "2.4.0",
     "jest": "^23.4.0",
     "string.prototype.endswith": "^0.2.0",
     "typings": "^2.1.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-flow": "^6.23.0",
     "eslint": "^4.19.1",
     "eslint-plugin-html": "^4.0.5",
     "eslint-plugin-typescript": "^0.12.0",
+    "flow-bin": "^0.76.0",
     "htmlhint": "^0.9.13",
     "husky": "^0.14.3",
     "npm-run-all": "^4.1.3",
+    "prettier": "1.13.7",
     "string-replace-loader": "^1.0.5",
     "ts-jest": "^23.0.0",
     "ts-loader": "^4.4.1",
@@ -62,6 +71,12 @@
     "lint:html": "htmlhint --config .htmlhintrc.json *.html html/*.html",
     "precommit": "./precommit.bash",
     "pretest": "npm run lint && npm run lint:html",
-    "start": "npm run dev-server"
+    "start": "npm run dev-server",
+    "format": "prettier --config ./.prettierrc --write \"./js/**/*.{ts,scss}\"",
+    "format-tests": "prettier --config ./.prettierrc --write \"./test/**/*.js\"",
+    "format-check": "prettier --config ./.prettierrc --list-different \"./src/**/*.{js,scss}\"",
+    "format-check-tests": "prettier --config ./.prettierrc --list-different \"./test/**/*.js\"",
+    "type-check": "flow check",
+    "format-files": "prettier --config ./.prettierrc --write"
   }
 }

@@ -4,7 +4,7 @@ import logger from '../utils/Logger';
 /* global cast */
 
 class CastClient {
-  castSession :any;
+  castSession: any;
   setUp() {
     logger.log('setting up cast session');
     this.castSession = (window as any).cast.framework.CastContext.getInstance().getCurrentSession();
@@ -25,7 +25,6 @@ class CastClient {
       try {
         const receiverMessage = JSON.parse(message);
         this.handleReceiverMessage(receiverMessage);
-
       } catch (error) {
         logger.error('Message parsing failed ' + message);
       }

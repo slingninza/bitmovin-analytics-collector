@@ -11,21 +11,21 @@ class Logger {
     return (this as any).showLogs;
   }
 
-  log (msg: any, ...optinalParamters: any[]) {
+  log(msg: any, ...optionalParamters: any[]) {
     if (!(this as any).showLogs) {
       return;
     }
 
-    console.log(msg);
-  };
+    console.log(msg, ...optionalParamters);
+  }
 
-  error (msg: any) {
+  error(msg: any) {
     if (!(this as any).showLogs) {
       return;
     }
 
     console.error(msg);
-  };
+  }
 
   warning(msg: string) {
     if (!(this as any).showLogs) {

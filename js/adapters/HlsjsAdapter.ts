@@ -9,13 +9,10 @@ import {Players} from '../enums/Players';
  * @constructor
  */
 export class HlsjsAdapter extends HTML5Adapter {
+  hls: any;
+  stateMachine: any;
 
-   hls: any;
-   eventCallback: any;
-   stateMachine: any;
- 
-  constructor(hls :any, eventCallback: any, stateMachine: any) {
-
+  constructor(hls: any, eventCallback: Function, stateMachine: any) {
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
 
@@ -33,6 +30,12 @@ export class HlsjsAdapter extends HTML5Adapter {
     return Players.HLSJS;
   }
 
+  /**
+   * Implemented by sub-class to deliver current quality-level info
+   * specific to media-engine.
+   * @override
+   * @returns {QualityLevelInfo}
+   */
 
   getCurrentQualityLevelInfo() {
     const hls = this.hls;
@@ -53,8 +56,11 @@ export class HlsjsAdapter extends HTML5Adapter {
     };
   }
 
+  /**
+   * @override
+   */
 
-  isLive() {
+  isLive(): boolean {
     const hls = this.hls;
     if (hls.currentLevel < 0) {
       return false;
@@ -66,9 +72,8 @@ export class HlsjsAdapter extends HTML5Adapter {
     return currentLevelObj.details.live;
   }
 
-
   getPlayerVersion() {
-    return (window as any).hls.version;
+    return (window as any).Hls.version;
   }
 
   getMIMEType() {
@@ -85,7 +90,7 @@ export class HlsjsAdapter extends HTML5Adapter {
   registerHlsEvents() {
     const hls = this.hls;
 
-    if (!(window as any).hls) {
+    if (!(window as any).Hls) {
       throw new Error('Hls.js is not defined installed (must be loaded before analytics module)');
     }
 

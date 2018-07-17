@@ -19,42 +19,39 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
  * @constructor
  */
 export class HTML5Adapter {
-
   /**
    * @constructs
    * @param {HTMLMediaElement} mediaElement
    * @param {function} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  eventCallback:any;
-  stateMachine:any
-  mediaEl:any;
-  mediaElEventHandlers :any;
-  analyticsBitrate_: number;
-  bufferingTimeout_ :any;
-  isBuffering_:any;
-  isLive_:boolean;
-  isPaused_:boolean;
-  previousMediaTime_:any;
-  needsReadyEvent_ :any;
-  needsFirstPlayIntent_:boolean;
-  mediaElementSet_:boolean;
+  public eventCallback: Function;
+  public stateMachine: any;
+  public mediaEl: any;
+  public mediaElEventHandlers: any;
+  private analyticsBitrate_: number;
+  private bufferingTimeout_: any;
+  private isBuffering_: any;
+  private isLive_: boolean;
+  private isPaused_: boolean;
+  private previousMediaTime_: any;
+  private needsReadyEvent_: any;
+  private needsFirstPlayIntent_: boolean;
+  private mediaElementSet_: boolean;
 
-  constructor(mediaElement: any, eventCallback: any, stateMachine: any) {
+  constructor(mediaElement: any, eventCallback: Function, stateMachine: any) {
     this.eventCallback = eventCallback;
 
     this.stateMachine = stateMachine;
 
     this.mediaEl = mediaElement;
 
-   
     this.mediaElEventHandlers = [];
 
     this.analyticsBitrate_ = -1;
 
     this.bufferingTimeout_ = null;
 
-   
     this.isBuffering_ = false;
 
     this.isLive_ = false;
@@ -62,7 +59,6 @@ export class HTML5Adapter {
     this.isPaused_ = false;
 
     this.previousMediaTime_ = null;
-
 
     this.needsReadyEvent_ = true;
 
@@ -124,17 +120,30 @@ export class HTML5Adapter {
     this.onMaybeReady();
   }
 
-  getCurrentQualityLevelInfo():any {
+  /** Implemented by sub-class to deliver current quality-level info
+   * specific to media-engine.
+   * @returns {QualityLevelInfo}
+   * @abstract
+   */
+
+  getCurrentQualityLevelInfo(): any {
     return null;
   }
 
- 
-  isLive() {
+  /**
+   * @abstract
+   */
+  isLive(): boolean {
     return false;
   }
 
- 
-  getMIMEType() :any {
+  /**	+
+   * Can be overriden by sub-classes
+   * @returns {string}
+   *
+   */
+
+  getMIMEType(): any {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
       return;
@@ -143,14 +152,28 @@ export class HTML5Adapter {
     return getMIMETypeFromFileExtension(mediaEl.src);
   }
 
-  getStreamType() {
+  /**
+   * Can be overriden by sub-classes
+   * @returns {string}
+   */
+
+  getStreamType(): any {
     return getStreamTypeFromMIMEType(this.getMIMEType());
   }
 
-  getPlayerVersion() {
+  /**
+   * @abstract
+   * @returns {string}
+   */
+
+  getPlayerVersion(): any {
     return null;
   }
 
+  /**
+   * Can be overriden by subclasses.
+   * @returns {string}
+   */
 
   getStreamURL() {
     const mediaEl = this.mediaEl;
@@ -167,14 +190,12 @@ export class HTML5Adapter {
   }
 
   registerMediaElement() {
-
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
       return;
     }
 
     this.listenToMediaElementEvent('loadedmetadata', () => {
-
       // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/readyState
       // HAVE_NOTHING 0 No information is available about the media resource.
       // HAVE_METADATA 1 Enough of the media resource has been retrieved that
@@ -194,32 +215,24 @@ export class HTML5Adapter {
       // silent
       this.checkQualityLevelAttributes(true);
 
-      const {
-        duration,
-        autoplay,
-        width,
-        height,
-        videoWidth,
-        videoHeight,
-        muted
-      } = mediaEl;
+      const {duration, autoplay, width, height, videoWidth, videoHeight, muted} = mediaEl;
 
       // This is redundant with what we give to updateMetadata method.
       // Not sure if there are good reasons to keep that so or if we should better centralize.
-      const info       = {
-        type       : 'html5',
-        isLive     : this.isLive(),
-        version    : this.getPlayerVersion(),
-        streamType : this.getStreamType(),
-        streamUrl  : this.getStreamURL(),
+      const info = {
+        type: 'html5',
+        isLive: this.isLive(),
+        version: this.getPlayerVersion(),
+        streamType: this.getStreamType(),
+        streamUrl: this.getStreamURL(),
         duration,
         autoplay,
         // HTMLVideoElement.width and HTMLVideoElement.height
         // is a DOMString that reflects the height HTML attribute,
         // which specifies the height of the display area, in CSS pixels.
         // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
-        width      : parseInt(width, 10),
-        height     : parseInt(height, 10),
+        width: parseInt(width, 10),
+        height: parseInt(height, 10),
         // Returns an unsigned long containing the intrinsic
         // height of the resource in CSS pixels,
         // taking into account the dimensions, aspect ratio,
@@ -227,7 +240,7 @@ export class HTML5Adapter {
         // as defined for the format used by the resource.
         // If the element's ready state is HAVE_NOTHING, the value is 0.
         // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
-        videoWindowWidth : videoWidth,
+        videoWindowWidth: videoWidth,
         videoWindowHeight: videoHeight,
         muted
       };
@@ -278,8 +291,8 @@ export class HTML5Adapter {
       this.eventCallback(Events.ERROR, {
         currentTime,
         // See https://developer.mozilla.org/en-US/docs/Web/API/MediaError
-        code       : error.code,
-        message    : error.message
+        code: error.code,
+        message: error.message
       });
     });
 
@@ -320,7 +333,6 @@ export class HTML5Adapter {
     });
 
     this.listenToMediaElementEvent('timeupdate', () => {
-
       const {currentTime} = mediaEl;
 
       this.isBuffering_ = false;
@@ -351,7 +363,6 @@ export class HTML5Adapter {
     // but data is unexpectedly not forthcoming.
     // https://developer.mozilla.org/en-US/docs/Web/Events/stalled
     this.listenToMediaElementEvent('stalled', () => {
-
       // this event doesn't indicate buffering by definition (interupted playback),
       // only that data throughput to playout buffers is not as high as expected
       // It happens on Chrome every once in a while as SourceBuffer's are not fed
@@ -362,10 +373,8 @@ export class HTML5Adapter {
     // The waiting event is fired when playback has stopped because of a temporary lack of data.
     // See https://developer.mozilla.org/en-US/docs/Web/Events/waiting
     this.listenToMediaElementEvent('waiting', () => {
-
       this.onBuffering();
     });
-
   }
 
   /**
@@ -383,37 +392,28 @@ export class HTML5Adapter {
   }
 
   onMaybeReady() {
-
     if (!this.needsReadyEvent_ || !this.mediaEl) {
       return;
     }
 
     this.needsReadyEvent_ = false;
 
-    const {
-      duration,
-      autoplay,
-      width,
-      height,
-      videoWidth,
-      videoHeight,
-      muted
-    } = this.mediaEl;
+    const {duration, autoplay, width, height, videoWidth, videoHeight, muted} = this.mediaEl;
 
-    const info       = {
-      type       : 'html5',
-      isLive     : this.isLive(),
-      version    : this.getPlayerVersion(),
-      streamType : this.getStreamType(),
-      streamUrl  : this.getStreamURL(),
-      duration   : duration,
-      autoplay   : autoplay,
+    const info = {
+      type: 'html5',
+      isLive: this.isLive(),
+      version: this.getPlayerVersion(),
+      streamType: this.getStreamType(),
+      streamUrl: this.getStreamURL(),
+      duration: duration,
+      autoplay: autoplay,
       // HTMLVideoElement.width and HTMLVideoElement.height
       // is a DOMString that reflects the height HTML attribute,
       // which specifies the height of the display area, in CSS pixels.
       // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
-      width      : parseInt(width),
-      height     : parseInt(height),
+      width: parseInt(width),
+      height: parseInt(height),
       // Returns an unsigned long containing the intrinsic
       // height of the resource in CSS pixels,
       // taking into account the dimensions, aspect ratio,
@@ -421,7 +421,7 @@ export class HTML5Adapter {
       // as defined for the format used by the resource.
       // If the element's ready state is HAVE_NOTHING, the value is 0.
       // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
-      videoWindowWidth : videoWidth,
+      videoWindowWidth: videoWidth,
       videoWindowHeight: videoHeight,
       muted
     };
@@ -489,8 +489,7 @@ export class HTML5Adapter {
     }
 
     this.bufferingTimeout_ = window.setTimeout(() => {
-
-      if (mediaEl.paused || mediaEl.ended && !this.isBuffering_) {
+      if (mediaEl.paused || (mediaEl.ended && !this.isBuffering_)) {
         return;
       }
 
@@ -499,7 +498,6 @@ export class HTML5Adapter {
       if (timeDelta < BUFFERING_TIMECHANGED_TIMEOUT) {
         this.onBuffering();
       }
-
     }, BUFFERING_TIMECHANGED_TIMEOUT);
   }
 
@@ -507,7 +505,6 @@ export class HTML5Adapter {
    * @param {boolean} silent
    */
   checkQualityLevelAttributes(silent = false) {
-
     const mediaEl = this.mediaEl;
 
     const qualityLevelInfo = this.getCurrentQualityLevelInfo();
@@ -527,7 +524,6 @@ export class HTML5Adapter {
           isLive
         });
       }
-
     }
 
     if (this.analyticsBitrate_ !== bitrate) {
@@ -544,6 +540,5 @@ export class HTML5Adapter {
 
       this.analyticsBitrate_ = bitrate;
     }
-
   }
 }

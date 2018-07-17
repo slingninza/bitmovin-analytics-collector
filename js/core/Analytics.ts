@@ -10,45 +10,46 @@ import CastReceiver from '../cast/CastReceiver';
 import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
 
 class Analytics {
-  static PAGE_LOAD_TYPE               = {
-    FOREGROUND: 1, BACKGROUND: 2
+  static PAGE_LOAD_TYPE = {
+    FOREGROUND: 1,
+    BACKGROUND: 2
   };
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
-  static PAGE_LOAD_TYPE_TIMEOUT       = 200;
+  static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
   config: any;
-  licenseCall :LicenseCall;
-  analyticsCall:AnalyticsCall;
-  castClient:CastClient;
-  castReceiver:CastReceiver;
-  droppedSampleFrames:number;
-  licensing:string;
-  startupTime:number;
-  pageLoadType :any;
-  autoplay:any;
-  isCastClient:boolean;
-  isCastReceiver:boolean;
-  isAllowedToSendSamples:boolean;
+  licenseCall: LicenseCall;
+  analyticsCall: AnalyticsCall;
+  castClient: CastClient;
+  castReceiver: CastReceiver;
+  droppedSampleFrames: number;
+  licensing: string;
+  startupTime: number;
+  pageLoadType: any;
+  autoplay: any;
+  isCastClient: boolean;
+  isCastReceiver: boolean;
+  isAllowedToSendSamples: boolean;
   samplesQueue: any;
-  castClientConfig :any;
-  sample:any;
-  stateMachineCallbacks:any;
-  analyticsStateMachine :any;
-  adapter:any;
+  castClientConfig: any;
+  sample: any;
+  stateMachineCallbacks: any;
+  analyticsStateMachine: any;
+  adapter: any;
 
   constructor(config: any) {
     this.config = config;
 
-    this.licenseCall                  = new LicenseCall();
-    this.analyticsCall                = new AnalyticsCall();
-    this.castClient                   = new CastClient();
-    this.castReceiver                 = new CastReceiver();
+    this.licenseCall = new LicenseCall();
+    this.analyticsCall = new AnalyticsCall();
+    this.castClient = new CastClient();
+    this.castReceiver = new CastReceiver();
 
     this.droppedSampleFrames = 0;
-    this.licensing           = 'waiting';
-    this.startupTime         = 0;
-    this.pageLoadType        = Analytics.PAGE_LOAD_TYPE.FOREGROUND;
+    this.licensing = 'waiting';
+    this.startupTime = 0;
+    this.pageLoadType = Analytics.PAGE_LOAD_TYPE.FOREGROUND;
 
     this.autoplay = undefined;
 
@@ -126,11 +127,11 @@ class Analytics {
   }
 
   setConfigParameters(sample = this.sample, config = this.config) {
-    sample.key          = config.key;
-    sample.playerKey    = config.playerKey;
-    sample.player       = config.player;
-    sample.cdnProvider  = config.cdnProvider;
-    sample.videoId      = config.videoId;
+    sample.key = config.key;
+    sample.playerKey = config.playerKey;
+    sample.player = config.player;
+    sample.cdnProvider = config.cdnProvider;
+    sample.videoId = config.videoId;
     sample.customUserId = config.userId;
 
     sample.customData1 = Utils.getCustomDataString(config.customData1);
@@ -146,7 +147,7 @@ class Analytics {
     const userId = Utils.getCookie('bitmovin_analytics_uuid');
     if (!userId || userId === '') {
       document.cookie = 'bitmovin_analytics_uuid=' + Utils.generateUUID();
-      this.sample.userId   = Utils.getCookie('bitmovin_analytics_uuid');
+      this.sample.userId = Utils.getCookie('bitmovin_analytics_uuid');
     } else {
       this.sample.userId = userId;
     }
@@ -160,15 +161,17 @@ class Analytics {
         if (!this.isCastReceiver) {
           this.sample.impressionId = Utils.generateUUID();
         }
-        logger.log('Setup bitmovin analytics ' + this.sample.analyticsVersion + ' with impressionId: ' + this.sample.impressionId);
+        logger.log(
+          'Setup bitmovin analytics ' + this.sample.analyticsVersion + ' with impressionId: ' + this.sample.impressionId
+        );
 
         this.setDuration(time);
         this.setState(state);
         this.sample.playerStartupTime = time;
-        this.sample.pageLoadType      = this.pageLoadType;
+        this.sample.pageLoadType = this.pageLoadType;
 
         if (window.performance && window.performance.timing) {
-          const loadTime           = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
+          const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
           this.sample.pageLoadTime = loadTime;
         }
 
@@ -203,7 +206,7 @@ class Analytics {
         this.setPlaybackSettingsFromLoadedEvent(playbackSettings);
       },
 
-      playing: (time:number, state :string, event :string) => {
+      playing: (time: number, state: string, event: string) => {
         this.setDuration(time);
         this.setState(state);
         this.sample.played = time;
@@ -213,7 +216,7 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      playingAndBye: (time :number, state :string, event :string) => {
+      playingAndBye: (time: number, state: string, event: string) => {
         this.setDuration(time);
         this.setState(state);
         this.sample.played = time;
@@ -240,14 +243,14 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      'qualitychange_pause': (time: number, state: any) => {
+      qualitychange_pause: (time: number, state: any) => {
         this.setDuration(time);
         this.setState(state);
 
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      'qualitychange_rebuffering': (time: number, state: any) => {
+      qualitychange_rebuffering: (time: number, state: any) => {
         this.setDuration(time);
         this.setState(state);
 
@@ -275,7 +278,7 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      'paused_seeking': (time: number, state: any, event: any) => {
+      paused_seeking: (time: number, state: any, event: any) => {
         this.setDuration(time);
         this.setState(state);
 
@@ -284,9 +287,9 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      'play_seeking': Utils.noOp,
+      play_seeking: Utils.noOp,
 
-      'end_play_seeking': (time: number, state: any, event: any) => {
+      end_play_seeking: (time: number, state: any, event: any) => {
         this.setState(state);
         this.setDuration(time);
 
@@ -309,7 +312,7 @@ class Analytics {
         this.stateMachineCallbacks.setVideoTimeStartFromEvent(event);
 
         this.setState('error');
-        this.sample.errorCode    = event.code;
+        this.sample.errorCode = event.code;
         this.sample.errorMessage = event.message;
 
         this.sendAnalyticsRequestAndClearValues();
@@ -400,7 +403,7 @@ class Analytics {
     const oldConfig = this.config;
     this.setCustomData(values);
     this.setCustomData(oldConfig);
-  }
+  };
 
   sourceChange = (config: any) => {
     logger.log('Processing Source Change for Analytics', config);
@@ -414,26 +417,21 @@ class Analytics {
       ...config
     };
     this.setConfigParameters(this.sample, newConfig);
-    
+
     this.analyticsStateMachine.sourceChange(Utils.getCurrentTimestamp());
-  }
+  };
 
   setCustomData = (values: any): any => {
     console.log(values);
-    const filterValues = ({
-      customData1 ,
-      customData2,
-      customData3,
-      customData4,
-      customData5,
-      experimentName
-    }: any) => {
-      const retVal = {customData1,
+    const filterValues = ({customData1, customData2, customData3, customData4, customData5, experimentName}: any) => {
+      const retVal = {
+        customData1,
         customData2,
         customData3,
         customData4,
         customData5,
-        experimentName};
+        experimentName
+      };
       if (customData1) {
         retVal.customData1 = customData1;
       }
@@ -463,15 +461,18 @@ class Analytics {
     this.setConfigParameters();
   };
 
-  register = (player: any, opts? :AnalyticsStateMachineOptions) => {
-    if(opts === undefined)
-    {
-      opts =new AnalyticsStateMachineOptions;
+  register = (player: any, opts?: AnalyticsStateMachineOptions) => {
+    if (opts === undefined) {
+      opts = new AnalyticsStateMachineOptions();
     }
     if (!opts.starttime) {
       opts.starttime = Utils.getCurrentTimestamp();
     }
-    this.analyticsStateMachine = AnalyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, opts);
+    this.analyticsStateMachine = AnalyticsStateMachineFactory.getAnalyticsStateMachine(
+      player,
+      this.stateMachineCallbacks,
+      opts
+    );
 
     this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
     if (!this.adapter) {
@@ -564,44 +565,46 @@ class Analytics {
 
   setupSample() {
     this.sample = {
-      domain             : Utils.sanitizePath(window.location.hostname),
-      path               : Utils.sanitizePath(window.location.pathname),
-      language           : navigator.language || (navigator as any).userLanguage,
-      userAgent          : navigator.userAgent,
-      screenWidth        : screen.width,
-      screenHeight       : screen.height,
-      isLive             : false,
-      isCasting          : this.isCastReceiver,
-      videoDuration      : 0,
-      size               : 'WINDOW',
-      time               : 0,
-      videoWindowWidth   : 0,
-      videoWindowHeight  : 0,
-      droppedFrames      : 0,
-      played             : 0,
-      buffered           : 0,
-      paused             : 0,
-      ad                 : 0,
-      seeked             : 0,
-      videoPlaybackWidth : 0,
+      domain: Utils.sanitizePath(window.location.hostname),
+      path: Utils.sanitizePath(window.location.pathname),
+      language: navigator.language || (navigator as any).userLanguage,
+      userAgent: navigator.userAgent,
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      isLive: false,
+      isCasting: this.isCastReceiver,
+      videoDuration: 0,
+      size: 'WINDOW',
+      time: 0,
+      videoWindowWidth: 0,
+      videoWindowHeight: 0,
+      droppedFrames: 0,
+      played: 0,
+      buffered: 0,
+      paused: 0,
+      ad: 0,
+      seeked: 0,
+      videoPlaybackWidth: 0,
       videoPlaybackHeight: 0,
-      videoBitrate       : 0,
-      audioBitrate       : 0,
-      videoTimeStart     : 0,
-      videoTimeEnd       : 0,
-      videoStartupTime   : 0,
-      duration           : 0,
-      startupTime        : 0,
+      videoBitrate: 0,
+      audioBitrate: 0,
+      videoTimeStart: 0,
+      videoTimeEnd: 0,
+      videoStartupTime: 0,
+      duration: 0,
+      startupTime: 0,
       //@ts-ignore
-      analyticsVersion   : __VERSION__
+      analyticsVersion: __VERSION__
     };
   }
 
   checkLicensing(key: any) {
-    this.licenseCall.sendRequest(key,
+    this.licenseCall.sendRequest(
+      key,
       this.sample.domain,
       this.sample.analyticsVersion,
-      this.handleLicensingResponse.bind(this));
+      this.handleLicensingResponse.bind(this)
+    );
   }
 
   handleLicensingResponse(licensingResponse: any) {
@@ -665,10 +668,8 @@ class Analytics {
 
     if (typeof navigator.sendBeacon === 'undefined') {
       this.sendAnalyticsRequestSynchronous();
-    }
-    else {
-      const success = navigator.sendBeacon(this.analyticsCall.getAnalyticsServerUrl(),
-        JSON.stringify(this.sample));
+    } else {
+      const success = navigator.sendBeacon(this.analyticsCall.getAnalyticsServerUrl(), JSON.stringify(this.sample));
       if (!success) {
         this.sendAnalyticsRequestSynchronous();
       }
@@ -684,19 +685,19 @@ class Analytics {
   }
 
   clearValues() {
-    this.sample.ad       = 0;
-    this.sample.paused   = 0;
-    this.sample.played   = 0;
-    this.sample.seeked   = 0;
+    this.sample.ad = 0;
+    this.sample.paused = 0;
+    this.sample.played = 0;
+    this.sample.seeked = 0;
     this.sample.buffered = 0;
 
     this.sample.playerStartupTime = 0;
-    this.sample.videoStartupTime  = 0;
-    this.sample.startupTime       = 0;
+    this.sample.videoStartupTime = 0;
+    this.sample.startupTime = 0;
 
-    this.sample.duration      = 0;
+    this.sample.duration = 0;
     this.sample.droppedFrames = 0;
-    this.sample.pageLoadType  = 0;
+    this.sample.pageLoadType = 0;
   }
 
   getDroppedFrames(frames: any) {
@@ -704,8 +705,7 @@ class Analytics {
       const droppedFrames = frames - this.droppedSampleFrames;
       this.droppedSampleFrames = frames;
       return droppedFrames;
-    }
-    else {
+    } else {
       return 0;
     }
   }

@@ -1,71 +1,68 @@
-import logger, { padRight } from '../utils/Logger';
+import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
 
-var states :_event[]=[];
-var enabled=false;
+var states: _event[] = [];
+var enabled = false;
 
-class _event{
-
+class _event {
   event: any;
   from: any;
   to: any;
   timestamp: number;
   eventObject: any;
-  constructor(event: any, from: any, to: any, timestamp: number, eventObject: any){
-    this.event=event;
-    this.from=from;
-    this.to=to;
-    this.timestamp=timestamp;
-    this.eventObject=eventObject;
+  constructor(event: any, from: any, to: any, timestamp: number, eventObject: any) {
+    this.event = event;
+    this.from = from;
+    this.to = to;
+    this.timestamp = timestamp;
+    this.eventObject = eventObject;
   }
-  
 }
 
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
 
-  States:any;
-  stateMachineCallbacks:any;
-  pausedTimestamp:any;
-  seekTimestamp: number; 
+  States: any;
+  stateMachineCallbacks: any;
+  pausedTimestamp: any;
+  seekTimestamp: number;
   seekedTimestamp: number;
   seekedTimeout: number;
   onEnterStateTimestamp: number;
-  stateMachine:any;
+  stateMachine: any;
 
-
-  constructor(stateMachineCallbacks: any, opts : AnalyticsStateMachineOptions) {
+  constructor(stateMachineCallbacks: any, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
-    this.pausedTimestamp       = null;
-    this.seekTimestamp         = 0;
-    this.seekedTimestamp       = 0;
-    this.seekedTimeout         = 0;
+    this.pausedTimestamp = null;
+    this.seekTimestamp = 0;
+    this.seekedTimestamp = 0;
+    this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
     this.States = {
-      SETUP                    : 'SETUP',
-      STARTUP                  : 'STARTUP',
-      READY                    : 'READY',
-      PLAYING                  : 'PLAYING',
-      REBUFFERING              : 'REBUFFERING',
-      PAUSE                    : 'PAUSE',
-      QUALITYCHANGE            : 'QUALITYCHANGE',
-      PAUSED_SEEKING           : 'PAUSED_SEEKING',
-      PLAY_SEEKING             : 'PLAY_SEEKING',
-      END_PLAY_SEEKING         : 'END_PLAY_SEEKING',
-      QUALITYCHANGE_PAUSE      : 'QUALITYCHANGE_PAUSE',
+      SETUP: 'SETUP',
+      STARTUP: 'STARTUP',
+      READY: 'READY',
+      PLAYING: 'PLAYING',
+      REBUFFERING: 'REBUFFERING',
+      PAUSE: 'PAUSE',
+      QUALITYCHANGE: 'QUALITYCHANGE',
+      PAUSED_SEEKING: 'PAUSED_SEEKING',
+      PLAY_SEEKING: 'PLAY_SEEKING',
+      END_PLAY_SEEKING: 'END_PLAY_SEEKING',
+      QUALITYCHANGE_PAUSE: 'QUALITYCHANGE_PAUSE',
       QUALITYCHANGE_REBUFFERING: 'QUALITYCHANGE_REBUFFERING',
-      END                      : 'END',
-      ERROR                    : 'ERROR',
-      AD                       : 'AD',
-      MUTING_READY             : 'MUTING_READY',
-      MUTING_PLAY              : 'MUTING_PLAY',
-      MUTING_PAUSE             : 'MUTING_PAUSE',
-      CASTING                  : 'CASTING',
-      SOURCE_CHANGING          : 'SOURCE_CHANGING',
+      END: 'END',
+      ERROR: 'ERROR',
+      AD: 'AD',
+      MUTING_READY: 'MUTING_READY',
+      MUTING_PLAY: 'MUTING_PLAY',
+      MUTING_PAUSE: 'MUTING_PAUSE',
+      CASTING: 'CASTING',
+      SOURCE_CHANGING: 'SOURCE_CHANGING'
     };
 
     this.createStateMachine(opts);
@@ -78,20 +75,21 @@ export class Bitmovin7AnalyticsStateMachine {
       'PLAY_SEEK',
       'FINISH_QUALITYCHANGE_PAUSE',
       'FINISH_QUALITYCHANGE',
-      'FINISH_QUALITYCHANGE_REBUFFERING'];
+      'FINISH_QUALITYCHANGE_REBUFFERING'
+    ];
   }
 
   sourceChange = (config: any, timestamp: number) => {
     this.callEvent(Events.MANUAL_SOURCE_CHANGE, config, timestamp);
-  }
+  };
 
-  createStateMachine(opts : AnalyticsStateMachineOptions) {
+  createStateMachine(opts: AnalyticsStateMachineOptions) {
     this.stateMachine = StateMachine.create({
-      initial  : this.States.SETUP,
+      initial: this.States.SETUP,
       error: (eventName, from, to, args, errorCode, errorMessage) => {
         logger.error('Error in statemachine: ' + errorMessage);
       },
-      events   : [
+      events: [
         {name: Events.READY, from: [this.States.SETUP, this.States.ERROR], to: this.States.READY},
         {name: Events.PLAY, from: this.States.READY, to: this.States.STARTUP},
 
@@ -122,12 +120,12 @@ export class Bitmovin7AnalyticsStateMachine {
         {
           name: Events.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to  : this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE
         },
         {
           name: Events.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to  : this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE
         },
         {name: 'FINISH_QUALITYCHANGE_PAUSE', from: this.States.QUALITYCHANGE_PAUSE, to: this.States.PAUSE},
 
@@ -207,22 +205,34 @@ export class Bitmovin7AnalyticsStateMachine {
         {name: Events.SEEKED, from: this.States.READY, to: this.States.READY},
         {name: Events.SEEKED, from: this.States.STARTUP, to: this.States.STARTUP},
 
-        {name: Events.MANUAL_SOURCE_CHANGE, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
-        {name: Events.SOURCE_UNLOADED, from: this.getAllStates(), to: this.States.SOURCE_CHANGING },
+        {name: Events.MANUAL_SOURCE_CHANGE, from: this.getAllStates(), to: this.States.SOURCE_CHANGING},
+        {name: Events.SOURCE_UNLOADED, from: this.getAllStates(), to: this.States.SOURCE_CHANGING},
 
-        {name: Events.READY, from: this.States.SOURCE_CHANGING, to: this.States.READY },
+        {name: Events.READY, from: this.States.SOURCE_CHANGING, to: this.States.READY},
 
         //{name: Events.SOURCE_LOADED, from: this.States.SETUP, to: this.States.SETUP},
         //{name: Events.SOURCE_LOADED, from: this.States.READY, to: this.States.READY},
 
         {name: Events.VIDEO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
         {name: Events.AUDIO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
-        {name: Events.VIDEO_CHANGE, from: this.States.QUALITYCHANGE_REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
-        {name: Events.AUDIO_CHANGE, from: this.States.QUALITYCHANGE_REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
-        {name: 'FINISH_QUALITYCHANGE_REBUFFERING', from: this.States.QUALITYCHANGE_REBUFFERING, to: this.States.REBUFFERING},
+        {
+          name: Events.VIDEO_CHANGE,
+          from: this.States.QUALITYCHANGE_REBUFFERING,
+          to: this.States.QUALITYCHANGE_REBUFFERING
+        },
+        {
+          name: Events.AUDIO_CHANGE,
+          from: this.States.QUALITYCHANGE_REBUFFERING,
+          to: this.States.QUALITYCHANGE_REBUFFERING
+        },
+        {
+          name: 'FINISH_QUALITYCHANGE_REBUFFERING',
+          from: this.States.QUALITYCHANGE_REBUFFERING,
+          to: this.States.REBUFFERING
+        }
       ],
       callbacks: {
-        onpause      : (event, from, to, timestamp) => {
+        onpause: (event, from, to, timestamp) => {
           if (from === this.States.PLAYING) {
             this.pausedTimestamp = timestamp;
           }
@@ -242,7 +252,7 @@ export class Bitmovin7AnalyticsStateMachine {
 
           if (event === Events.SEEKED && from === this.States.PAUSED_SEEKING) {
             this.seekedTimestamp = timestamp;
-            this.seekedTimeout   = window.setTimeout(() => {
+            this.seekedTimeout = window.setTimeout(() => {
               this.stateMachine.pause(timestamp, eventObject);
             }, Bitmovin7AnalyticsStateMachine.SEEKED_PAUSE_DELAY);
             return false;
@@ -252,7 +262,7 @@ export class Bitmovin7AnalyticsStateMachine {
             return false;
           }
         },
-        onafterevent : (event, from, to, timestamp) => {
+        onafterevent: (event, from, to, timestamp) => {
           if (to === this.States.QUALITYCHANGE_PAUSE) {
             this.stateMachine.FINISH_QUALITYCHANGE_PAUSE(timestamp);
           }
@@ -266,7 +276,7 @@ export class Bitmovin7AnalyticsStateMachine {
             this.stateMachine.FINISH_MUTING(timestamp);
           }
         },
-        onenterstate : (event: any, from: any, to: any, timestamp: number, eventObject: any) => {
+        onenterstate: (event: any, from: any, to: any, timestamp: number, eventObject: any) => {
           if (from === 'none' && opts.starttime) {
             this.onEnterStateTimestamp = opts.starttime;
           } else {
@@ -274,11 +284,21 @@ export class Bitmovin7AnalyticsStateMachine {
           }
 
           logger.log('[ENTER] ' + padRight(to, 20) + 'EVENT: ' + padRight(event, 20) + ' from ' + padRight(from, 14));
-          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            eventObject &&
+            to !== this.States.PAUSED_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
-          if (event === 'PLAY_SEEK' && to === this.States.PLAY_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            event === 'PLAY_SEEK' &&
+            to === this.States.PLAY_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.seekTimestamp = this.onEnterStateTimestamp;
           }
 
@@ -286,14 +306,19 @@ export class Bitmovin7AnalyticsStateMachine {
             this.stateMachineCallbacks.startCasting(timestamp, eventObject);
           }
         },
-        onleavestate : (event, from, to, timestamp, eventObject) => {
+        onleavestate: (event, from, to, timestamp, eventObject) => {
           if (!timestamp) {
             return;
           }
-          this.addStatesToLog(event,from,to,timestamp,eventObject,enabled);
+          this.addStatesToLog(event, from, to, timestamp, eventObject, enabled);
           const stateDuration = timestamp - this.onEnterStateTimestamp;
 
-          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            eventObject &&
+            to !== this.States.PAUSED_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
@@ -319,7 +344,12 @@ export class Bitmovin7AnalyticsStateMachine {
             }
           }
 
-          if (eventObject && to !== this.States.PAUSED_SEEKING && to !== this.States.PLAY_SEEKING && to !== this.States.END_PLAY_SEEKING) {
+          if (
+            eventObject &&
+            to !== this.States.PAUSED_SEEKING &&
+            to !== this.States.PLAY_SEEKING &&
+            to !== this.States.END_PLAY_SEEKING
+          ) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
@@ -333,10 +363,10 @@ export class Bitmovin7AnalyticsStateMachine {
             this.stateMachineCallbacks.unMute();
           }
         },
-        onseek       : (event, from, to, timestamp) => {
+        onseek: (event, from, to, timestamp) => {
           this.seekTimestamp = timestamp;
         },
-        onseeked     : (event, from, to, timestamp) => {
+        onseeked: (event, from, to, timestamp) => {
           this.seekedTimestamp = timestamp;
         },
         ontimechanged: (event, from, to, timestamp, eventObject) => {
@@ -368,16 +398,16 @@ export class Bitmovin7AnalyticsStateMachine {
     }
   }
 
-  addStatesToLog(event: any,from: any,to: any,timestamp: any,eventObject: any,enabled: boolean){
-    if(enabled){
-      states.push(new _event(event,from,to,timestamp,eventObject));
-      if(event==='end'){
-        console.log(JSON.stringify(states));  
+  addStatesToLog(event: any, from: any, to: any, timestamp: any, eventObject: any, enabled: boolean) {
+    if (enabled) {
+      states.push(new _event(event, from, to, timestamp, eventObject));
+      if (event === 'end') {
+        console.log(JSON.stringify(states));
       }
-    }    
+    }
   }
 
-  getStates(){
+  getStates() {
     return states;
   }
 }

@@ -1,6 +1,6 @@
 class HttpCall {
-  post(url :string, body :any, callback :any, async = true) {
-    let xhttp :any;
+  post(url: string, body: any, callback: Function, async = true) {
+    let xhttp: any;
     let legacyMode = false;
 
     if ((window as any).XDomainRequest) {

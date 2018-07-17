@@ -4,8 +4,8 @@ import logger from '../utils/Logger';
 /* global cast */
 
 class CastReceiver {
-  messageBus :any;
-  callback :any;
+  messageBus: any;
+  callback: any;
   setUp() {
     const castReceiverManager = (window as any).cast.receiver.CastReceiverManager.getInstance();
     this.messageBus = castReceiverManager.getCastMessageBus(

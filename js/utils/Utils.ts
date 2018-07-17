@@ -1,43 +1,43 @@
-const validString = function(string: any) {
-  return (string != undefined && typeof string == 'string');
+const validString = (string: any) => {
+  return string != undefined && typeof string == 'string';
 };
 
-const validBoolean = function(boolean: any) {
-  return (boolean != undefined && typeof boolean == 'boolean');
+const validBoolean = (boolean: any) => {
+  return boolean != undefined && typeof boolean == 'boolean';
 };
 
-const validNumber = function(number: any) {
-  return (number != undefined && typeof number == 'number');
+const validNumber = (number: any) => {
+  return number != undefined && typeof number == 'number';
 };
 
-const sanitizePath = function(path: any) {
+const sanitizePath = (path: string) => {
   return path.replace(/\/$/g, '');
 };
 
-const calculateTime = function(time: any) {
+const calculateTime = (time: number) => {
   time = time * 1000;
   return Math.round(time);
 };
 
-const getCurrentTimestamp = function() {
+const getCurrentTimestamp = () => {
   return new Date().getTime();
 };
 
-const getDurationFromTimestampToNow = function(timestamp: any) {
+const getDurationFromTimestampToNow = (timestamp: number) => {
   return getCurrentTimestamp() - timestamp;
 };
 
-const generateUUID = function() {
+const generateUUID = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c == 'x' ? r : (r & 0x3 | 0x8);
+    const r = (Math.random() * 16) | 0;
+    const v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };
 
-const getCookie = function(cname: string) {
+const getCookie = (cname: string) => {
   const name = cname + '=';
-  const ca   = document.cookie.split(';');
+  const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) == ' ') {
@@ -48,17 +48,15 @@ const getCookie = function(cname: string) {
     }
   }
 
-  return'';
+  return '';
 };
 
-const noOp = function() {
+const noOp = () => {};
 
-};
-
-const times = function (fn: any, times: any) {
+const times = function(fn: any, times: any) {
   let count = 0;
   let retVal: any;
-  return function () {
+  return function() {
     if (count >= times) {
       return retVal;
     }
@@ -68,22 +66,24 @@ const times = function (fn: any, times: any) {
   };
 };
 
-const once = function (fn: any) {
+const once = (fn: any) => {
   return times(fn, 1);
 };
 
-const getHiddenProp = function() {
-  const prefixes = ['webkit','moz','ms','o'];
-  if ('hidden' in document) { return 'hidden'; }
-  for (let i = 0; i < prefixes.length; i++){
-    if ((prefixes[i] + 'Hidden') in document) {
+const getHiddenProp = () => {
+  const prefixes = ['webkit', 'moz', 'ms', 'o'];
+  if ('hidden' in document) {
+    return 'hidden';
+  }
+  for (let i = 0; i < prefixes.length; i++) {
+    if (prefixes[i] + 'Hidden' in document) {
       return prefixes[i] + 'Hidden';
     }
   }
   return null;
 };
 
-const getCustomDataString = function(customData: any): any {
+const getCustomDataString = (customData: any): any => {
   if (typeof customData === 'object') {
     return JSON.stringify(customData);
   } else if (typeof customData === 'function') {
@@ -113,4 +113,3 @@ export default {
   getHiddenProp,
   getCustomDataString
 };
-

@@ -5,34 +5,44 @@ import {MIMETypes} from '../enums/MIMETypes';
 import {Players} from '../enums/Players';
 
 export class DashjsAdapter extends HTML5Adapter {
-  mediaPlayer:any;
-  constructor(mediaPlayer: any, eventCallback: any, stateMachine: any) {
+  mediaPlayer: any;
+
+  constructor(mediaPlayer: any, eventCallback: Function, stateMachine: any) {
     super(null, eventCallback, stateMachine);
 
     let videoEl = null;
     let canPlay = false;
     try {
       videoEl = mediaPlayer.getVideoElement();
-    } catch(e) { /* eslint-disable-line no-empty */ }
+    } catch (e) {
+      /* eslint-disable-line no-empty */
+    }
     if (!videoEl) {
-      mediaPlayer.on((window as any).dashjs.MediaPlayer.events.CAN_PLAY, () => {
-        if (canPlay) {
-          return;
-        }
-        videoEl = mediaPlayer.getVideoElement();
-        console.log('CAN_PLAY');
-        canPlay = true;
-        this._initialize(mediaPlayer, videoEl);
-      }, this);
+      mediaPlayer.on(
+        (window as any).dashjs.MediaPlayer.events.CAN_PLAY,
+        () => {
+          if (canPlay) {
+            return;
+          }
+          videoEl = mediaPlayer.getVideoElement();
+          console.log('CAN_PLAY');
+          canPlay = true;
+          this._initialize(mediaPlayer, videoEl);
+        },
+        this
+      );
     } else {
       this._initialize(mediaPlayer, videoEl);
     }
   }
 
   _initialize(mediaPlayer: any, videoEl: any) {
-  
-    this.mediaPlayer = mediaPlayer;
+    /**
+     * @public
+     * @member {dashjs.MediaPlayer}
+     */
 
+    this.mediaPlayer = mediaPlayer;
     this.setMediaElement(videoEl);
   }
 
@@ -49,16 +59,26 @@ export class DashjsAdapter extends HTML5Adapter {
     return false;
   }
 
-
+  /**
+   * @override
+   */
   getMIMEType() {
     return MIMETypes.DASH;
   }
 
-
+  /**
+   * @override
+   */
   getStreamURL() {
     return this.mediaPlayer ? this.mediaPlayer.getSource() : null;
   }
 
+  /**
+   * Implemented by sub-class to deliver current quality-level info
+   * specific to media-engine.
+   * @override
+   * @returns {QualityLevelInfo}
+   */
 
   getCurrentQualityLevelInfo() {
     if (this.mediaPlayer) {
