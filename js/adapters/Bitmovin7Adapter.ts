@@ -1,6 +1,6 @@
 import Events from '../enums/Events';
 import {Players} from '../enums/Players';
-import Source from '../Source';
+import Source from '../utils/Source';
 
 class Bitmovin7Adapter {
   onBeforeUnLoadEvent: boolean;

@@ -386,7 +386,7 @@ export class Bitmovin7AnalyticsStateMachine {
     });
   }
 
-  callEvent(eventType: any, eventObject: any, timestamp: number) {
+  callEvent(eventType: string, eventObject: any, timestamp: number) {
     const exec = this.stateMachine[eventType];
 
     if (exec) {

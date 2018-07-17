@@ -75,9 +75,9 @@
     "pretest": "npm run lint && npm run lint:html",
     "start": "npm run dev-server",
     "format": "prettier --config ./.prettierrc --write \"./js/**/*.{ts,scss}\"",
-    "format-tests": "prettier --config ./.prettierrc --write \"./test/**/*.js\"",
-    "format-check": "prettier --config ./.prettierrc --list-different \"./src/**/*.{js,scss}\"",
-    "format-check-tests": "prettier --config ./.prettierrc --list-different \"./test/**/*.js\"",
+    "format-tests": "prettier --config ./.prettierrc --write \"./tests/**/*.ts\"",
+    "format-check": "prettier --config ./.prettierrc --list-different \"./js/**/*.{ts,scss}\"",
+    "format-check-tests": "prettier --config ./.prettierrc --list-different \"./tests/**/*.ts\"",
     "type-check": "flow check",
     "format-files": "prettier --config ./.prettierrc --write"
   }
