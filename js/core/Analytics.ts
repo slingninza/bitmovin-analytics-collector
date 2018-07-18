@@ -422,7 +422,6 @@ class Analytics {
   };
 
   setCustomData = (values: any): any => {
-    console.log(values);
     const filterValues = ({customData1, customData2, customData3, customData4, customData5, experimentName}: any) => {
       const retVal = {
         customData1,
