@@ -4,7 +4,7 @@ import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
 class LicenseCall extends HttpCall {
   static licenseServerUrl = ANALYTICS_BACKEND_BASE_URL + '/licensing';
 
-  sendRequest(key: any, domain: any, version: any, callback: Function) {
+  sendRequest(key: string, domain: string, version: string, callback: Function) {
     const licensingRequest = {
       key: key,
       domain: domain,

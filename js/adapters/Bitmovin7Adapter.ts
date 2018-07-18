@@ -1,6 +1,6 @@
 import Events from '../enums/Events';
 import {Players} from '../enums/Players';
-import Source from '../utils/Source';
+import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 
 class Bitmovin7Adapter {
   onBeforeUnLoadEvent: boolean;
@@ -65,7 +65,7 @@ class Bitmovin7Adapter {
       }
 
       const config = this.player.getConfig();
-      let source: Source = {};
+      let source: PlayerSourceConfig = {};
 
       const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
       if (config.source) {
@@ -99,7 +99,7 @@ class Bitmovin7Adapter {
       }
 
       const config = this.player.getConfig();
-      let source: Source = {};
+      let source: PlayerSourceConfig = {};
       const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
       if (config.source) {
         source.videoId = config.source.videoId;

@@ -9,7 +9,7 @@
  */
 
 class PlayerDetector {
-  static isBitmovinVersionPre7 = function(player: any) {
+  static isBitmovinVersionPre7 = (player: any) => {
     if (PlayerDetector.isDashjs(player)) {
       return false;
     }
@@ -21,7 +21,7 @@ class PlayerDetector {
     return false;
   };
 
-  static isBitmovinVersion7Plus = function(player: any) {
+  static isBitmovinVersion7Plus = (player: any) => {
     const functionsToCheck = ['getAvailableLicenseServers', 'getMaxTimeShift', 'getAvailableSubtitles'];
     for (const fun of functionsToCheck) {
       if (!(typeof player[fun] === 'function')) {
@@ -32,7 +32,7 @@ class PlayerDetector {
     return true;
   };
 
-  static isVideoJs = function(player: any) {
+  static isVideoJs = (player: any) => {
     if (typeof (window as any).videojs === 'function') {
       if ((window as any).videojs(player.id_) === player) {
         return true;

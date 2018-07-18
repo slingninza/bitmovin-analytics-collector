@@ -6,14 +6,14 @@ export class BitmovinAnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 60;
   static SEEKED_PAUSE_DELAY = 120;
 
-  States: any;
-  stateMachineCallbacks: any;
-  pausedTimestamp: any;
-  seekTimestamp: number;
-  seekedTimestamp: number;
-  seekedTimeout: number;
-  onEnterStateTimestamp: number;
-  stateMachine: any;
+  private States: any;
+  private stateMachineCallbacks: any;
+  private pausedTimestamp: any;
+  private seekTimestamp: number;
+  private seekedTimestamp: number;
+  private seekedTimeout: number;
+  private onEnterStateTimestamp: number;
+  private stateMachine: any;
 
   constructor(stateMachineCallbacks: any) {
     this.stateMachineCallbacks = stateMachineCallbacks;
@@ -231,7 +231,7 @@ export class BitmovinAnalyticsStateMachine {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
-          const fnName = (from as string).toLowerCase();
+          const fnName = String(from).toLowerCase();
           if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
             const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
@@ -275,7 +275,7 @@ export class BitmovinAnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            this.stateMachineCallbacks.heartbeat(stateDuration, (from as string).toLowerCase(), eventObject);
+            this.stateMachineCallbacks.heartbeat(stateDuration, String(from).toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);

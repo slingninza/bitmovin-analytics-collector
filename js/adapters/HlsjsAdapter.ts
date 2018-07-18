@@ -72,10 +72,15 @@ export class HlsjsAdapter extends HTML5Adapter {
     return currentLevelObj.details.live;
   }
 
+  /**
+   * @override
+   */
   getPlayerVersion() {
     return (window as any).Hls.version;
   }
-
+  /**
+   * @override
+   */
   getMIMEType() {
     return MIMETypes.HLS;
   }

@@ -9,7 +9,7 @@ const analyticsWrapper = (config: any) => {
     register: (player: any, opts?: AnalyticsStateMachineOptions) => {
       return analytics.register(player, opts);
     },
-    getCurrentImpressionId: () => {
+    getCurrentImpressionId: (): string | undefined => {
       return analytics.getCurrentImpressionId();
     },
     setCustomData: analytics.setCustomData,

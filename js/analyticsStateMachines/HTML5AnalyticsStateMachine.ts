@@ -1,16 +1,17 @@
 import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
+import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
 
 export class HTML5AnalyticsStateMachine {
-  States: any;
-  stateMachineCallbacks: any;
-  pausedTimestamp: any;
-  onEnterStateTimestamp: number;
-  seekStartedAt: any;
-  stateMachine: any;
+  private States: any;
+  private stateMachineCallbacks: any;
+  private pausedTimestamp: any;
+  private onEnterStateTimestamp: number;
+  private seekStartedAt: any;
+  private stateMachine: any;
 
-  constructor(stateMachineCallbacks: any, opts = {}) {
+  constructor(stateMachineCallbacks: any, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
     this.pausedTimestamp = null;
@@ -48,7 +49,7 @@ export class HTML5AnalyticsStateMachine {
     ];
   }
 
-  createStateMachine(opts = {}) {
+  createStateMachine(opts: AnalyticsStateMachineOptions) {
     this.stateMachine = StateMachine.create({
       initial: this.States.SETUP,
       error: (eventName, from, to, args, errorCode, errorMessage) => {
@@ -189,9 +190,7 @@ export class HTML5AnalyticsStateMachine {
       ],
       callbacks: {
         onenterstate: (event, from, to, timestamp, eventObject) => {
-          //@ts-ignore
           if (from === 'none' && opts.starttime) {
-            //@ts-ignore
             this.onEnterStateTimestamp = opts.starttime;
           } else {
             this.onEnterStateTimestamp = timestamp || new Date().getTime();
@@ -225,7 +224,7 @@ export class HTML5AnalyticsStateMachine {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
           }
 
-          const fnName = (from as string).toLowerCase();
+          const fnName = String(from).toLowerCase();
           if (from === this.States.PAUSED_SEEKING) {
             const seekDuration = timestamp - this.seekStartedAt;
             this.seekStartedAt = null;
@@ -267,7 +266,7 @@ export class HTML5AnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            this.stateMachineCallbacks.heartbeat(stateDuration, (from as string).toLowerCase(), eventObject);
+            this.stateMachineCallbacks.heartbeat(stateDuration, String(from).toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
@@ -280,7 +279,7 @@ export class HTML5AnalyticsStateMachine {
     });
   }
 
-  callEvent(eventType: any, eventObject: any, timestamp: any) {
+  callEvent(eventType: string, eventObject: any, timestamp: number) {
     const exec = this.stateMachine[eventType];
 
     if (exec) {

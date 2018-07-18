@@ -53,7 +53,7 @@ const getCookie = (cname: string) => {
 
 const noOp = () => {};
 
-const times = function(fn: any, times: any) {
+const times = function(fn: Function, times: number) {
   let count = 0;
   let retVal: any;
   return function() {

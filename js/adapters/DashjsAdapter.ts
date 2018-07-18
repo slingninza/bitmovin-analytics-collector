@@ -6,7 +6,10 @@ import {Players} from '../enums/Players';
 
 export class DashjsAdapter extends HTML5Adapter {
   mediaPlayer: any;
-
+  /**
+   * @public
+   * @member {dashjs.MediaPlayer}
+   */
   constructor(mediaPlayer: any, eventCallback: Function, stateMachine: any) {
     super(null, eventCallback, stateMachine);
 
@@ -37,11 +40,6 @@ export class DashjsAdapter extends HTML5Adapter {
   }
 
   _initialize(mediaPlayer: any, videoEl: any) {
-    /**
-     * @public
-     * @member {dashjs.MediaPlayer}
-     */
-
     this.mediaPlayer = mediaPlayer;
     this.setMediaElement(videoEl);
   }

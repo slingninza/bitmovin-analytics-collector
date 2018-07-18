@@ -7,7 +7,7 @@ stateMachine.setEnabledDebugging(true);
 let statesfromStateMachine = [];
 
 for (let i = 0; i < statesFromFile.length; i++) {
-  var state = statesFromFile[i];
+  const state = statesFromFile[i];
   stateMachine.callEvent(state.event, state.eventObject, state.timestamp);
 }
 
@@ -15,8 +15,10 @@ statesfromStateMachine = stateMachine.getStates();
 statesfromStateMachine = JSON.parse(JSON.stringify(statesfromStateMachine));
 
 for (let z = 0; z < statesfromStateMachine.length; z++) {
-  each([[statesfromStateMachine[z], statesFromFile[z]]]).test(
-    'Test: ' + statesFromFile[z].event + ' From: ' + statesFromFile[z].from + ' To: ' + statesFromFile[z].to,
+  const stateFromMachine=statesfromStateMachine[z];
+  const stateFromFile=statesFromFile[z];
+  each([[stateFromMachine,stateFromFile]]).test(
+    'Test: ' + stateFromFile.event + ' From: ' + stateFromFile.from + ' To: ' + stateFromFile.to,
     (statefromStateMachine, stateFromFile) => {
       expect(statefromStateMachine.event).toEqual(stateFromFile.event);
       expect(statefromStateMachine.from).toEqual(stateFromFile.from);

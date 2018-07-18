@@ -1,18 +1,19 @@
 import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
+import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
 
 export class VideojsAnalyticsStateMachine {
-  States: any;
-  stateMachineCallbacks: any;
-  pausedTimestamp: any;
-  seekTimestamp: number;
-  seekedTimestamp: number;
-  seekedTimeout: number;
-  onEnterStateTimestamp: number;
-  stateMachine: any;
+  private States: any;
+  private stateMachineCallbacks: any;
+  private pausedTimestamp: any;
+  private seekTimestamp: number;
+  private seekedTimestamp: number;
+  private seekedTimeout: number;
+  private onEnterStateTimestamp: number;
+  private stateMachine: any;
 
-  constructor(stateMachineCallbacks: any, opts = {}) {
+  constructor(stateMachineCallbacks: any, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
     this.pausedTimestamp = null;
@@ -56,7 +57,7 @@ export class VideojsAnalyticsStateMachine {
     ];
   }
 
-  createStateMachine(opts = {}) {
+  createStateMachine(opts: AnalyticsStateMachineOptions) {
     this.stateMachine = StateMachine.create({
       initial: this.States.SETUP,
       error: (eventName, from, to, args, errorCode, errorMessage) => {
@@ -212,9 +213,7 @@ export class VideojsAnalyticsStateMachine {
       ],
       callbacks: {
         onenterstate: (event, from, to, timestamp, eventObject) => {
-          //@ts-ignore
           if (from === 'none' && opts.starttime) {
-            //@ts-ignore
             this.onEnterStateTimestamp = opts.starttime;
           } else {
             this.onEnterStateTimestamp = timestamp || new Date().getTime();
@@ -272,7 +271,7 @@ export class VideojsAnalyticsStateMachine {
             return true;
           }
 
-          const fnName = (from as string).toLowerCase();
+          const fnName = String(from).toLowerCase();
           if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
             const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
@@ -321,7 +320,7 @@ export class VideojsAnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            this.stateMachineCallbacks.heartbeat(stateDuration, (from as string).toLowerCase(), eventObject);
+            this.stateMachineCallbacks.heartbeat(stateDuration, String(from).toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
@@ -334,7 +333,7 @@ export class VideojsAnalyticsStateMachine {
     });
   }
 
-  callEvent(eventType: any, eventObject: any, timestamp: any) {
+  callEvent(eventType: string, eventObject: any, timestamp: number) {
     const exec = this.stateMachine[eventType];
 
     if (exec) {

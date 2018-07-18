@@ -2,35 +2,23 @@ import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
-
-class _event {
-  event: any;
-  from: any;
-  to: any;
-  timestamp: number;
-  eventObject: any;
-  constructor(event: any, from: any, to: any, timestamp: number, eventObject: any) {
-    this.event = event;
-    this.from = from;
-    this.to = to;
-    this.timestamp = timestamp;
-    this.eventObject = eventObject;
-  }
-}
+import eventDebugging from '../utils/eventDebugging';
 
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
-  private states: _event[] = [];
+
+  private debuggingStates: eventDebugging[] = [];
   private enabledDebugging = false;
-  States: any;
-  stateMachineCallbacks: any;
-  pausedTimestamp: any;
-  seekTimestamp: number;
-  seekedTimestamp: number;
-  seekedTimeout: number;
-  onEnterStateTimestamp: number;
-  stateMachine: any;
+
+  private States: any;
+  private stateMachineCallbacks: any;
+  private pausedTimestamp: any;
+  private seekTimestamp: number;
+  private seekedTimestamp: number;
+  private seekedTimeout: number;
+  private onEnterStateTimestamp: number;
+  private stateMachine: any;
 
   constructor(stateMachineCallbacks: any, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
@@ -308,7 +296,7 @@ export class Bitmovin7AnalyticsStateMachine {
           if (!timestamp) {
             return;
           }
-          this.addStatesToLog(event, from, to, timestamp, eventObject, this.enabledDebugging);
+          this.addStatesToLog(event, from, to, timestamp, eventObject);
           const stateDuration = timestamp - this.onEnterStateTimestamp;
 
           if (
@@ -324,7 +312,7 @@ export class Bitmovin7AnalyticsStateMachine {
             return true;
           }
 
-          const fnName = (from as string).toLowerCase();
+          const fnName = String(from).toLowerCase();
           if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
             const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
@@ -373,7 +361,7 @@ export class Bitmovin7AnalyticsStateMachine {
           if (stateDuration > 59700) {
             this.stateMachineCallbacks.setVideoTimeEndFromEvent(eventObject);
 
-            this.stateMachineCallbacks.heartbeat(stateDuration, (from as string).toLowerCase(), eventObject);
+            this.stateMachineCallbacks.heartbeat(stateDuration, String(from).toLowerCase(), eventObject);
             this.onEnterStateTimestamp = timestamp;
 
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
@@ -396,14 +384,14 @@ export class Bitmovin7AnalyticsStateMachine {
     }
   }
 
-  addStatesToLog(event: any, from: any, to: any, timestamp: any, eventObject: any, debuggerEnabled: boolean) {
-    if (debuggerEnabled) {
-      this.states.push(new _event(event, from, to, timestamp, eventObject));
+  addStatesToLog(event: any, from: any, to: any, timestamp: any, eventObject: any) {
+    if (this.enabledDebugging) {
+      this.debuggingStates.push(new eventDebugging(event, from, to, timestamp, eventObject));
     }
   }
 
   getStates() {
-    return this.states;
+    return this.debuggingStates;
   }
 
   setEnabledDebugging(enabled: boolean) {

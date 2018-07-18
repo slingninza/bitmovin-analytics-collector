@@ -1,14 +1,15 @@
 import HttpCall from './HttpCall';
 import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
+import {Sample} from '../types/Sample';
 
 class AnalyticsCall extends HttpCall {
   static analyticsServerUrl = ANALYTICS_BACKEND_BASE_URL + '/analytics';
 
-  sendRequest(sample: any, callback: Function) {
+  sendRequest(sample: Sample, callback: Function) {
     this.post(AnalyticsCall.analyticsServerUrl, sample, callback);
   }
 
-  sendRequestSynchronous(sample: any, callback: Function) {
+  sendRequestSynchronous(sample: Sample, callback: Function) {
     this.post(AnalyticsCall.analyticsServerUrl, sample, callback, false);
   }
 
