@@ -2,11 +2,17 @@
 
 import Events from '../enums/Events';
 import {Players} from '../enums/Players';
+declare var videojs :any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 class VideoJsAdapter {
-  constructor(player, eventCallback, stateMachine) {
+  onBeforeUnLoadEvent :boolean;
+  player :any;
+  eventCallback : Function;
+ stateMachine : any;
+
+  constructor(player: any, eventCallback: Function, stateMachine: any) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -18,7 +24,7 @@ class VideoJsAdapter {
     return Players.VIDEOJS;
   }
 
-  getStreamType(url) {
+  getStreamType(url: string) {
     if (url.endsWith('.m3u8')) {
       return 'hls';
     }
@@ -30,7 +36,7 @@ class VideoJsAdapter {
 
   // this seems very generic. one could put it in a helper
   // and use it in many adapter implementations.
-  getStreamSources(url) {
+  getStreamSources(url: string) {
     let mpdUrl       = null;
     let m3u8Url      = null;
     let progUrl      = null;
@@ -52,14 +58,14 @@ class VideoJsAdapter {
     };
   }
 
-  getVideoWindowDimensions(player) {
+  getVideoWindowDimensions(player: any) {
     return {
       width : player.width(),
       height: player.height()
     };
   }
 
-  getVideoSourceDimensions(tech) {
+  getVideoSourceDimensions(tech: any) {
     return {
       videoWidth : tech.videoWidth(),
       videoHeight: tech.videoHeight()
@@ -81,7 +87,7 @@ class VideoJsAdapter {
 
   register() {
     const that = this;
-    this.player.on('loadedmetadata', function() {
+    this.player.on('loadedmetadata', function(this :any) {
       const streamType = that.getStreamType(this.currentSrc());
       const sources    = that.getStreamSources(this.currentSrc());
       const mode = that.getVideojsSourceHandlerMode_();
@@ -100,7 +106,7 @@ class VideoJsAdapter {
       };
       that.stateMachine.updateMetadata(info);
     });
-    this.player.ready(function() {
+    this.player.ready(function(this :any) {
       const streamType = that.getStreamType(this.currentSrc());
       const sources    = that.getStreamSources(this.currentSrc());
       const mode = that.getVideojsSourceHandlerMode_();
@@ -119,17 +125,17 @@ class VideoJsAdapter {
       };
       that.eventCallback(Events.READY, info);
     });
-    this.player.on('play', function() {
+    this.player.on('play', function(this :any) {
       that.eventCallback(Events.PLAY, {
         currentTime: this.currentTime()
       });
     });
-    this.player.on('pause', function() {
+    this.player.on('pause', function(this :any) {
       that.eventCallback(Events.PAUSE, {
         currentTime: this.currentTime()
       });
     });
-    this.player.on('error', function() {
+    this.player.on('error', function(this :any) {
       const error = this.error();
       that.eventCallback(Events.ERROR, {
         currentTime: this.currentTime(),
@@ -137,7 +143,7 @@ class VideoJsAdapter {
         message    : error.message
       });
     });
-    this.player.on('volumechange', function() {
+    this.player.on('volumechange', function(this :any) {
       const muted = this.muted();
       if (muted) {
         that.eventCallback(Events.MUTE, {
@@ -149,26 +155,26 @@ class VideoJsAdapter {
         });
       }
     });
-    this.player.on('seeking', function () {
+    this.player.on('seeking', function (this :any) {
       that.eventCallback(Events.SEEK, {
         currentTime: this.currentTime(),
         droppedFrames: 0
       });
     });
-    this.player.on('seeked', function () {
+    this.player.on('seeked', function (this :any) {
       that.eventCallback(Events.SEEKED, {
         currentTime: this.currentTime(),
         droppedFrames: 0
       });
     });
 
-    let analyticsBitrate;
-    let bufferingTimeout;
+    let analyticsBitrate: any;
+    let bufferingTimeout: any;
     // eslint-disable-next-line
     let lastTimeupdate   = Date.now();
     let isStalling       = false;
 
-    this.player.on('timeupdate', function() {
+    this.player.on('timeupdate', function(this :any) {
       clearTimeout(bufferingTimeout);
       isStalling     = false;
       lastTimeupdate = Date.now();
