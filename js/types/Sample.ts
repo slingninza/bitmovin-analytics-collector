@@ -1,5 +1,5 @@
 export type Sample = {
-  domain?: string;
+  domain?: any;
   path?: string;
   language?: string;
   userAgent?: string;
@@ -27,7 +27,7 @@ export type Sample = {
   videoStartupTime?: number;
   duration?: number;
   startupTime?: number;
-  analyticsVersion?: string;
+  analyticsVersion?: any;
   playerStartupTime?: number;
   pageLoadType?: number;
   streamFormat?: string;
