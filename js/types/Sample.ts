@@ -1,12 +1,12 @@
 export type Sample = {
-  domain?: any;
-  path?: any;
-  language?: any;
-  userAgent?: any;
+  domain?: string;
+  path?: string;
+  language?: string;
+  userAgent?: string;
   screenWidth?: number;
   screenHeight?: number;
-  isLive?: false;
-  isCasting?: any;
+  isLive?: boolean;
+  isCasting?: boolean;
   videoDuration?: number;
   size?: string;
   time?: number;
@@ -27,7 +27,7 @@ export type Sample = {
   videoStartupTime?: number;
   duration?: number;
   startupTime?: number;
-  analyticsVersion?: any;
+  analyticsVersion?: string;
   playerStartupTime?: number;
   pageLoadType?: number;
   streamFormat?: string;
@@ -35,12 +35,12 @@ export type Sample = {
   progUrl?: string;
   m3u8Url?: string;
   mpdUrl?: string;
-  playerTech?: any;
-  version?: any;
+  playerTech?: string;
+  version?: string;
   player?: any;
-  state?: any;
+  state?: string;
   impressionId?: string;
-  userId?: any;
+  userId?: string;
   errorMessage?: any;
   errorCode?: any;
   autoplay?: any;

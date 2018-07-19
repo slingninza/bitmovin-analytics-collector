@@ -3,10 +3,11 @@
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Players} from '../enums/Players';
+import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 export class ShakaAdapter extends HTML5Adapter {
   shakaPlayer: any;
-  constructor(shakaPlayer: any, eventCallback: Function, stateMachine: any) {
+  constructor(shakaPlayer: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
     super(shakaPlayer.getMediaElement(), eventCallback, stateMachine);
 
     if (!(window as any).shaka) {

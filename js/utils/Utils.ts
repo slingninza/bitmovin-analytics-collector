@@ -66,7 +66,7 @@ const times = function(fn: Function, times: number) {
   };
 };
 
-const once = (fn: any) => {
+const once = (fn: Function) => {
   return times(fn, 1);
 };
 
@@ -83,7 +83,7 @@ const getHiddenProp = () => {
   return null;
 };
 
-const getCustomDataString = (customData: any): any => {
+const getCustomDataString = (customData: any): string | undefined => {
   if (typeof customData === 'object') {
     return JSON.stringify(customData);
   } else if (typeof customData === 'function') {

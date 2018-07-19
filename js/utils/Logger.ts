@@ -1,9 +1,9 @@
 class Logger {
-  constructor(showLogs = false) {
+  constructor(showLogs: boolean = false) {
     (this as any).showLogs = showLogs;
   }
 
-  setLogging(logging: any) {
+  setLogging(logging: boolean) {
     (this as any).showLogs = logging;
   }
 
@@ -11,7 +11,7 @@ class Logger {
     return (this as any).showLogs;
   }
 
-  log(msg: any, ...optionalParamters: any[]) {
+  log(msg: string, ...optionalParamters: any[]) {
     if (!(this as any).showLogs) {
       return;
     }
@@ -19,7 +19,7 @@ class Logger {
     console.log(msg, ...optionalParamters);
   }
 
-  error(msg: any) {
+  error(msg: string | undefined) {
     if (!(this as any).showLogs) {
       return;
     }
@@ -36,7 +36,7 @@ class Logger {
   }
 }
 
-export const padRight = (str: any, length: number) => {
+export const padRight = (str: string | undefined, length: number) => {
   const padStr = new Array(length).join(' ');
   return (str + padStr).slice(0, length);
 };

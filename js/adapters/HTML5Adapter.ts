@@ -2,6 +2,7 @@ import Events from '../enums/Events';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
 import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
 import {Players} from '../enums/Players';
+import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -26,7 +27,7 @@ export class HTML5Adapter {
    * @param {AnalyticsStateMachine} stateMachine
    */
   public eventCallback: Function;
-  public stateMachine: any;
+  public stateMachine: HTML5AnalyticsStateMachine;
   public mediaEl: any;
   public mediaElEventHandlers: any;
   private analyticsBitrate_: number;
@@ -39,7 +40,7 @@ export class HTML5Adapter {
   private needsFirstPlayIntent_: boolean;
   private mediaElementSet_: boolean;
 
-  constructor(mediaElement: any, eventCallback: Function, stateMachine: any) {
+  constructor(mediaElement: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
     this.eventCallback = eventCallback;
 
     this.stateMachine = stateMachine;

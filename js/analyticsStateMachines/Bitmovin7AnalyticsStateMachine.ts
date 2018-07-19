@@ -2,13 +2,13 @@ import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
-import eventDebugging from '../utils/eventDebugging';
+import EventDebugging from '../utils/EventDebugging';
 
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
 
-  private debuggingStates: eventDebugging[] = [];
+  private debuggingStates: EventDebugging[] = [];
   private enabledDebugging = false;
 
   private States: any;
@@ -262,7 +262,13 @@ export class Bitmovin7AnalyticsStateMachine {
             this.stateMachine.FINISH_MUTING(timestamp);
           }
         },
-        onenterstate: (event: any, from: any, to: any, timestamp: number, eventObject: any) => {
+        onenterstate: (
+          event: string | undefined,
+          from: string | undefined,
+          to: string | undefined,
+          timestamp: number,
+          eventObject: any
+        ) => {
           if (from === 'none' && opts.starttime) {
             this.onEnterStateTimestamp = opts.starttime;
           } else {
@@ -384,9 +390,15 @@ export class Bitmovin7AnalyticsStateMachine {
     }
   }
 
-  addStatesToLog(event: any, from: any, to: any, timestamp: any, eventObject: any) {
+  addStatesToLog(
+    event: string | undefined,
+    from: string | undefined,
+    to: string | undefined,
+    timestamp: number,
+    eventObject: any
+  ) {
     if (this.enabledDebugging) {
-      this.debuggingStates.push(new eventDebugging(event, from, to, timestamp, eventObject));
+      this.debuggingStates.push(new EventDebugging(event, from, to, timestamp, eventObject));
     }
   }
 

@@ -3,14 +3,16 @@
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Players} from '../enums/Players';
+import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 export class DashjsAdapter extends HTML5Adapter {
-  mediaPlayer: any;
   /**
    * @public
    * @member {dashjs.MediaPlayer}
    */
-  constructor(mediaPlayer: any, eventCallback: Function, stateMachine: any) {
+  mediaPlayer: any;
+
+  constructor(mediaPlayer: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
     super(null, eventCallback, stateMachine);
 
     let videoEl = null;
@@ -56,28 +58,24 @@ export class DashjsAdapter extends HTML5Adapter {
     // FIXME: Maybe use http://cdn.dashjs.org/latest/jsdoc/module-MediaPlayer.html#getLiveDelay__anchor
     return false;
   }
-
   /**
    * @override
    */
   getMIMEType() {
     return MIMETypes.DASH;
   }
-
   /**
    * @override
    */
   getStreamURL() {
     return this.mediaPlayer ? this.mediaPlayer.getSource() : null;
   }
-
   /**
    * Implemented by sub-class to deliver current quality-level info
    * specific to media-engine.
    * @override
    * @returns {QualityLevelInfo}
    */
-
   getCurrentQualityLevelInfo() {
     if (this.mediaPlayer) {
       const videoBitrateInfoList = this.mediaPlayer.getBitrateInfoListFor('video');
