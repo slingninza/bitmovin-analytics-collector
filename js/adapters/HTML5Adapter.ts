@@ -126,7 +126,6 @@ export class HTML5Adapter {
    * @returns {QualityLevelInfo}
    * @abstract
    */
-
   getCurrentQualityLevelInfo(): any {
     return null;
   }
@@ -143,7 +142,6 @@ export class HTML5Adapter {
    * @returns {string}
    *
    */
-
   getMIMEType(): any {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
@@ -157,7 +155,6 @@ export class HTML5Adapter {
    * Can be overriden by sub-classes
    * @returns {string}
    */
-
   getStreamType(): any {
     return getStreamTypeFromMIMEType(this.getMIMEType());
   }
@@ -166,7 +163,6 @@ export class HTML5Adapter {
    * @abstract
    * @returns {string}
    */
-
   getPlayerVersion(): any {
     return null;
   }
@@ -175,7 +171,6 @@ export class HTML5Adapter {
    * Can be overriden by subclasses.
    * @returns {string}
    */
-
   getStreamURL() {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {

@@ -423,7 +423,7 @@ class Analytics {
 
   setCustomData = (values: any): any => {
     const filterValues = ({customData1, customData2, customData3, customData4, customData5, experimentName}: any) => {
-      const retVal = {
+      let retVal = {
         customData1,
         customData2,
         customData3,

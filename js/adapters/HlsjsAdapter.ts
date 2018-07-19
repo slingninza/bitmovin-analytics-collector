@@ -14,7 +14,6 @@ export class HlsjsAdapter extends HTML5Adapter {
   constructor(hls: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
-
     /**
      * @public
      * @member {Hls} hls Hls.js client instance
@@ -35,7 +34,6 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    * @returns {QualityLevelInfo}
    */
-
   getCurrentQualityLevelInfo() {
     const hls = this.hls;
     const currentLevelObj = hls.levels[hls.currentLevel];
@@ -58,7 +56,6 @@ export class HlsjsAdapter extends HTML5Adapter {
   /**
    * @override
    */
-
   isLive(): boolean {
     const hls = this.hls;
     if (hls.currentLevel < 0) {
