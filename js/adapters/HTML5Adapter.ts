@@ -1,7 +1,7 @@
 import Events from '../enums/Events';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
 import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
-import {Players} from '../enums/Players';
+import {Player} from '../enums/Player';
 import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -73,7 +73,7 @@ export class HTML5Adapter {
   }
 
   getPlayerName() {
-    return Players.HTML5;
+    return Player.HTML5;
   }
 
   /**
@@ -238,7 +238,7 @@ export class HTML5Adapter {
         // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
         videoWindowWidth: videoWidth,
         videoWindowHeight: videoHeight,
-        muted
+        muted,
       };
 
       // silence events if we have not yet intended play
@@ -258,7 +258,7 @@ export class HTML5Adapter {
       this.needsFirstPlayIntent_ = false;
 
       this.eventCallback(Events.PLAY, {
-        currentTime
+        currentTime,
       });
     });
 
@@ -277,7 +277,7 @@ export class HTML5Adapter {
       }
 
       this.eventCallback(Events.TIMECHANGED, {
-        currentTime
+        currentTime,
       });
     });
 
@@ -288,7 +288,7 @@ export class HTML5Adapter {
         currentTime,
         // See https://developer.mozilla.org/en-US/docs/Web/API/MediaError
         code: error.code,
-        message: error.message
+        message: error.message,
       });
     });
 
@@ -297,11 +297,11 @@ export class HTML5Adapter {
 
       if (muted) {
         this.eventCallback(Events.MUTE, {
-          currentTime
+          currentTime,
         });
       } else {
         this.eventCallback(Events.UN_MUTE, {
-          currentTime
+          currentTime,
         });
       }
     });
@@ -311,7 +311,7 @@ export class HTML5Adapter {
 
       this.eventCallback(Events.SEEK, {
         currentTime,
-        droppedFrames: 0
+        droppedFrames: 0,
       });
     });
 
@@ -324,7 +324,7 @@ export class HTML5Adapter {
 
       this.eventCallback(Events.SEEKED, {
         currentTime,
-        droppedFrames: 0
+        droppedFrames: 0,
       });
     });
 
@@ -340,7 +340,7 @@ export class HTML5Adapter {
 
       if (!this.isPaused_) {
         this.eventCallback(Events.TIMECHANGED, {
-          currentTime
+          currentTime,
         });
       }
 
@@ -419,7 +419,7 @@ export class HTML5Adapter {
       // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
       videoWindowWidth: videoWidth,
       videoWindowHeight: videoHeight,
-      muted
+      muted,
     };
 
     this.stateMachine.updateMetadata(info);
@@ -453,7 +453,7 @@ export class HTML5Adapter {
     }
 
     this.eventCallback(Events.START_BUFFERING, {
-      currentTime
+      currentTime,
     });
 
     this.isBuffering_ = true;
@@ -467,7 +467,7 @@ export class HTML5Adapter {
     const {currentTime} = this.mediaEl;
 
     this.eventCallback(Events.PAUSE, {
-      currentTime
+      currentTime,
     });
 
     this.isPaused_ = true;
@@ -517,7 +517,7 @@ export class HTML5Adapter {
 
       if (!silent) {
         this.stateMachine.updateMetadata({
-          isLive
+          isLive,
         });
       }
     }
@@ -527,7 +527,7 @@ export class HTML5Adapter {
         width,
         height,
         bitrate,
-        currentTime: mediaEl.currentTime
+        currentTime: mediaEl.currentTime,
       };
 
       if (!silent) {

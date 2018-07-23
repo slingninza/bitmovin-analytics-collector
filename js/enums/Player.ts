@@ -1,4 +1,4 @@
-export enum Players {
+export enum Player {
   BITMOVIN = 'bitmovin',
   JW = 'jw',
   RADIANT = 'radiant',
@@ -6,5 +6,6 @@ export enum Players {
   HLSJS = 'hlsjs',
   SHAKA = 'shaka',
   DASHJS = 'dashjs',
-  HTML5 = 'html5'
+  HTML5 = 'html5',
 }
+

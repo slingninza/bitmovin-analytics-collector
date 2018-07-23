@@ -42,7 +42,7 @@ export class BitmovinAnalyticsStateMachine {
       AD: 'AD',
       MUTING_READY: 'MUTING_READY',
       MUTING_PLAY: 'MUTING_PLAY',
-      MUTING_PAUSE: 'MUTING_PAUSE'
+      MUTING_PAUSE: 'MUTING_PAUSE',
     };
 
     this.createStateMachine();
@@ -83,12 +83,12 @@ export class BitmovinAnalyticsStateMachine {
         {
           name: Events.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to: this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE,
         },
         {
           name: Events.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to: this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE,
         },
         {name: 'FINISH_QUALITYCHANGE_PAUSE', from: this.States.QUALITYCHANGE_PAUSE, to: this.States.PAUSE},
 
@@ -152,9 +152,9 @@ export class BitmovinAnalyticsStateMachine {
             'FINISH_QUALITYCHANGE_PAUSE',
             'FINISH_QUALITYCHANGE',
             this.States.END,
-            this.States.ERROR
+            this.States.ERROR,
           ],
-          to: this.States.ERROR
+          to: this.States.ERROR,
         },
 
         {name: Events.SEEK, from: this.States.END_PLAY_SEEKING, to: this.States.PLAY_SEEKING},
@@ -175,7 +175,7 @@ export class BitmovinAnalyticsStateMachine {
 
         {name: Events.MUTE, from: this.States.PAUSE, to: this.States.MUTING_PAUSE},
         {name: Events.UN_MUTE, from: this.States.PAUSE, to: this.States.MUTING_PAUSE},
-        {name: 'FINISH_MUTING', from: this.States.MUTING_PAUSE, to: this.States.PAUSE}
+        {name: 'FINISH_MUTING', from: this.States.MUTING_PAUSE, to: this.States.PAUSE},
       ],
       callbacks: {
         onpause: (event, from, to, timestamp) => {
@@ -284,8 +284,8 @@ export class BitmovinAnalyticsStateMachine {
         },
         onplayerError: (event, from, to, timestamp, eventObject) => {
           this.stateMachineCallbacks.error(eventObject);
-        }
-      }
+        },
+      },
     });
   }
 

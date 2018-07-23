@@ -2,7 +2,7 @@
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
-import {Players} from '../enums/Players';
+import {Player} from '../enums/Player';
 import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 /**
  * @class
@@ -25,7 +25,7 @@ export class HlsjsAdapter extends HTML5Adapter {
   }
 
   getPlayerName() {
-    return Players.HLSJS;
+    return Player.HLSJS;
   }
 
   /**
@@ -49,7 +49,7 @@ export class HlsjsAdapter extends HTML5Adapter {
     return {
       bitrate,
       width,
-      height
+      height,
     };
   }
 

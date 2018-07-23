@@ -14,7 +14,7 @@ import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 class Analytics {
   static PAGE_LOAD_TYPE = {
     FOREGROUND: 1,
-    BACKGROUND: 2
+    BACKGROUND: 2,
   };
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
@@ -380,8 +380,8 @@ class Analytics {
             path,
             language,
             userAgent,
-            impressionId
-          }
+            impressionId,
+          },
         };
 
         this.castClient.setUp();
@@ -396,7 +396,7 @@ class Analytics {
 
       source_changing: () => {
         this.sample.impressionId = Utils.generateUUID();
-      }
+      },
     };
   }
 
@@ -415,7 +415,7 @@ class Analytics {
 
     const newConfig = {
       ...this.config,
-      ...config
+      ...config,
     };
     this.setConfigParameters(this.sample, newConfig);
 
@@ -430,7 +430,7 @@ class Analytics {
         customData3,
         customData4,
         customData5,
-        experimentName
+        experimentName,
       };
       if (customData1) {
         retVal.customData1 = customData1;
@@ -456,7 +456,7 @@ class Analytics {
     this.sendAnalyticsRequestAndClearValues();
     this.config = {
       ...this.config,
-      ...filterValues(values)
+      ...filterValues(values),
     };
     this.setConfigParameters();
   };

@@ -1,13 +1,13 @@
-const validString = (string: any) => {
-  return string != undefined && typeof string == 'string';
+const validString = (text: any) => {
+  return text != undefined && typeof text == 'string';
 };
 
-const validBoolean = (boolean: any) => {
-  return boolean != undefined && typeof boolean == 'boolean';
+const validBoolean = (bool: any) => {
+  return bool != undefined && typeof bool == 'boolean';
 };
 
-const validNumber = (number: any) => {
-  return number != undefined && typeof number == 'number';
+const validNumber = (num: any) => {
+  return num != undefined && typeof num == 'number';
 };
 
 const sanitizePath = (path: string) => {
@@ -20,7 +20,7 @@ const calculateTime = (time: number) => {
 };
 
 const getCurrentTimestamp = () => {
-  return new Date().getTime();
+  return Date.now();
 };
 
 const getDurationFromTimestampToNow = (timestamp: number) => {
@@ -111,5 +111,5 @@ export default {
   times,
   once,
   getHiddenProp,
-  getCustomDataString
+  getCustomDataString,
 };

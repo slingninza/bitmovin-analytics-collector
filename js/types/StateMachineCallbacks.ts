@@ -1,4 +1,4 @@
-export type StateMachineCallbacks = {
+export interface StateMachineCallbacks {
   [key: string]: any;
   setVideoTimeStartFromEvent: Function;
   startCasting: Function;
@@ -11,4 +11,4 @@ export type StateMachineCallbacks = {
   unMute: Function;
   playingAndBye: Function;
   pause: Function;
-};
+}

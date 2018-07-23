@@ -7,7 +7,7 @@ export const MIMETypes = {
   MP4,
   WEBM,
   HLS,
-  DASH
+  DASH,
 };
 
 export function getMIMETypeFromFileExtension(path: string) {

@@ -2,7 +2,7 @@
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
-import {Players} from '../enums/Players';
+import {Player} from '../enums/Player';
 import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 export class DashjsAdapter extends HTML5Adapter {
@@ -47,7 +47,7 @@ export class DashjsAdapter extends HTML5Adapter {
   }
 
   getPlayerName() {
-    return Players.DASHJS;
+    return Player.DASHJS;
   }
 
   getPlayerVersion() {
@@ -85,7 +85,7 @@ export class DashjsAdapter extends HTML5Adapter {
       return {
         width,
         height,
-        bitrate
+        bitrate,
       };
     }
     return null;

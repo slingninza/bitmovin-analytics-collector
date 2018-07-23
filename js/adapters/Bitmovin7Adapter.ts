@@ -1,5 +1,5 @@
 import Events from '../enums/Events';
-import {Players} from '../enums/Players';
+import {Player} from '../enums/Player';
 import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 
 class Bitmovin7Adapter {
@@ -15,7 +15,7 @@ class Bitmovin7Adapter {
   }
 
   getPlayerName() {
-    return Players.BITMOVIN;
+    return Player.BITMOVIN;
   }
 
   register() {
@@ -23,14 +23,14 @@ class Bitmovin7Adapter {
       if (!progressive) {
         return {
           progUrl: undefined,
-          progBitrate: undefined
+          progBitrate: undefined,
         };
       }
 
       if (typeof progressive === 'string') {
         return {
           progUrl: progressive,
-          progBitrate: 0
+          progBitrate: 0,
         };
       }
 
@@ -39,14 +39,14 @@ class Bitmovin7Adapter {
         const progressiveArrayIndex = parseInt(playbackVideoData.id) || 0;
         return {
           progUrl: progressive[progressiveArrayIndex].url,
-          progBitrate: progressive[progressiveArrayIndex].bitrate || 0
+          progBitrate: progressive[progressiveArrayIndex].bitrate || 0,
         };
       }
 
       if (typeof progressive === 'object') {
         return {
           progUrl: progressive.url,
-          progBitrate: progressive.bitrate || 0
+          progBitrate: progressive.bitrate || 0,
         };
       }
     };
@@ -54,7 +54,7 @@ class Bitmovin7Adapter {
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event: any) => {
       this.eventCallback(Events.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
@@ -88,7 +88,7 @@ class Bitmovin7Adapter {
         videoWindowWidth: this.player.getFigure().offsetWidth,
         videoWindowHeight: this.player.getFigure().offsetHeight,
         isMuted: this.player.isMuted(),
-        autoplay
+        autoplay,
       });
     });
 
@@ -125,7 +125,7 @@ class Bitmovin7Adapter {
         videoWindowWidth: this.player.getFigure().offsetWidth,
         videoWindowHeight: this.player.getFigure().offsetHeight,
         isMuted: this.player.isMuted(),
-        autoplay
+        autoplay,
       });
     });
 
@@ -136,56 +136,56 @@ class Bitmovin7Adapter {
     this.player.addEventHandler(this.player.EVENT.ON_CAST_STOPPED, () => {
       this.eventCallback(Events.END_CAST, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_PLAY, () => {
       this.eventCallback(Events.PLAY, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_PAUSED, () => {
       this.eventCallback(Events.PAUSE, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_TIME_CHANGED, () => {
       this.eventCallback(Events.TIMECHANGED, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_SEEK, () => {
       this.eventCallback(Events.SEEK, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_SEEKED, () => {
       this.eventCallback(Events.SEEKED, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_STALL_STARTED, () => {
       this.eventCallback(Events.START_BUFFERING, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_STALL_ENDED, () => {
       this.eventCallback(Events.END_BUFFERING, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
@@ -195,7 +195,7 @@ class Bitmovin7Adapter {
       this.eventCallback(Events.AUDIO_CHANGE, {
         bitrate: quality.bitrate,
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
@@ -207,49 +207,49 @@ class Bitmovin7Adapter {
         height: quality.height,
         bitrate: quality.bitrate,
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_FULLSCREEN_ENTER, () => {
       this.eventCallback(Events.START_FULLSCREEN, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_FULLSCREEN_EXIT, () => {
       this.eventCallback(Events.END_FULLSCREEN, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_AD_STARTED, () => {
       this.eventCallback(Events.START_AD, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_AD_FINISHED, () => {
       this.eventCallback(Events.END_AD, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_MUTED, () => {
       this.eventCallback(Events.MUTE, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_UNMUTED, () => {
       this.eventCallback(Events.UN_MUTE, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
@@ -257,14 +257,14 @@ class Bitmovin7Adapter {
       this.eventCallback(Events.ERROR, {
         code: event.code,
         message: event.message,
-        currentTime: this.player.getCurrentTime()
+        currentTime: this.player.getCurrentTime(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_PLAYBACK_FINISHED, () => {
       this.eventCallback(Events.PLAYBACK_FINISHED, {
         currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames()
+        droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
@@ -273,7 +273,7 @@ class Bitmovin7Adapter {
         this.onBeforeUnLoadEvent = true;
         this.eventCallback(Events.UNLOAD, {
           currentTime: this.player.getCurrentTime(),
-          droppedFrames: this.player.getDroppedFrames()
+          droppedFrames: this.player.getDroppedFrames(),
         });
       }
     };

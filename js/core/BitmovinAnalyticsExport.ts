@@ -1,5 +1,5 @@
 import Analytics from './Analytics';
-import {Players} from '../enums/Players';
+import {Player} from '../enums/Player';
 import CdnProviders from '../enums/CDNProviders';
 import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
 
@@ -16,7 +16,7 @@ const analyticsWrapper = (config: any) => {
     setCustomDataOnce: analytics.setCustomDataOnce,
     sourceChange: (config: any) => {
       analytics.sourceChange(config);
-    }
+    },
   };
 };
 
@@ -66,7 +66,7 @@ const wrapPlayerLoad = (player: any, analytics: any) => {
 const AnalyticsModule = {
   name: 'analytics',
   module: {
-    Analytics: analyticsWrapper
+    Analytics: analyticsWrapper,
   },
   hooks: {
     setup: (module: any, player: any) => {
@@ -75,11 +75,11 @@ const AnalyticsModule = {
 
       analytics._module(config, player);
       return Promise.resolve();
-    }
-  }
+    },
+  },
 };
 
-(analyticsWrapper as any).Players = Players;
+(analyticsWrapper as any).Players = Player;
 (analyticsWrapper as any).CdnProviders = CdnProviders;
 (analyticsWrapper as any).PlayerModule = AnalyticsModule;
 

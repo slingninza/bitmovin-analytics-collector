@@ -49,7 +49,7 @@ export class Bitmovin7AnalyticsStateMachine {
       MUTING_PLAY: 'MUTING_PLAY',
       MUTING_PAUSE: 'MUTING_PAUSE',
       CASTING: 'CASTING',
-      SOURCE_CHANGING: 'SOURCE_CHANGING'
+      SOURCE_CHANGING: 'SOURCE_CHANGING',
     };
 
     this.createStateMachine(opts);
@@ -62,7 +62,7 @@ export class Bitmovin7AnalyticsStateMachine {
       'PLAY_SEEK',
       'FINISH_QUALITYCHANGE_PAUSE',
       'FINISH_QUALITYCHANGE',
-      'FINISH_QUALITYCHANGE_REBUFFERING'
+      'FINISH_QUALITYCHANGE_REBUFFERING',
     ];
   }
 
@@ -107,12 +107,12 @@ export class Bitmovin7AnalyticsStateMachine {
         {
           name: Events.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to: this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE,
         },
         {
           name: Events.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to: this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE,
         },
         {name: 'FINISH_QUALITYCHANGE_PAUSE', from: this.States.QUALITYCHANGE_PAUSE, to: this.States.PAUSE},
 
@@ -205,18 +205,18 @@ export class Bitmovin7AnalyticsStateMachine {
         {
           name: Events.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_REBUFFERING,
-          to: this.States.QUALITYCHANGE_REBUFFERING
+          to: this.States.QUALITYCHANGE_REBUFFERING,
         },
         {
           name: Events.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_REBUFFERING,
-          to: this.States.QUALITYCHANGE_REBUFFERING
+          to: this.States.QUALITYCHANGE_REBUFFERING,
         },
         {
           name: 'FINISH_QUALITYCHANGE_REBUFFERING',
           from: this.States.QUALITYCHANGE_REBUFFERING,
-          to: this.States.REBUFFERING
-        }
+          to: this.States.REBUFFERING,
+        },
       ],
       callbacks: {
         onpause: (event, from, to, timestamp) => {
@@ -376,8 +376,8 @@ export class Bitmovin7AnalyticsStateMachine {
         },
         onplayerError: (event, from, to, timestamp, eventObject) => {
           this.stateMachineCallbacks.error(eventObject);
-        }
-      }
+        },
+      },
     });
   }
 

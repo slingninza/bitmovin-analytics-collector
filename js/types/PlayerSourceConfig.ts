@@ -1,4 +1,4 @@
-export type PlayerSourceConfig = {
+export interface PlayerSourceConfig = {
   videoId?: string;
   userId?: string;
   mpdUrl?: string;

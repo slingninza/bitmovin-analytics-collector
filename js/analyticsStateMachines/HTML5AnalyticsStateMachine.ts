@@ -35,7 +35,7 @@ export class HTML5AnalyticsStateMachine {
       MUTING_READY: 'MUTING_READY',
       MUTING_PLAY: 'MUTING_PLAY',
       MUTING_PAUSE: 'MUTING_PAUSE',
-      CASTING: 'CASTING'
+      CASTING: 'CASTING',
     };
 
     this.createStateMachine(opts);
@@ -46,7 +46,7 @@ export class HTML5AnalyticsStateMachine {
       ...Object.keys(this.States).map(key => this.States[key]),
       'FINISH_QUALITYCHANGE_PAUSE',
       'FINISH_QUALITYCHANGE',
-      'FINISH_QUALITYCHANGE_REBUFFERING'
+      'FINISH_QUALITYCHANGE_REBUFFERING',
     ];
   }
 
@@ -102,12 +102,12 @@ export class HTML5AnalyticsStateMachine {
         {
           name: Events.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to: this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE,
         },
         {
           name: Events.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
-          to: this.States.QUALITYCHANGE_PAUSE
+          to: this.States.QUALITYCHANGE_PAUSE,
         },
         {name: 'FINISH_QUALITYCHANGE_PAUSE', from: this.States.QUALITYCHANGE_PAUSE, to: this.States.PAUSE},
 
@@ -176,18 +176,18 @@ export class HTML5AnalyticsStateMachine {
         {
           name: Events.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_REBUFFERING,
-          to: this.States.QUALITYCHANGE_REBUFFERING
+          to: this.States.QUALITYCHANGE_REBUFFERING,
         },
         {
           name: Events.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_REBUFFERING,
-          to: this.States.QUALITYCHANGE_REBUFFERING
+          to: this.States.QUALITYCHANGE_REBUFFERING,
         },
         {
           name: 'FINISH_QUALITYCHANGE_REBUFFERING',
           from: this.States.QUALITYCHANGE_REBUFFERING,
-          to: this.States.REBUFFERING
-        }
+          to: this.States.REBUFFERING,
+        },
       ],
       callbacks: {
         onenterstate: (event, from, to, timestamp, eventObject) => {
@@ -275,8 +275,8 @@ export class HTML5AnalyticsStateMachine {
         },
         onplayerError: (event, from, to, timestamp, eventObject) => {
           this.stateMachineCallbacks.error(eventObject);
-        }
-      }
+        },
+      },
     });
   }
 

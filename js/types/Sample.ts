@@ -1,4 +1,4 @@
-export type Sample = {
+export interface Sample {
   domain?: any;
   path?: string;
   language?: string;
@@ -56,4 +56,4 @@ export type Sample = {
   cdnProvider?: any;
   videoId?: string;
   customUserId?: string;
-};
+}

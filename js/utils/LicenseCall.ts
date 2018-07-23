@@ -8,7 +8,7 @@ class LicenseCall extends HttpCall {
     const licensingRequest = {
       key: key,
       domain: domain,
-      analyticsVersion: version
+      analyticsVersion: version,
     };
 
     this.post(LicenseCall.licenseServerUrl, licensingRequest, callback);

@@ -25,7 +25,7 @@ export enum Events {
   END = 'end',
   METADATA_LOADED = 'metadataLoaded',
   SOURCE_UNLOADED = 'sourceUnloaded',
-  MANUAL_SOURCE_CHANGE = 'manualSourceChangeInitiated'
+  MANUAL_SOURCE_CHANGE = 'manualSourceChangeInitiated',
 }
 
 export default Events;

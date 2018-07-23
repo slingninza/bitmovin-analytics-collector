@@ -6,7 +6,7 @@ const mapping = {
   [MP4]: 'progressive',
   [WEBM]: 'progressive',
   [HLS]: 'hls',
-  [DASH]: 'dash'
+  [DASH]: 'dash',
 };
 
 export function getStreamTypeFromMIMEType(mimeType: string) {

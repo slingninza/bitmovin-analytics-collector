@@ -5,7 +5,7 @@ const CdnProviders = {
   MAXCDN: 'maxcdn',
   CLOUDFRONT: 'cloudfront',
   CHINACACHE: 'chinacache',
-  BITGRAVITY: 'bitgravity'
+  BITGRAVITY: 'bitgravity',
 };
 
 export default CdnProviders;

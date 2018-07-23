@@ -1,7 +1,7 @@
 /* global videojs */
 
 import Events from '../enums/Events';
-import {Players} from '../enums/Players';
+import {Player} from '../enums/Player';
 import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
 declare var videojs: any;
 
@@ -22,7 +22,7 @@ class VideoJsAdapter {
   }
 
   getPlayerName() {
-    return Players.VIDEOJS;
+    return Player.VIDEOJS;
   }
 
   getStreamType(url: string) {
@@ -55,21 +55,21 @@ class VideoJsAdapter {
     return {
       mpdUrl,
       m3u8Url,
-      progUrl
+      progUrl,
     };
   }
 
   getVideoWindowDimensions(player: any) {
     return {
       width: player.width(),
-      height: player.height()
+      height: player.height(),
     };
   }
 
   getVideoSourceDimensions(tech: any) {
     return {
       videoWidth: tech.videoWidth(),
-      videoHeight: tech.videoHeight()
+      videoHeight: tech.videoHeight(),
     };
   }
 
@@ -103,7 +103,7 @@ class VideoJsAdapter {
         ...that.getVideoWindowDimensions(this),
         videoWindowWidth: this.videoWidth(),
         videoWindowHeight: this.videoHeight(),
-        muted: this.muted()
+        muted: this.muted(),
       };
       that.stateMachine.updateMetadata(info);
     });
@@ -122,18 +122,18 @@ class VideoJsAdapter {
         ...that.getVideoWindowDimensions(this),
         videoWindowWidth: this.videoWidth(),
         videoWindowHeight: this.videoHeight(),
-        muted: this.muted()
+        muted: this.muted(),
       };
       that.eventCallback(Events.READY, info);
     });
     this.player.on('play', function(this: any) {
       that.eventCallback(Events.PLAY, {
-        currentTime: this.currentTime()
+        currentTime: this.currentTime(),
       });
     });
     this.player.on('pause', function(this: any) {
       that.eventCallback(Events.PAUSE, {
-        currentTime: this.currentTime()
+        currentTime: this.currentTime(),
       });
     });
     this.player.on('error', function(this: any) {
@@ -141,31 +141,31 @@ class VideoJsAdapter {
       that.eventCallback(Events.ERROR, {
         currentTime: this.currentTime(),
         code: error.code,
-        message: error.message
+        message: error.message,
       });
     });
     this.player.on('volumechange', function(this: any) {
       const muted = this.muted();
       if (muted) {
         that.eventCallback(Events.MUTE, {
-          currentTime: this.currentTime()
+          currentTime: this.currentTime(),
         });
       } else {
         that.eventCallback(Events.UN_MUTE, {
-          currentTime: this.currentTime()
+          currentTime: this.currentTime(),
         });
       }
     });
     this.player.on('seeking', function(this: any) {
       that.eventCallback(Events.SEEK, {
         currentTime: this.currentTime(),
-        droppedFrames: 0
+        droppedFrames: 0,
       });
     });
     this.player.on('seeked', function(this: any) {
       that.eventCallback(Events.SEEKED, {
         currentTime: this.currentTime(),
-        droppedFrames: 0
+        droppedFrames: 0,
       });
     });
 
@@ -181,7 +181,7 @@ class VideoJsAdapter {
       lastTimeupdate = Date.now();
 
       that.eventCallback(Events.TIMECHANGED, {
-        currentTime: this.currentTime()
+        currentTime: this.currentTime(),
       });
 
       // that is not the quality that is currently being played.
@@ -202,7 +202,7 @@ class VideoJsAdapter {
           width,
           height,
           bitrate,
-          currentTime: this.currentTime()
+          currentTime: this.currentTime(),
         };
 
         that.eventCallback(Events.VIDEO_CHANGE, eventObject);
@@ -215,7 +215,7 @@ class VideoJsAdapter {
         }
 
         that.eventCallback(Events.START_BUFFERING, {
-          currentTime: this.currentTime()
+          currentTime: this.currentTime(),
         });
       }, BUFFERING_TIMECHANGED_TIMEOUT);
 
@@ -254,7 +254,7 @@ class VideoJsAdapter {
             width,
             height,
             bitrate,
-            currentTime: this.currentTime()
+            currentTime: this.currentTime(),
           };
 
           that.eventCallback(Events.VIDEO_CHANGE, eventObject);
@@ -271,7 +271,7 @@ class VideoJsAdapter {
       if (!this.onBeforeUnLoadEvent) {
         this.onBeforeUnLoadEvent = true;
         this.eventCallback(Events.UNLOAD, {
-          currentTime: this.player.currentTime()
+          currentTime: this.player.currentTime(),
         });
       }
     };

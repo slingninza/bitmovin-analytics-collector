@@ -2,7 +2,7 @@
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
-import {Players} from '../enums/Players';
+import {Player} from '../enums/Player';
 import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 export class ShakaAdapter extends HTML5Adapter {
@@ -22,7 +22,7 @@ export class ShakaAdapter extends HTML5Adapter {
   }
 
   getPlayerName() {
-    return Players.SHAKA;
+    return Player.SHAKA;
   }
 
   getPlayerVersion() {
@@ -73,7 +73,7 @@ export class ShakaAdapter extends HTML5Adapter {
     return {
       bitrate,
       width,
-      height
+      height,
     };
   }
 }
