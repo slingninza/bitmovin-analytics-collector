@@ -7,6 +7,7 @@ import VideoJsAdapter from '../adapters/VideoJsAdapter';
 import {HlsjsAdapter} from '../adapters/HlsjsAdapter';
 import {ShakaAdapter} from '../adapters/ShakaAdapter';
 import {DashjsAdapter} from '../adapters/DashjsAdapter';
+import {Adapter} from '../types/Adapter';
 
 /**
  * Stateless. Auto-maps given player instance to new adapter instances.
@@ -18,20 +19,24 @@ class AdapterFactory {
    * @param {AnalyticsEventCallback} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  static getAdapter(player: any, eventCallback: any, stateMachine: any) {
+  static getAdapter(player: any, eventCallback: any, stateMachine: any): Adapter {
+    let adapter;
+
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
-      return new BitmovinAdapter(player, eventCallback);
+      adapter = new BitmovinAdapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
-      return new Bitmovin7Adapter(player, eventCallback);
+      adapter = new Bitmovin7Adapter(player, eventCallback);
     } else if (PlayerDetector.isVideoJs(player)) {
-      return new VideoJsAdapter(player, eventCallback, stateMachine);
+      adapter = new VideoJsAdapter(player, eventCallback, stateMachine);
     } else if (PlayerDetector.isHlsjs(player)) {
-      return new HlsjsAdapter(player, eventCallback, stateMachine);
+      adapter = new HlsjsAdapter(player, eventCallback, stateMachine);
     } else if (PlayerDetector.isShaka(player)) {
-      return new ShakaAdapter(player, eventCallback, stateMachine);
+      adapter = new ShakaAdapter(player, eventCallback, stateMachine);
     } else if (PlayerDetector.isDashjs(player)) {
-      return new DashjsAdapter(player, eventCallback, stateMachine);
+      adapter = new DashjsAdapter(player, eventCallback, stateMachine);
     }
+
+    return <Adapter>adapter;
   }
 }
 

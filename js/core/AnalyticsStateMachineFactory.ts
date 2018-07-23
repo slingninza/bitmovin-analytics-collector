@@ -5,6 +5,8 @@ import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAna
 import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
+import Analytics from './Analytics';
+import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 
 /**
  * Stateless. Auto-maps given player instance to new state-machine instances.
@@ -20,7 +22,7 @@ class AnalyticsStateMachineFactory {
     player: any,
     stateMachineCallbacks: StateMachineCallbacks,
     opts: AnalyticsStateMachineOptions
-  ) {
+  ): AnalyticsStateMachine {
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
       return new BitmovinAnalyticsStateMachine(stateMachineCallbacks);
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
