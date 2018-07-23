@@ -1,4 +1,4 @@
-import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
+import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
 
 export interface AnalyticsStateMachine {
   createStateMachine: (opts: AnalyticsStateMachineOptions) => void;

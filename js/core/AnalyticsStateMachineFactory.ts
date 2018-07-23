@@ -3,7 +3,7 @@ import {BitmovinAnalyticsStateMachine} from '../analyticsStateMachines/BitmovinA
 import {Bitmovin7AnalyticsStateMachine} from '../analyticsStateMachines/Bitmovin7AnalyticsStateMachine';
 import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
 import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
-import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
+import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import Analytics from './Analytics';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';

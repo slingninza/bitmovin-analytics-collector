@@ -7,7 +7,7 @@ import AdapterFactory from './AdapterFactory';
 import AnalyticsStateMachineFactory from './AnalyticsStateMachineFactory';
 import CastClient from '../cast/CastClient';
 import CastReceiver from '../cast/CastReceiver';
-import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
+import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import {Sample} from '../types/Sample';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
@@ -463,7 +463,9 @@ class Analytics {
 
   register = (player: any, opts?: AnalyticsStateMachineOptions) => {
     if (opts === undefined) {
-      opts = new AnalyticsStateMachineOptions();
+      opts = {
+        starttime: undefined,
+      };
     }
     if (!opts.starttime) {
       opts.starttime = Utils.getCurrentTimestamp();

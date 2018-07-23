@@ -1,7 +1,7 @@
 import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
-import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
+import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
 export class HTML5AnalyticsStateMachine {

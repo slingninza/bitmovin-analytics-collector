@@ -7,7 +7,11 @@ import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5Analyti
 
 export class ShakaAdapter extends HTML5Adapter {
   shakaPlayer: any;
-  constructor(shakaPlayer: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
+  constructor(
+    shakaPlayer: any,
+    eventCallback: (event: string, eventObject: any) => void,
+    stateMachine: HTML5AnalyticsStateMachine
+  ) {
     super(shakaPlayer.getMediaElement(), eventCallback, stateMachine);
 
     if (!(window as any).shaka) {

@@ -1,7 +1,7 @@
 import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
-import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
+import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import EventDebugging from '../utils/EventDebugging';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 

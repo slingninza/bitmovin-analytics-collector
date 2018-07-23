@@ -11,7 +11,11 @@ import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5Analyti
 export class HlsjsAdapter extends HTML5Adapter {
   hls: any;
 
-  constructor(hls: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
+  constructor(
+    hls: any,
+    eventCallback: (event: string, eventObject: any) => void,
+    stateMachine: HTML5AnalyticsStateMachine
+  ) {
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
     /**

@@ -1,7 +1,7 @@
 import Analytics from './Analytics';
 import {Player} from '../enums/Player';
 import CdnProviders from '../enums/CDNProviders';
-import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
+import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 
 const analyticsWrapper = (config: any) => {
   const analytics = new Analytics(config);

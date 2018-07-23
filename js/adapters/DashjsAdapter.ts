@@ -12,7 +12,11 @@ export class DashjsAdapter extends HTML5Adapter {
    */
   mediaPlayer: any;
 
-  constructor(mediaPlayer: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
+  constructor(
+    mediaPlayer: any,
+    eventCallback: (event: string, eventObject: any) => void,
+    stateMachine: HTML5AnalyticsStateMachine
+  ) {
     super(null, eventCallback, stateMachine);
 
     let videoEl = null;
