@@ -2,16 +2,17 @@ import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
+import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
 export class HTML5AnalyticsStateMachine {
   private States: any;
-  private stateMachineCallbacks: any;
+  private stateMachineCallbacks: StateMachineCallbacks;
   private pausedTimestamp: any;
   private onEnterStateTimestamp: number;
   private seekStartedAt: any;
   private stateMachine: any;
 
-  constructor(stateMachineCallbacks: any, opts: AnalyticsStateMachineOptions) {
+  constructor(stateMachineCallbacks: StateMachineCallbacks, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
     this.pausedTimestamp = null;

@@ -9,6 +9,7 @@ import CastClient from '../cast/CastClient';
 import CastReceiver from '../cast/CastReceiver';
 import AnalyticsStateMachineOptions from './AnalyticsStateMachineOptions';
 import {Sample} from '../types/Sample';
+import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
 class Analytics {
   static PAGE_LOAD_TYPE = {
@@ -35,7 +36,7 @@ class Analytics {
   private samplesQueue: any;
   private castClientConfig: any;
   private sample: Sample;
-  private stateMachineCallbacks: any;
+  private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine: any;
   private adapter: any;
 

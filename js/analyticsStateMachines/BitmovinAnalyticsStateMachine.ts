@@ -1,13 +1,14 @@
 import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
+import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
 export class BitmovinAnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 60;
   static SEEKED_PAUSE_DELAY = 120;
 
   private States: any;
-  private stateMachineCallbacks: any;
+  private stateMachineCallbacks: StateMachineCallbacks;
   private pausedTimestamp: any;
   private seekTimestamp: number;
   private seekedTimestamp: number;
@@ -15,7 +16,7 @@ export class BitmovinAnalyticsStateMachine {
   private onEnterStateTimestamp: number;
   private stateMachine: any;
 
-  constructor(stateMachineCallbacks: any) {
+  constructor(stateMachineCallbacks: StateMachineCallbacks) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
     this.pausedTimestamp = null;

@@ -3,6 +3,7 @@ import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
 import EventDebugging from '../utils/EventDebugging';
+import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
@@ -12,7 +13,7 @@ export class Bitmovin7AnalyticsStateMachine {
   private enabledDebugging = false;
 
   private States: any;
-  private stateMachineCallbacks: any;
+  private stateMachineCallbacks: StateMachineCallbacks;
   private pausedTimestamp: any;
   private seekTimestamp: number;
   private seekedTimestamp: number;
@@ -20,7 +21,7 @@ export class Bitmovin7AnalyticsStateMachine {
   private onEnterStateTimestamp: number;
   private stateMachine: any;
 
-  constructor(stateMachineCallbacks: any, opts: AnalyticsStateMachineOptions) {
+  constructor(stateMachineCallbacks: StateMachineCallbacks, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
     this.pausedTimestamp = null;
     this.seekTimestamp = 0;
