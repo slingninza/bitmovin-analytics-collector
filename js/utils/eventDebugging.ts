@@ -2,10 +2,16 @@ export default class EventDebugging {
   event: string | undefined;
   from: string | undefined;
   to: string | undefined;
-  timestamp: number ;
+  timestamp: number;
   eventObject: any;
 
-  constructor(event: string | undefined, from: string | undefined, to: string | undefined, timestamp: number, eventObject: any) {
+  constructor(
+    event: string | undefined,
+    from: string | undefined,
+    to: string | undefined,
+    timestamp: number,
+    eventObject: any
+  ) {
     this.event = event;
     this.from = from;
     this.to = to;

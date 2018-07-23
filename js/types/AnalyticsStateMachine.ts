@@ -1,4 +1,6 @@
+import AnalyticsStateMachineOptions from '../core/AnalyticsStateMachineOptions';
+
 export interface AnalyticsStateMachine {
-  createStateMachine: Function;
-  callEvent: Function;
+  createStateMachine: (opts: AnalyticsStateMachineOptions) => void;
+  callEvent: (eventType: string, eventObject: any, timestamp: number) => void;
 }

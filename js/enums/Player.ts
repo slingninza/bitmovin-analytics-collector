@@ -8,4 +8,3 @@ export enum Player {
   DASHJS = 'dashjs',
   HTML5 = 'html5',
 }
-

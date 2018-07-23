@@ -1,3 +1,3 @@
 export interface Adapter {
-  getPlayerName: Function;
+  getPlayerName: () => string;
 }

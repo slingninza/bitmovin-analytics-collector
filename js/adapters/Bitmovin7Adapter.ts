@@ -1,13 +1,14 @@
 import Events from '../enums/Events';
 import {Player} from '../enums/Player';
 import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
+import 'bitmovin-player-ui';
 
 class Bitmovin7Adapter {
   onBeforeUnLoadEvent: boolean;
-  player: any;
-  eventCallback: Function;
+  player: bitmovin.PlayerAPI;
+  eventCallback: (event: string, eventObject: any) => void;
 
-  constructor(player: any, eventCallback: Function) {
+  constructor(player: bitmovin.PlayerAPI, eventCallback: (event: string, eventObject: any) => void) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -51,14 +52,14 @@ class Bitmovin7Adapter {
       }
     };
     /* eslint-disable no-unused-vars */
-    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event: any) => {
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event: bitmovin.PlayerAPI.PlayerEvent) => {
       this.eventCallback(Events.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event: any) => {
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event: bitmovin.PlayerAPI.PlayerEvent) => {
       let autoplay = false;
       if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
         autoplay = this.player.getConfig().playback.autoplay;
@@ -129,7 +130,7 @@ class Bitmovin7Adapter {
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_CAST_STARTED, (event: any) => {
+    this.player.addEventHandler(this.player.EVENT.ON_CAST_STARTED, (event: bitmovin.PlayerAPI.PlayerEvent) => {
       this.eventCallback(Events.START_CAST, event);
     });
 

@@ -26,7 +26,7 @@ export class HTML5Adapter {
    * @param {function} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  public eventCallback: Function;
+  public eventCallback: (event: string, eventObject: any) => void;
   public stateMachine: HTML5AnalyticsStateMachine;
   public mediaEl: any;
   public mediaElEventHandlers: any;
@@ -40,7 +40,11 @@ export class HTML5Adapter {
   private needsFirstPlayIntent_: boolean;
   private mediaElementSet_: boolean;
 
-  constructor(mediaElement: any, eventCallback: Function, stateMachine: HTML5AnalyticsStateMachine) {
+  constructor(
+    mediaElement: any,
+    eventCallback: (event: string, eventObject: any) => void,
+    stateMachine: HTML5AnalyticsStateMachine
+  ) {
     this.eventCallback = eventCallback;
 
     this.stateMachine = stateMachine;
