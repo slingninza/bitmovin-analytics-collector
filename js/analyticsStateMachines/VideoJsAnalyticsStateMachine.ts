@@ -1,6 +1,6 @@
 import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
-import Events from '../enums/Events';
+import {Event} from '../enums/Event';
 import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
@@ -44,7 +44,7 @@ export class VideojsAnalyticsStateMachine {
     this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
-    this.States=States;
+    this.States = States;
     this.createStateMachine(opts);
   }
 
@@ -66,144 +66,144 @@ export class VideojsAnalyticsStateMachine {
         logger.error('Error in statemachine: ' + errorMessage);
       },
       events: [
-        {name: Events.TIMECHANGED, from: this.States.SETUP, to: this.States.SETUP},
-        {name: Events.READY, from: [this.States.SETUP, this.States.ERROR], to: this.States.READY},
-        {name: Events.PLAY, from: this.States.READY, to: this.States.STARTUP},
+        {name: Event.TIMECHANGED, from: this.States.SETUP, to: this.States.SETUP},
+        {name: Event.READY, from: [this.States.SETUP, this.States.ERROR], to: this.States.READY},
+        {name: Event.PLAY, from: this.States.READY, to: this.States.STARTUP},
 
-        {name: Events.START_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
-        {name: Events.END_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
-        {name: Events.VIDEO_CHANGE, from: this.States.STARTUP, to: this.States.STARTUP},
-        {name: Events.AUDIO_CHANGE, from: this.States.STARTUP, to: this.States.STARTUP},
-        {name: Events.TIMECHANGED, from: this.States.STARTUP, to: this.States.PLAYING},
+        {name: Event.START_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
+        {name: Event.END_BUFFERING, from: this.States.STARTUP, to: this.States.STARTUP},
+        {name: Event.VIDEO_CHANGE, from: this.States.STARTUP, to: this.States.STARTUP},
+        {name: Event.AUDIO_CHANGE, from: this.States.STARTUP, to: this.States.STARTUP},
+        {name: Event.TIMECHANGED, from: this.States.STARTUP, to: this.States.PLAYING},
 
-        {name: Events.TIMECHANGED, from: this.States.PLAYING, to: this.States.PLAYING},
-        {name: Events.END_BUFFERING, from: this.States.PLAYING, to: this.States.PLAYING},
-        {name: Events.START_BUFFERING, from: this.States.PLAYING, to: this.States.REBUFFERING},
-        {name: Events.START_BUFFERING, from: this.States.REBUFFERING, to: this.States.REBUFFERING},
-        {name: Events.TIMECHANGED, from: this.States.REBUFFERING, to: this.States.PLAYING},
+        {name: Event.TIMECHANGED, from: this.States.PLAYING, to: this.States.PLAYING},
+        {name: Event.END_BUFFERING, from: this.States.PLAYING, to: this.States.PLAYING},
+        {name: Event.START_BUFFERING, from: this.States.PLAYING, to: this.States.REBUFFERING},
+        {name: Event.START_BUFFERING, from: this.States.REBUFFERING, to: this.States.REBUFFERING},
+        {name: Event.TIMECHANGED, from: this.States.REBUFFERING, to: this.States.PLAYING},
 
         // Ignoring since it's pushed in a live stream
-        {name: Events.SEEK, from: this.States.STARTUP, to: this.States.STARTUP},
-        {name: Events.SEEK, from: this.States.PLAYING, to: this.States.PLAY_SEEKING},
-        {name: Events.TIMECHANGED, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
-        {name: Events.TIMECHANGED, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
+        {name: Event.SEEK, from: this.States.STARTUP, to: this.States.STARTUP},
+        {name: Event.SEEK, from: this.States.PLAYING, to: this.States.PLAY_SEEKING},
+        {name: Event.TIMECHANGED, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.TIMECHANGED, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
 
-        {name: Events.PAUSE, from: this.States.PLAYING, to: this.States.PAUSE},
-        {name: Events.PAUSE, from: this.States.REBUFFERING, to: this.States.PAUSE},
-        {name: Events.TIMECHANGED, from: this.States.PAUSE, to: this.States.PAUSE},
-        {name: Events.PLAY, from: this.States.PAUSE, to: this.States.PLAYING},
+        {name: Event.PAUSE, from: this.States.PLAYING, to: this.States.PAUSE},
+        {name: Event.PAUSE, from: this.States.REBUFFERING, to: this.States.PAUSE},
+        {name: Event.TIMECHANGED, from: this.States.PAUSE, to: this.States.PAUSE},
+        {name: Event.PLAY, from: this.States.PAUSE, to: this.States.PLAYING},
 
-        {name: Events.VIDEO_CHANGE, from: this.States.PLAYING, to: this.States.QUALITYCHANGE},
-        {name: Events.AUDIO_CHANGE, from: this.States.PLAYING, to: this.States.QUALITYCHANGE},
-        {name: Events.VIDEO_CHANGE, from: this.States.QUALITYCHANGE, to: this.States.QUALITYCHANGE},
-        {name: Events.AUDIO_CHANGE, from: this.States.QUALITYCHANGE, to: this.States.QUALITYCHANGE},
+        {name: Event.VIDEO_CHANGE, from: this.States.PLAYING, to: this.States.QUALITYCHANGE},
+        {name: Event.AUDIO_CHANGE, from: this.States.PLAYING, to: this.States.QUALITYCHANGE},
+        {name: Event.VIDEO_CHANGE, from: this.States.QUALITYCHANGE, to: this.States.QUALITYCHANGE},
+        {name: Event.AUDIO_CHANGE, from: this.States.QUALITYCHANGE, to: this.States.QUALITYCHANGE},
         {name: 'FINISH_QUALITYCHANGE', from: this.States.QUALITYCHANGE, to: this.States.PLAYING},
 
-        {name: Events.VIDEO_CHANGE, from: this.States.PAUSE, to: this.States.QUALITYCHANGE_PAUSE},
-        {name: Events.AUDIO_CHANGE, from: this.States.PAUSE, to: this.States.QUALITYCHANGE_PAUSE},
+        {name: Event.VIDEO_CHANGE, from: this.States.PAUSE, to: this.States.QUALITYCHANGE_PAUSE},
+        {name: Event.AUDIO_CHANGE, from: this.States.PAUSE, to: this.States.QUALITYCHANGE_PAUSE},
         {
-          name: Events.VIDEO_CHANGE,
+          name: Event.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
           to: this.States.QUALITYCHANGE_PAUSE,
         },
         {
-          name: Events.AUDIO_CHANGE,
+          name: Event.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_PAUSE,
           to: this.States.QUALITYCHANGE_PAUSE,
         },
         {name: 'FINISH_QUALITYCHANGE_PAUSE', from: this.States.QUALITYCHANGE_PAUSE, to: this.States.PAUSE},
 
-        {name: Events.SEEK, from: this.States.PAUSE, to: this.States.PAUSED_SEEKING},
-        {name: Events.SEEK, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
-        {name: Events.AUDIO_CHANGE, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
-        {name: Events.VIDEO_CHANGE, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
-        {name: Events.START_BUFFERING, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
-        {name: Events.END_BUFFERING, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
-        {name: Events.SEEKED, from: this.States.PAUSED_SEEKING, to: this.States.PAUSE},
-        {name: Events.PLAY, from: this.States.PAUSED_SEEKING, to: this.States.PLAYING},
-        {name: Events.PAUSE, from: this.States.PAUSED_SEEKING, to: this.States.PAUSE},
+        {name: Event.SEEK, from: this.States.PAUSE, to: this.States.PAUSED_SEEKING},
+        {name: Event.SEEK, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
+        {name: Event.AUDIO_CHANGE, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
+        {name: Event.VIDEO_CHANGE, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
+        {name: Event.START_BUFFERING, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
+        {name: Event.END_BUFFERING, from: this.States.PAUSED_SEEKING, to: this.States.PAUSED_SEEKING},
+        {name: Event.SEEKED, from: this.States.PAUSED_SEEKING, to: this.States.PAUSE},
+        {name: Event.PLAY, from: this.States.PAUSED_SEEKING, to: this.States.PLAYING},
+        {name: Event.PAUSE, from: this.States.PAUSED_SEEKING, to: this.States.PAUSE},
 
         {name: 'PLAY_SEEK', from: this.States.PAUSE, to: this.States.PLAY_SEEKING},
         {name: 'PLAY_SEEK', from: this.States.PAUSED_SEEKING, to: this.States.PLAY_SEEKING},
         {name: 'PLAY_SEEK', from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
-        {name: Events.SEEK, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
-        {name: Events.AUDIO_CHANGE, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
-        {name: Events.VIDEO_CHANGE, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
-        {name: Events.START_BUFFERING, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
-        {name: Events.END_BUFFERING, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
-        {name: Events.SEEKED, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.SEEK, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.AUDIO_CHANGE, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.VIDEO_CHANGE, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.START_BUFFERING, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.END_BUFFERING, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.SEEKED, from: this.States.PLAY_SEEKING, to: this.States.PLAY_SEEKING},
 
         // We are ending the seek
-        {name: Events.SEEKED, from: this.States.PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Event.SEEKED, from: this.States.PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
 
-        {name: Events.START_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
-        {name: Events.END_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
-        {name: Events.SEEKED, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
-        {name: Events.TIMECHANGED, from: this.States.END_PLAY_SEEKING, to: this.States.PLAYING},
+        {name: Event.START_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Event.END_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Event.SEEKED, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Event.TIMECHANGED, from: this.States.END_PLAY_SEEKING, to: this.States.PLAYING},
 
-        {name: Events.END, from: this.States.PLAY_SEEKING, to: this.States.END},
-        {name: Events.END, from: this.States.PAUSED_SEEKING, to: this.States.END},
-        {name: Events.END, from: this.States.PLAYING, to: this.States.END},
-        {name: Events.END, from: this.States.PAUSE, to: this.States.END},
-        {name: Events.SEEK, from: this.States.END, to: this.States.END},
-        {name: Events.SEEKED, from: this.States.END, to: this.States.END},
-        {name: Events.TIMECHANGED, from: this.States.END, to: this.States.END},
-        {name: Events.END_BUFFERING, from: this.States.END, to: this.States.END},
-        {name: Events.START_BUFFERING, from: this.States.END, to: this.States.END},
-        {name: Events.END, from: this.States.END, to: this.States.END},
+        {name: Event.END, from: this.States.PLAY_SEEKING, to: this.States.END},
+        {name: Event.END, from: this.States.PAUSED_SEEKING, to: this.States.END},
+        {name: Event.END, from: this.States.PLAYING, to: this.States.END},
+        {name: Event.END, from: this.States.PAUSE, to: this.States.END},
+        {name: Event.SEEK, from: this.States.END, to: this.States.END},
+        {name: Event.SEEKED, from: this.States.END, to: this.States.END},
+        {name: Event.TIMECHANGED, from: this.States.END, to: this.States.END},
+        {name: Event.END_BUFFERING, from: this.States.END, to: this.States.END},
+        {name: Event.START_BUFFERING, from: this.States.END, to: this.States.END},
+        {name: Event.END, from: this.States.END, to: this.States.END},
 
         //Ignored - Livestreams do a Seek during startup and SEEKED once playback started
-        {name: Events.SEEKED, from: this.States.PLAYING, to: this.States.PLAYING},
+        {name: Event.SEEKED, from: this.States.PLAYING, to: this.States.PLAYING},
 
-        {name: Events.PLAY, from: this.States.END, to: this.States.PLAYING},
+        {name: Event.PLAY, from: this.States.END, to: this.States.PLAYING},
 
-        {name: Events.ERROR, from: this.getAllStates(), to: this.States.ERROR},
-        {name: Events.PAUSE, from: this.States.ERROR, to: this.States.ERROR},
+        {name: Event.ERROR, from: this.getAllStates(), to: this.States.ERROR},
+        {name: Event.PAUSE, from: this.States.ERROR, to: this.States.ERROR},
 
-        {name: Events.SEEK, from: this.States.END_PLAY_SEEKING, to: this.States.PLAY_SEEKING},
+        {name: Event.SEEK, from: this.States.END_PLAY_SEEKING, to: this.States.PLAY_SEEKING},
         {name: 'FINISH_PLAY_SEEKING', from: this.States.END_PLAY_SEEKING, to: this.States.PLAYING},
 
-        {name: Events.UNLOAD, from: this.getAllStates(), to: this.States.END},
+        {name: Event.UNLOAD, from: this.getAllStates(), to: this.States.END},
 
-        {name: Events.START_AD, from: this.States.PLAYING, to: this.States.AD},
-        {name: Events.END_AD, from: this.States.AD, to: this.States.PLAYING},
+        {name: Event.START_AD, from: this.States.PLAYING, to: this.States.AD},
+        {name: Event.END_AD, from: this.States.AD, to: this.States.PLAYING},
 
-        {name: Events.MUTE, from: this.States.READY, to: this.States.MUTING_READY},
-        {name: Events.UN_MUTE, from: this.States.READY, to: this.States.MUTING_READY},
+        {name: Event.MUTE, from: this.States.READY, to: this.States.MUTING_READY},
+        {name: Event.UN_MUTE, from: this.States.READY, to: this.States.MUTING_READY},
         {name: 'FINISH_MUTING', from: this.States.MUTING_READY, to: this.States.READY},
 
-        {name: Events.MUTE, from: this.States.PLAYING, to: this.States.MUTING_PLAY},
-        {name: Events.UN_MUTE, from: this.States.PLAYING, to: this.States.MUTING_PLAY},
+        {name: Event.MUTE, from: this.States.PLAYING, to: this.States.MUTING_PLAY},
+        {name: Event.UN_MUTE, from: this.States.PLAYING, to: this.States.MUTING_PLAY},
         {name: 'FINISH_MUTING', from: this.States.MUTING_PLAY, to: this.States.PLAYING},
 
-        {name: Events.MUTE, from: this.States.PAUSE, to: this.States.MUTING_PAUSE},
-        {name: Events.UN_MUTE, from: this.States.PAUSE, to: this.States.MUTING_PAUSE},
+        {name: Event.MUTE, from: this.States.PAUSE, to: this.States.MUTING_PAUSE},
+        {name: Event.UN_MUTE, from: this.States.PAUSE, to: this.States.MUTING_PAUSE},
         {name: 'FINISH_MUTING', from: this.States.MUTING_PAUSE, to: this.States.PAUSE},
 
-        {name: Events.START_CAST, from: [this.States.READY, this.States.PAUSE], to: this.States.CASTING},
-        {name: Events.PAUSE, from: this.States.CASTING, to: this.States.CASTING},
-        {name: Events.PLAY, from: this.States.CASTING, to: this.States.CASTING},
-        {name: Events.TIMECHANGED, from: this.States.CASTING, to: this.States.CASTING},
-        {name: Events.MUTE, from: this.States.CASTING, to: this.States.CASTING},
-        {name: Events.SEEK, from: this.States.CASTING, to: this.States.CASTING},
-        {name: Events.SEEKED, from: this.States.CASTING, to: this.States.CASTING},
-        {name: Events.END_CAST, from: this.States.CASTING, to: this.States.READY},
+        {name: Event.START_CAST, from: [this.States.READY, this.States.PAUSE], to: this.States.CASTING},
+        {name: Event.PAUSE, from: this.States.CASTING, to: this.States.CASTING},
+        {name: Event.PLAY, from: this.States.CASTING, to: this.States.CASTING},
+        {name: Event.TIMECHANGED, from: this.States.CASTING, to: this.States.CASTING},
+        {name: Event.MUTE, from: this.States.CASTING, to: this.States.CASTING},
+        {name: Event.SEEK, from: this.States.CASTING, to: this.States.CASTING},
+        {name: Event.SEEKED, from: this.States.CASTING, to: this.States.CASTING},
+        {name: Event.END_CAST, from: this.States.CASTING, to: this.States.READY},
 
-        {name: Events.SEEK, from: this.States.READY, to: this.States.READY},
-        {name: Events.SEEKED, from: this.States.READY, to: this.States.READY},
-        {name: Events.SEEKED, from: this.States.STARTUP, to: this.States.STARTUP},
+        {name: Event.SEEK, from: this.States.READY, to: this.States.READY},
+        {name: Event.SEEKED, from: this.States.READY, to: this.States.READY},
+        {name: Event.SEEKED, from: this.States.STARTUP, to: this.States.STARTUP},
 
-        {name: Events.SOURCE_LOADED, from: this.getAllStates(), to: this.States.SETUP},
+        {name: Event.SOURCE_LOADED, from: this.getAllStates(), to: this.States.SETUP},
 
-        {name: Events.VIDEO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
-        {name: Events.AUDIO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
+        {name: Event.VIDEO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
+        {name: Event.AUDIO_CHANGE, from: this.States.REBUFFERING, to: this.States.QUALITYCHANGE_REBUFFERING},
         {
-          name: Events.VIDEO_CHANGE,
+          name: Event.VIDEO_CHANGE,
           from: this.States.QUALITYCHANGE_REBUFFERING,
           to: this.States.QUALITYCHANGE_REBUFFERING,
         },
         {
-          name: Events.AUDIO_CHANGE,
+          name: Event.AUDIO_CHANGE,
           from: this.States.QUALITYCHANGE_REBUFFERING,
           to: this.States.QUALITYCHANGE_REBUFFERING,
         },
@@ -241,7 +241,7 @@ export class VideojsAnalyticsStateMachine {
             this.seekTimestamp = this.onEnterStateTimestamp;
           }
 
-          if (event === Events.START_CAST && to === this.States.CASTING) {
+          if (event === Event.START_CAST && to === this.States.CASTING) {
             this.stateMachineCallbacks.startCasting(timestamp, eventObject);
           }
         },
@@ -277,7 +277,7 @@ export class VideojsAnalyticsStateMachine {
           if (from === this.States.END_PLAY_SEEKING || from === this.States.PAUSED_SEEKING) {
             const seekDuration = this.seekedTimestamp - this.seekTimestamp;
             this.stateMachineCallbacks[fnName](seekDuration, fnName, eventObject);
-          } else if (event === Events.UNLOAD && from === this.States.PLAYING) {
+          } else if (event === Event.UNLOAD && from === this.States.PLAYING) {
             this.stateMachineCallbacks.playingAndBye(stateDuration, fnName, eventObject);
           } else if (from === this.States.PAUSE && to !== this.States.PAUSED_SEEKING) {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(event);
@@ -300,13 +300,13 @@ export class VideojsAnalyticsStateMachine {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
-          if (event === Events.VIDEO_CHANGE) {
+          if (event === Event.VIDEO_CHANGE) {
             this.stateMachineCallbacks.videoChange(eventObject);
-          } else if (event === Events.AUDIO_CHANGE) {
+          } else if (event === Event.AUDIO_CHANGE) {
             this.stateMachineCallbacks.audioChange(eventObject);
-          } else if (event === Events.MUTE) {
+          } else if (event === Event.MUTE) {
             this.stateMachineCallbacks.mute();
-          } else if (event === Events.UN_MUTE) {
+          } else if (event === Event.UN_MUTE) {
             this.stateMachineCallbacks.unMute();
           }
         },

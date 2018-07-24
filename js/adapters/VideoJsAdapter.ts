@@ -1,6 +1,6 @@
 /* global videojs */
 
-import Events from '../enums/Events';
+import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
 declare var videojs: any;
@@ -124,21 +124,21 @@ class VideoJsAdapter {
         videoWindowHeight: this.videoHeight(),
         muted: this.muted(),
       };
-      that.eventCallback(Events.READY, info);
+      that.eventCallback(Event.READY, info);
     });
     this.player.on('play', function(this: any) {
-      that.eventCallback(Events.PLAY, {
+      that.eventCallback(Event.PLAY, {
         currentTime: this.currentTime(),
       });
     });
     this.player.on('pause', function(this: any) {
-      that.eventCallback(Events.PAUSE, {
+      that.eventCallback(Event.PAUSE, {
         currentTime: this.currentTime(),
       });
     });
     this.player.on('error', function(this: any) {
       const error = this.error();
-      that.eventCallback(Events.ERROR, {
+      that.eventCallback(Event.ERROR, {
         currentTime: this.currentTime(),
         code: error.code,
         message: error.message,
@@ -147,23 +147,23 @@ class VideoJsAdapter {
     this.player.on('volumechange', function(this: any) {
       const muted = this.muted();
       if (muted) {
-        that.eventCallback(Events.MUTE, {
+        that.eventCallback(Event.MUTE, {
           currentTime: this.currentTime(),
         });
       } else {
-        that.eventCallback(Events.UN_MUTE, {
+        that.eventCallback(Event.UN_MUTE, {
           currentTime: this.currentTime(),
         });
       }
     });
     this.player.on('seeking', function(this: any) {
-      that.eventCallback(Events.SEEK, {
+      that.eventCallback(Event.SEEK, {
         currentTime: this.currentTime(),
         droppedFrames: 0,
       });
     });
     this.player.on('seeked', function(this: any) {
-      that.eventCallback(Events.SEEKED, {
+      that.eventCallback(Event.SEEKED, {
         currentTime: this.currentTime(),
         droppedFrames: 0,
       });
@@ -180,7 +180,7 @@ class VideoJsAdapter {
       isStalling = false;
       lastTimeupdate = Date.now();
 
-      that.eventCallback(Events.TIMECHANGED, {
+      that.eventCallback(Event.TIMECHANGED, {
         currentTime: this.currentTime(),
       });
 
@@ -205,7 +205,7 @@ class VideoJsAdapter {
           currentTime: this.currentTime(),
         };
 
-        that.eventCallback(Events.VIDEO_CHANGE, eventObject);
+        that.eventCallback(Event.VIDEO_CHANGE, eventObject);
         analyticsBitrate = bitrate;
       }
 
@@ -214,7 +214,7 @@ class VideoJsAdapter {
           return;
         }
 
-        that.eventCallback(Events.START_BUFFERING, {
+        that.eventCallback(Event.START_BUFFERING, {
           currentTime: this.currentTime(),
         });
       }, BUFFERING_TIMECHANGED_TIMEOUT);
@@ -257,7 +257,7 @@ class VideoJsAdapter {
             currentTime: this.currentTime(),
           };
 
-          that.eventCallback(Events.VIDEO_CHANGE, eventObject);
+          that.eventCallback(Event.VIDEO_CHANGE, eventObject);
           analyticsBitrate = bitrate;
         }
       }
@@ -270,7 +270,7 @@ class VideoJsAdapter {
     window.onunload = window.onbeforeunload = () => {
       if (!this.onBeforeUnLoadEvent) {
         this.onBeforeUnLoadEvent = true;
-        this.eventCallback(Events.UNLOAD, {
+        this.eventCallback(Event.UNLOAD, {
           currentTime: this.player.currentTime(),
         });
       }

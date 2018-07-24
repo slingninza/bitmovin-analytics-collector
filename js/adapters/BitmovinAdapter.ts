@@ -1,4 +1,4 @@
-import Events from '../enums/Events';
+import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 
 class BitmovinAdapter {
@@ -19,7 +19,7 @@ class BitmovinAdapter {
 
   register() {
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, () => {
-      this.eventCallback(Events.SOURCE_LOADED);
+      this.eventCallback(Event.SOURCE_LOADED);
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_READY, () => {
@@ -28,7 +28,7 @@ class BitmovinAdapter {
         autoplay = this.player.getConfig().playback.autoplay;
       }
 
-      this.eventCallback(Events.READY, {
+      this.eventCallback(Event.READY, {
         isLive: this.player.isLive(),
         version: this.player.getVersion(),
         type: this.player.getPlayerType(),
@@ -47,54 +47,54 @@ class BitmovinAdapter {
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_CAST_START, () => {
-      this.eventCallback(Events.START_CAST);
+      this.eventCallback(Event.START_CAST);
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_CAST_STOP, () => {
-      this.eventCallback(Events.END_CAST);
+      this.eventCallback(Event.END_CAST);
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_PLAY, () => {
-      this.eventCallback(Events.PLAY, {
+      this.eventCallback(Event.PLAY, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_PAUSE, () => {
-      this.eventCallback(Events.PAUSE, {
+      this.eventCallback(Event.PAUSE, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_TIME_CHANGED, () => {
-      this.eventCallback(Events.TIMECHANGED, {
+      this.eventCallback(Event.TIMECHANGED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_SEEK, () => {
-      this.eventCallback(Events.SEEK, {
+      this.eventCallback(Event.SEEK, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_SEEKED, () => {
-      this.eventCallback(Events.SEEKED, {
+      this.eventCallback(Event.SEEKED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_START_BUFFERING, () => {
-      this.eventCallback(Events.START_BUFFERING);
+      this.eventCallback(Event.START_BUFFERING);
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_STOP_BUFFERING, () => {
-      this.eventCallback(Events.END_BUFFERING, {
+      this.eventCallback(Event.END_BUFFERING, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
@@ -103,7 +103,7 @@ class BitmovinAdapter {
     this.player.addEventHandler(this.player.EVENT.ON_AUDIO_PLAYBACK_QUALITY_CHANGE, () => {
       const quality = this.player.getPlaybackAudioData();
 
-      this.eventCallback(Events.AUDIO_CHANGE, {
+      this.eventCallback(Event.AUDIO_CHANGE, {
         bitrate: quality.bitrate,
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
@@ -113,7 +113,7 @@ class BitmovinAdapter {
     this.player.addEventHandler(this.player.EVENT.ON_VIDEO_PLAYBACK_QUALITY_CHANGE, () => {
       const quality = this.player.getPlaybackVideoData();
 
-      this.eventCallback(Events.VIDEO_CHANGE, {
+      this.eventCallback(Event.VIDEO_CHANGE, {
         width: quality.width,
         height: quality.height,
         bitrate: quality.bitrate,
@@ -123,7 +123,7 @@ class BitmovinAdapter {
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_FULLSCREEN_ENTER, () => {
-      this.eventCallback(Events.START_FULLSCREEN, {
+      this.eventCallback(Event.START_FULLSCREEN, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
@@ -131,49 +131,49 @@ class BitmovinAdapter {
     this.onBeforeUnLoadEvent = false;
 
     this.player.addEventHandler(this.player.EVENT.ON_FULLSCREEN_EXIT, () => {
-      this.eventCallback(Events.END_FULLSCREEN, {
+      this.eventCallback(Event.END_FULLSCREEN, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_AD_STARTED, () => {
-      this.eventCallback(Events.START_AD, {
+      this.eventCallback(Event.START_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_AD_FINISHED, () => {
-      this.eventCallback(Events.END_AD, {
+      this.eventCallback(Event.END_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_MUTE, () => {
-      this.eventCallback(Events.MUTE, {
+      this.eventCallback(Event.MUTE, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_UNMUTE, () => {
-      this.eventCallback(Events.UN_MUTE, {
+      this.eventCallback(Event.UN_MUTE, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_ERROR, (event: any) => {
-      this.eventCallback(Events.ERROR, {
+      this.eventCallback(Event.ERROR, {
         code: event.code,
         message: event.message,
       });
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_PLAYBACK_FINISHED, () => {
-      this.eventCallback(Events.PLAYBACK_FINISHED, {
+      this.eventCallback(Event.PLAYBACK_FINISHED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
@@ -182,7 +182,7 @@ class BitmovinAdapter {
     window.onunload = window.onbeforeunload = () => {
       if (!this.onBeforeUnLoadEvent) {
         this.onBeforeUnLoadEvent = true;
-        this.eventCallback(Events.UNLOAD, {
+        this.eventCallback(Event.UNLOAD, {
           currentTime: this.player.getCurrentTime(),
           droppedFrames: this.player.getDroppedFrames(),
         });

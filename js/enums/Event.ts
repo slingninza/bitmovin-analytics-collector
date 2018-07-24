@@ -1,4 +1,4 @@
-export enum Events {
+export enum Event {
   READY = 'ready',
   SOURCE_LOADED = 'sourceLoaded',
   PLAY = 'play',
@@ -28,4 +28,3 @@ export enum Events {
   MANUAL_SOURCE_CHANGE = 'manualSourceChangeInitiated',
 }
 
-export default Events;

@@ -20,7 +20,7 @@ class AdapterFactory {
    * @param {AnalyticsEventCallback} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine): Adapter | undefined {
+  static getAdapter(player: any, eventCallback: any, stateMachine: any): Adapter | undefined {
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
       return new BitmovinAdapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {

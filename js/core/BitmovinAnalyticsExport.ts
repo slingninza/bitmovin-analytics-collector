@@ -1,6 +1,6 @@
 import Analytics from './Analytics';
 import {Player} from '../enums/Player';
-import CdnProviders from '../enums/CDNProviders';
+import {CdnProvider} from '../enums/CDNProvider';
 import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 
 const analyticsWrapper = (config: any) => {
@@ -80,7 +80,7 @@ const AnalyticsModule = {
 };
 
 (analyticsWrapper as any).Players = Player;
-(analyticsWrapper as any).CdnProviders = CdnProviders;
+(analyticsWrapper as any).CdnProviders = CdnProvider;
 (analyticsWrapper as any).PlayerModule = AnalyticsModule;
 
 (window as any).bitmovin = (window as any).bitmovin || {};

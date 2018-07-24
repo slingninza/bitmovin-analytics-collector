@@ -30,7 +30,7 @@ class Analytics {
   private licensing: string;
   private startupTime: number;
   private pageLoadType: any;
-  private autoplay:boolean|undefined;
+  private autoplay: boolean | undefined;
   private isCastClient: boolean;
   private isCastReceiver: boolean;
   private isAllowedToSendSamples: boolean;
@@ -88,7 +88,7 @@ class Analytics {
     }
   }
 
-  updateSampleToCastClientConfig(sample: any, castClientConfig: any) {
+  updateSampleToCastClientConfig(sample: Sample, castClientConfig: any) {
     const {config, userId, impressionId, domain, path, language, userAgent} = castClientConfig;
     sample.impressionId = impressionId;
     sample.userId = userId;
@@ -159,7 +159,7 @@ class Analytics {
     this.stateMachineCallbacks = {
       // All of these are called in the onLeaveState Method.
       // So it's the last sample
-      setup: (time: number, state: any, event: any) => {
+      setup: (time: number, state: string, event: string) => {
         if (!this.isCastReceiver) {
           this.sample.impressionId = Utils.generateUUID();
         }
@@ -189,7 +189,7 @@ class Analytics {
 
       ready: Utils.noOp,
 
-      startup: (time: number, state: any) => {
+      startup: (time: number, state: string) => {
         this.setDuration(time);
         this.sample.videoStartupTime = time;
         this.setState(state);
@@ -228,7 +228,7 @@ class Analytics {
         this.sendUnloadRequest();
       },
 
-      heartbeat: (time: number, state: any, event: any) => {
+      heartbeat: (time: number, state: any, event: string) => {
         this.setDroppedFrames(event);
         this.setState(state);
         this.setDuration(time);
@@ -238,28 +238,28 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      qualitychange: (time: number, state: any) => {
+      qualitychange: (time: number, state: string) => {
         this.setDuration(time);
         this.setState(state);
 
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      qualitychange_pause: (time: number, state: any) => {
+      qualitychange_pause: (time: number, state: string) => {
         this.setDuration(time);
         this.setState(state);
 
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      qualitychange_rebuffering: (time: number, state: any) => {
+      qualitychange_rebuffering: (time: number, state: string) => {
         this.setDuration(time);
         this.setState(state);
 
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      videoChange: (event: any) => {
+      videoChange: (event: string) => {
         this.stateMachineCallbacks.setVideoTimeEndFromEvent(event);
         this.stateMachineCallbacks.setVideoTimeStartFromEvent(event);
         this.setPlaybackVideoPropertiesFromEvent(event);
@@ -271,7 +271,7 @@ class Analytics {
         this.sample.audioBitrate = event.bitrate;
       },
 
-      pause: (time: number, state: any, event: any) => {
+      pause: (time: number, state: string, event: string) => {
         this.setDuration(time);
         this.setState(state);
 
@@ -280,7 +280,7 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      paused_seeking: (time: number, state: any, event: any) => {
+      paused_seeking: (time: number, state: string, event: string) => {
         this.setDuration(time);
         this.setState(state);
 
@@ -291,7 +291,7 @@ class Analytics {
 
       play_seeking: Utils.noOp,
 
-      end_play_seeking: (time: number, state: any, event: any) => {
+      end_play_seeking: (time: number, state: string, event: string) => {
         this.setState(state);
         this.setDuration(time);
 
@@ -300,7 +300,7 @@ class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      rebuffering: (time: number, state: any, event: any) => {
+      rebuffering: (time: number, state: string, event: string) => {
         this.setDuration(time);
         this.setState(state);
 
@@ -323,11 +323,11 @@ class Analytics {
         delete this.sample.errorMessage;
       },
 
-      end: (time: number, state: any, event: any) => {
+      end: (time: number, state: string, event: string) => {
         this.sample.impressionId = Utils.generateUUID();
       },
 
-      ad: (time: number, state: any, event: any) => {
+      ad: (time: number, state: string, event: string) => {
         this.setDuration(time);
         this.setState(state);
         this.sample.ad = time;
@@ -491,17 +491,17 @@ class Analytics {
     return this.sample.impressionId;
   };
 
-  record = (eventType: any, eventObject: any) => {
+  record = (eventType: string, eventObject: any) => {
     eventObject = eventObject || {};
 
     this.analyticsStateMachine.callEvent(eventType, eventObject, Utils.getCurrentTimestamp());
   };
 
-  setDuration(duration: any) {
+  setDuration(duration: number) {
     this.sample.duration = duration;
   }
 
-  setState(state: any) {
+  setState(state: string) {
     this.sample.state = state;
   }
 

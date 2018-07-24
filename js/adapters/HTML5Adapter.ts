@@ -1,4 +1,4 @@
-import Events from '../enums/Events';
+import {Event} from '../enums/Event';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
 import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
 import {Player} from '../enums/Player';
@@ -32,11 +32,11 @@ export class HTML5Adapter {
   public mediaElEventHandlers: any;
   private analyticsBitrate_: number;
   private bufferingTimeout_: any;
-  private isBuffering_: any;
+  private isBuffering_: boolean;
   private isLive_: boolean;
   private isPaused_: boolean;
   private previousMediaTime_: any;
-  private needsReadyEvent_: any;
+  private needsReadyEvent_: boolean;
   private needsFirstPlayIntent_: boolean;
   private mediaElementSet_: boolean;
 
@@ -250,7 +250,7 @@ export class HTML5Adapter {
         return;
       }
 
-      this.eventCallback(Events.METADATA_LOADED, info);
+      this.eventCallback(Event.METADATA_LOADED, info);
     });
 
     // We need the PLAY event to indicate the intent to play
@@ -261,7 +261,7 @@ export class HTML5Adapter {
 
       this.needsFirstPlayIntent_ = false;
 
-      this.eventCallback(Events.PLAY, {
+      this.eventCallback(Event.PLAY, {
         currentTime,
       });
     });
@@ -280,7 +280,7 @@ export class HTML5Adapter {
         return;
       }
 
-      this.eventCallback(Events.TIMECHANGED, {
+      this.eventCallback(Event.TIMECHANGED, {
         currentTime,
       });
     });
@@ -288,7 +288,7 @@ export class HTML5Adapter {
     this.listenToMediaElementEvent('error', () => {
       const {currentTime, error} = mediaEl;
 
-      this.eventCallback(Events.ERROR, {
+      this.eventCallback(Event.ERROR, {
         currentTime,
         // See https://developer.mozilla.org/en-US/docs/Web/API/MediaError
         code: error.code,
@@ -300,11 +300,11 @@ export class HTML5Adapter {
       const {muted, currentTime} = mediaEl;
 
       if (muted) {
-        this.eventCallback(Events.MUTE, {
+        this.eventCallback(Event.MUTE, {
           currentTime,
         });
       } else {
-        this.eventCallback(Events.UN_MUTE, {
+        this.eventCallback(Event.UN_MUTE, {
           currentTime,
         });
       }
@@ -313,7 +313,7 @@ export class HTML5Adapter {
     this.listenToMediaElementEvent('seeking', () => {
       const {currentTime} = mediaEl;
 
-      this.eventCallback(Events.SEEK, {
+      this.eventCallback(Event.SEEK, {
         currentTime,
         droppedFrames: 0,
       });
@@ -326,7 +326,7 @@ export class HTML5Adapter {
         clearTimeout(this.bufferingTimeout_);
       }
 
-      this.eventCallback(Events.SEEKED, {
+      this.eventCallback(Event.SEEKED, {
         currentTime,
         droppedFrames: 0,
       });
@@ -343,7 +343,7 @@ export class HTML5Adapter {
       }
 
       if (!this.isPaused_) {
-        this.eventCallback(Events.TIMECHANGED, {
+        this.eventCallback(Event.TIMECHANGED, {
           currentTime,
         });
       }
@@ -428,7 +428,7 @@ export class HTML5Adapter {
 
     this.stateMachine.updateMetadata(info);
 
-    this.eventCallback(Events.READY, info);
+    this.eventCallback(Event.READY, info);
   }
 
   /**
@@ -456,7 +456,7 @@ export class HTML5Adapter {
       return;
     }
 
-    this.eventCallback(Events.START_BUFFERING, {
+    this.eventCallback(Event.START_BUFFERING, {
       currentTime,
     });
 
@@ -470,7 +470,7 @@ export class HTML5Adapter {
 
     const {currentTime} = this.mediaEl;
 
-    this.eventCallback(Events.PAUSE, {
+    this.eventCallback(Event.PAUSE, {
       currentTime,
     });
 
@@ -535,7 +535,7 @@ export class HTML5Adapter {
       };
 
       if (!silent) {
-        this.eventCallback(Events.VIDEO_CHANGE, eventData);
+        this.eventCallback(Event.VIDEO_CHANGE, eventData);
       }
 
       this.analyticsBitrate_ = bitrate;

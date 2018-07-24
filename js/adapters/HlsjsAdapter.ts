@@ -60,7 +60,7 @@ export class HlsjsAdapter extends HTML5Adapter {
   /**
    * @override
    */
-  isLive(): boolean {
+  isLive() {
     const hls = this.hls;
     if (hls.currentLevel < 0) {
       return false;
