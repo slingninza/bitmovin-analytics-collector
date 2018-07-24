@@ -8,7 +8,7 @@ declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
-class VideoJsAdapter implements Adapter {
+export class VideoJsAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: Function;
@@ -278,5 +278,3 @@ class VideoJsAdapter implements Adapter {
     };
   }
 }
-
-export default VideoJsAdapter;

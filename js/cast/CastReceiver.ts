@@ -1,9 +1,9 @@
 import {MESSAGE_NAMESPACE} from '../utils/Settings';
-import logger from '../utils/Logger';
+import {logger} from '../utils/Logger';
 
 /* global cast */
 
-class CastReceiver {
+export class CastReceiver {
   messageBus: any;
   callback: any;
   setUp() {
@@ -35,5 +35,3 @@ class CastReceiver {
     this.messageBus.broadcast(message);
   }
 }
-
-export default CastReceiver;

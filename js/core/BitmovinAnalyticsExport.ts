@@ -1,9 +1,9 @@
-import Analytics from './Analytics';
+import {Analytics} from './Analytics';
 import {Player} from '../enums/Player';
 import {CdnProvider} from '../enums/CDNProvider';
-import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
+import {AnalyticsStateMachineOptions} from '../types/AnalyticsStateMachineOptions';
 
-const analyticsWrapper = (config: any) => {
+export const analyticsWrapper = (config: any) => {
   const analytics = new Analytics(config);
   return {
     register: (player: any, opts?: AnalyticsStateMachineOptions) => {
@@ -85,5 +85,3 @@ const AnalyticsModule = {
 
 (window as any).bitmovin = (window as any).bitmovin || {};
 (window as any).bitmovin.analytics = analyticsWrapper;
-
-export default analyticsWrapper;

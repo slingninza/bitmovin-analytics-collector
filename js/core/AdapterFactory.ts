@@ -1,8 +1,8 @@
 import PlayerDetector from '../utils/PlayerDetector';
 
-import BitmovinAdapter from '../adapters/BitmovinAdapter';
-import Bitmovin7Adapter from '../adapters/Bitmovin7Adapter';
-import VideoJsAdapter from '../adapters/VideoJsAdapter';
+import {BitmovinAdapter} from '../adapters/BitmovinAdapter';
+import {Bitmovin7Adapter} from '../adapters/Bitmovin7Adapter';
+import {VideoJsAdapter} from '../adapters/VideoJsAdapter';
 
 import {HlsjsAdapter} from '../adapters/HlsjsAdapter';
 import {ShakaAdapter} from '../adapters/ShakaAdapter';
@@ -14,7 +14,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
  * Stateless. Auto-maps given player instance to new adapter instances.
  * @class
  */
-class AdapterFactory {
+export class AdapterFactory {
   /**
    * @param {object} player
    * @param {AnalyticsEventCallback} eventCallback
@@ -36,5 +36,3 @@ class AdapterFactory {
     }
   }
 }
-
-export default AdapterFactory;

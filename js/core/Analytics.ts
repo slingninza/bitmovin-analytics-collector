@@ -1,25 +1,24 @@
 /* global __VERSION__ */
-import LicenseCall from '../utils/LicenseCall';
-import AnalyticsCall from '../utils/AnalyticsCall';
+import {LicenseCall} from '../utils/LicenseCall';
+import {AnalyticsCall} from '../utils/AnalyticsCall';
 import Utils from '../utils/Utils';
-import logger from '../utils/Logger';
-import AdapterFactory from './AdapterFactory';
-import AnalyticsStateMachineFactory from './AnalyticsStateMachineFactory';
-import CastClient from '../cast/CastClient';
-import CastReceiver from '../cast/CastReceiver';
-import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
+import {logger} from '../utils/Logger';
+import {AdapterFactory} from './AdapterFactory';
+import {AnalyticsStateMachineFactory} from './AnalyticsStateMachineFactory';
+import {CastClient} from '../cast/CastClient';
+import {CastReceiver} from '../cast/CastReceiver';
+import {AnalyticsStateMachineOptions} from '../types/AnalyticsStateMachineOptions';
 import {Sample} from '../types/Sample';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import {Adapter} from '../types/Adapter';
-import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
-import { AnalyicsConfig } from '../types/AnalyticsConfig';
+import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
+import {AnalyicsConfig} from '../types/AnalyticsConfig';
 
 enum PAGE_LOAD_TYPE {
-  FOREGROUND= 1,
-  BACKGROUND= 2,
-};
-class Analytics {
-
+  FOREGROUND = 1,
+  BACKGROUND = 2,
+}
+export class Analytics {
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
@@ -423,7 +422,7 @@ class Analytics {
     };
     this.setConfigParameters(this.sample, newConfig);
 
-    this.analyticsStateMachine.sourceChange(newConfig,Utils.getCurrentTimestamp());
+    this.analyticsStateMachine.sourceChange(newConfig, Utils.getCurrentTimestamp());
   };
 
   setCustomData = (values: any): any => {
@@ -713,5 +712,3 @@ class Analytics {
     }
   }
 }
-
-export default Analytics;

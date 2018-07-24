@@ -1,4 +1,4 @@
-class HttpCall {
+export class HttpCall {
   post(url: string, body: any, callback: Function, async: boolean = true) {
     let xhttp: any;
     let legacyMode = false;
@@ -38,5 +38,3 @@ class HttpCall {
     xhttp.send(JSON.stringify(body));
   }
 }
-
-export default HttpCall;

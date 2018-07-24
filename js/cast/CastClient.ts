@@ -1,9 +1,9 @@
 import {MESSAGE_NAMESPACE} from '../utils/Settings';
-import logger from '../utils/Logger';
+import {logger} from '../utils/Logger';
 
 /* global cast */
 
-class CastClient {
+export class CastClient {
   castSession: any;
   setUp() {
     logger.log('setting up cast session');
@@ -46,5 +46,3 @@ class CastClient {
     this.castSession.sendMessage(MESSAGE_NAMESPACE, message);
   }
 }
-
-export default CastClient;

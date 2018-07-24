@@ -1,3 +1,3 @@
-export default interface AnalyticsStateMachineOptions {
+export interface AnalyticsStateMachineOptions {
   starttime: any;
 }

@@ -1,8 +1,8 @@
-import HttpCall from './HttpCall';
+import {HttpCall} from './HttpCall';
 import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
 import {Sample} from '../types/Sample';
 
-class AnalyticsCall extends HttpCall {
+export class AnalyticsCall extends HttpCall {
   static analyticsServerUrl = ANALYTICS_BACKEND_BASE_URL + '/analytics';
 
   sendRequest(sample: Sample, callback: Function) {
@@ -17,5 +17,3 @@ class AnalyticsCall extends HttpCall {
     return AnalyticsCall.analyticsServerUrl;
   }
 }
-
-export default AnalyticsCall;

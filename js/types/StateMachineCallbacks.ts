@@ -1,5 +1,3 @@
-import Utils from '../utils/Utils';
-
 export interface StateMachineCallbacks {
   [key: string]: any;
   setup: (time: number, state: string, event: string) => void;

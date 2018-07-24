@@ -41,5 +41,4 @@ export const padRight = (str: string | undefined, length: number) => {
   return (str + padStr).slice(0, length);
 };
 
-const logger = new Logger();
-export default logger;
+export const logger = new Logger();

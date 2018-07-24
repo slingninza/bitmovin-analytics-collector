@@ -1,4 +1,4 @@
-export default class EventDebugging {
+export class EventDebugging {
   event: string | undefined;
   from: string | undefined;
   to: string | undefined;

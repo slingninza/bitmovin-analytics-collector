@@ -4,7 +4,7 @@ import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import 'bitmovin-player-ui/dist/js/framework/main';
 import {Adapter} from '../types/Adapter';
 
-class Bitmovin7Adapter implements Adapter {
+export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: bitmovin.PlayerAPI;
   eventCallback: (event: string, eventObject: any) => void;
@@ -281,5 +281,3 @@ class Bitmovin7Adapter implements Adapter {
     };
   }
 }
-
-export default Bitmovin7Adapter;
