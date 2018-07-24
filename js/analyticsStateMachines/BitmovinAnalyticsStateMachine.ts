@@ -2,6 +2,7 @@ import logger, {padRight} from '../utils/Logger';
 import * as StateMachine from 'javascript-state-machine';
 import {Event} from '../enums/Event';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
+import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
 
 enum States {
   SETUP = 'SETUP',
@@ -23,7 +24,7 @@ enum States {
   MUTING_PAUSE = 'MUTING_PAUSE',
 }
 
-export class BitmovinAnalyticsStateMachine {
+export class BitmovinAnalyticsStateMachine implements AnalyticsStateMachine{
   static PAUSE_SEEK_DELAY = 60;
   static SEEKED_PAUSE_DELAY = 120;
 
@@ -300,4 +301,6 @@ export class BitmovinAnalyticsStateMachine {
       logger.log('Ignored Event: ' + eventType);
     }
   }
+
+  updateMetadata(metadata: any) {};
 }

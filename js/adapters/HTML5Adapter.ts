@@ -2,7 +2,8 @@ import {Event} from '../enums/Event';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
 import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
 import {Player} from '../enums/Player';
-import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
+import { Adapter } from '../types/Adapter';
+import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -19,7 +20,7 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
  * @class
  * @constructor
  */
-export class HTML5Adapter {
+export class HTML5Adapter implements Adapter{
   /**
    * @constructs
    * @param {HTMLMediaElement} mediaElement
@@ -27,7 +28,7 @@ export class HTML5Adapter {
    * @param {AnalyticsStateMachine} stateMachine
    */
   public eventCallback: (event: string, eventObject: any) => void;
-  public stateMachine: HTML5AnalyticsStateMachine;
+  public stateMachine: AnalyticsStateMachine;
   public mediaEl: any;
   public mediaElEventHandlers: any;
   private analyticsBitrate_: number;
@@ -43,7 +44,7 @@ export class HTML5Adapter {
   constructor(
     mediaElement: any,
     eventCallback: (event: string, eventObject: any) => void,
-    stateMachine: HTML5AnalyticsStateMachine
+    stateMachine: AnalyticsStateMachine
   ) {
     this.eventCallback = eventCallback;
 

@@ -2,18 +2,19 @@
 
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
-import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
+import { Adapter } from '../types/Adapter';
+import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
-class VideoJsAdapter {
+class VideoJsAdapter implements Adapter{
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: Function;
-  stateMachine: VideojsAnalyticsStateMachine;
+  stateMachine: AnalyticsStateMachine;
 
-  constructor(player: any, eventCallback: Function, stateMachine: VideojsAnalyticsStateMachine) {
+  constructor(player: any, eventCallback: Function, stateMachine: AnalyticsStateMachine) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;

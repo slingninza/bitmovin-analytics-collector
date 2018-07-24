@@ -4,6 +4,7 @@ import {Event} from '../enums/Event';
 import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import EventDebugging from '../utils/EventDebugging';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
+import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
 
 enum States {
   SETUP = 'SETUP',
@@ -28,7 +29,8 @@ enum States {
   SOURCE_CHANGING = 'SOURCE_CHANGING',
 }
 
-export class Bitmovin7AnalyticsStateMachine {
+export class Bitmovin7AnalyticsStateMachine implements AnalyticsStateMachine{
+
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
 
@@ -412,4 +414,6 @@ export class Bitmovin7AnalyticsStateMachine {
   setEnabledDebugging(enabled: boolean) {
     this.enabledDebugging = enabled;
   }
+
+  updateMetadata(metadata: any) {};
 }

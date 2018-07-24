@@ -3,7 +3,7 @@
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
-import {HTML5AnalyticsStateMachine} from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
+import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
 
 export class DashjsAdapter extends HTML5Adapter {
   /**
@@ -15,7 +15,7 @@ export class DashjsAdapter extends HTML5Adapter {
   constructor(
     mediaPlayer: any,
     eventCallback: (event: string, eventObject: any) => void,
-    stateMachine: HTML5AnalyticsStateMachine
+    stateMachine: AnalyticsStateMachine
   ) {
     super(null, eventCallback, stateMachine);
 

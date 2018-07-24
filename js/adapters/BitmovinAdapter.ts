@@ -1,7 +1,8 @@
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
+import { Adapter } from '../types/Adapter';
 
-class BitmovinAdapter {
+class BitmovinAdapter implements Adapter{
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: Function;

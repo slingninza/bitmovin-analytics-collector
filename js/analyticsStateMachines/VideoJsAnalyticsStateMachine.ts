@@ -3,6 +3,7 @@ import * as StateMachine from 'javascript-state-machine';
 import {Event} from '../enums/Event';
 import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
+import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
 
 enum States {
   SETUP = 'SETUP',
@@ -25,7 +26,7 @@ enum States {
   CASTING = 'CASTING',
 }
 
-export class VideojsAnalyticsStateMachine {
+export class VideojsAnalyticsStateMachine implements AnalyticsStateMachine{
   private States: any;
   private stateMachineCallbacks: StateMachineCallbacks;
   private pausedTimestamp: any;
