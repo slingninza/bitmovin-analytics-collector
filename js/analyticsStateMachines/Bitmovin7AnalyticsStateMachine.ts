@@ -5,6 +5,29 @@ import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions'
 import EventDebugging from '../utils/EventDebugging';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
+enum States {
+  SETUP = 'SETUP',
+  STARTUP = 'STARTUP',
+  READY = 'READY',
+  PLAYING = 'PLAYING',
+  REBUFFERING = 'REBUFFERING',
+  PAUSE = 'PAUSE',
+  QUALITYCHANGE = 'QUALITYCHANGE',
+  PAUSED_SEEKING = 'PAUSED_SEEKING',
+  PLAY_SEEKING = 'PLAY_SEEKING',
+  END_PLAY_SEEKING = 'END_PLAY_SEEKING',
+  QUALITYCHANGE_PAUSE = 'QUALITYCHANGE_PAUSE',
+  QUALITYCHANGE_REBUFFERING = 'QUALITYCHANGE_REBUFFERING',
+  END = 'END',
+  ERROR = 'ERROR',
+  AD = 'AD',
+  MUTING_READY = 'MUTING_READY',
+  MUTING_PLAY = 'MUTING_PLAY',
+  MUTING_PAUSE = 'MUTING_PAUSE',
+  CASTING = 'CASTING',
+  SOURCE_CHANGING = 'SOURCE_CHANGING',
+}
+
 export class Bitmovin7AnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 200;
   static SEEKED_PAUSE_DELAY = 300;
@@ -29,28 +52,7 @@ export class Bitmovin7AnalyticsStateMachine {
     this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
-    this.States = {
-      SETUP: 'SETUP',
-      STARTUP: 'STARTUP',
-      READY: 'READY',
-      PLAYING: 'PLAYING',
-      REBUFFERING: 'REBUFFERING',
-      PAUSE: 'PAUSE',
-      QUALITYCHANGE: 'QUALITYCHANGE',
-      PAUSED_SEEKING: 'PAUSED_SEEKING',
-      PLAY_SEEKING: 'PLAY_SEEKING',
-      END_PLAY_SEEKING: 'END_PLAY_SEEKING',
-      QUALITYCHANGE_PAUSE: 'QUALITYCHANGE_PAUSE',
-      QUALITYCHANGE_REBUFFERING: 'QUALITYCHANGE_REBUFFERING',
-      END: 'END',
-      ERROR: 'ERROR',
-      AD: 'AD',
-      MUTING_READY: 'MUTING_READY',
-      MUTING_PLAY: 'MUTING_PLAY',
-      MUTING_PAUSE: 'MUTING_PAUSE',
-      CASTING: 'CASTING',
-      SOURCE_CHANGING: 'SOURCE_CHANGING',
-    };
+    this.States = States;
 
     this.createStateMachine(opts);
   }

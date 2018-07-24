@@ -10,6 +10,7 @@ import CastReceiver from '../cast/CastReceiver';
 import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import {Sample} from '../types/Sample';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
+import {Adapter} from '../types/Adapter';
 
 class Analytics {
   static PAGE_LOAD_TYPE = {
@@ -29,7 +30,7 @@ class Analytics {
   private licensing: string;
   private startupTime: number;
   private pageLoadType: any;
-  private autoplay: any;
+  private autoplay:boolean|undefined;
   private isCastClient: boolean;
   private isCastReceiver: boolean;
   private isAllowedToSendSamples: boolean;
@@ -38,7 +39,7 @@ class Analytics {
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine: any;
-  private adapter: any;
+  private adapter?: Adapter;
 
   constructor(config: any) {
     this.config = config;

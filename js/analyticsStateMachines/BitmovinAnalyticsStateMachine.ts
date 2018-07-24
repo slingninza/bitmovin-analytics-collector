@@ -3,6 +3,26 @@ import * as StateMachine from 'javascript-state-machine';
 import Events from '../enums/Events';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
+enum States {
+  SETUP = 'SETUP',
+  STARTUP = 'STARTUP',
+  READY = 'READY',
+  PLAYING = 'PLAYING',
+  REBUFFERING = 'REBUFFERING',
+  PAUSE = 'PAUSE',
+  QUALITYCHANGE = 'QUALITYCHANGE',
+  PAUSED_SEEKING = 'PAUSED_SEEKING',
+  PLAY_SEEKING = 'PLAY_SEEKING',
+  END_PLAY_SEEKING = 'END_PLAY_SEEKING',
+  QUALITYCHANGE_PAUSE = 'QUALITYCHANGE_PAUSE',
+  END = 'END',
+  ERROR = 'ERROR',
+  AD = 'AD',
+  MUTING_READY = 'MUTING_READY',
+  MUTING_PLAY = 'MUTING_PLAY',
+  MUTING_PAUSE = 'MUTING_PAUSE',
+}
+
 export class BitmovinAnalyticsStateMachine {
   static PAUSE_SEEK_DELAY = 60;
   static SEEKED_PAUSE_DELAY = 120;
@@ -25,25 +45,7 @@ export class BitmovinAnalyticsStateMachine {
     this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
-    this.States = {
-      SETUP: 'SETUP',
-      STARTUP: 'STARTUP',
-      READY: 'READY',
-      PLAYING: 'PLAYING',
-      REBUFFERING: 'REBUFFERING',
-      PAUSE: 'PAUSE',
-      QUALITYCHANGE: 'QUALITYCHANGE',
-      PAUSED_SEEKING: 'PAUSED_SEEKING',
-      PLAY_SEEKING: 'PLAY_SEEKING',
-      END_PLAY_SEEKING: 'END_PLAY_SEEKING',
-      QUALITYCHANGE_PAUSE: 'QUALITYCHANGE_PAUSE',
-      END: 'END',
-      ERROR: 'ERROR',
-      AD: 'AD',
-      MUTING_READY: 'MUTING_READY',
-      MUTING_PLAY: 'MUTING_PLAY',
-      MUTING_PAUSE: 'MUTING_PAUSE',
-    };
+    this.States = States;
 
     this.createStateMachine();
   }

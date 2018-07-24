@@ -4,6 +4,27 @@ import Events from '../enums/Events';
 import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 
+enum States {
+  SETUP = 'SETUP',
+  STARTUP = 'STARTUP',
+  READY = 'READY',
+  PLAYING = 'PLAYING',
+  REBUFFERING = 'REBUFFERING',
+  PAUSE = 'PAUSE',
+  QUALITYCHANGE = 'QUALITYCHANGE',
+  PAUSED_SEEKING = 'PAUSED_SEEKING',
+  PLAY_SEEKING = 'PLAY_SEEKING',
+  END_PLAY_SEEKING = 'END_PLAY_SEEKING',
+  QUALITYCHANGE_PAUSE = 'QUALITYCHANGE_PAUSE',
+  QUALITYCHANGE_REBUFFERING = 'QUALITYCHANGE_REBUFFERING',
+  END = 'END',
+  ERROR = 'ERROR',
+  MUTING_READY = 'MUTING_READY',
+  MUTING_PLAY = 'MUTING_PLAY',
+  MUTING_PAUSE = 'MUTING_PAUSE',
+  CASTING = 'CASTING',
+}
+
 export class VideojsAnalyticsStateMachine {
   private States: any;
   private stateMachineCallbacks: StateMachineCallbacks;
@@ -23,27 +44,7 @@ export class VideojsAnalyticsStateMachine {
     this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
-    this.States = {
-      SETUP: 'SETUP',
-      STARTUP: 'STARTUP',
-      READY: 'READY',
-      PLAYING: 'PLAYING',
-      REBUFFERING: 'REBUFFERING',
-      PAUSE: 'PAUSE',
-      QUALITYCHANGE: 'QUALITYCHANGE',
-      PAUSED_SEEKING: 'PAUSED_SEEKING',
-      PLAY_SEEKING: 'PLAY_SEEKING',
-      END_PLAY_SEEKING: 'END_PLAY_SEEKING',
-      QUALITYCHANGE_PAUSE: 'QUALITYCHANGE_PAUSE',
-      QUALITYCHANGE_REBUFFERING: 'QUALITYCHANGE_REBUFFERING',
-      END: 'END',
-      ERROR: 'ERROR',
-      MUTING_READY: 'MUTING_READY',
-      MUTING_PLAY: 'MUTING_PLAY',
-      MUTING_PAUSE: 'MUTING_PAUSE',
-      CASTING: 'CASTING',
-    };
-
+    this.States=States;
     this.createStateMachine(opts);
   }
 
