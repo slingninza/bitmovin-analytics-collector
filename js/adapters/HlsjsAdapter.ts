@@ -3,7 +3,7 @@
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
-import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
+import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 /**
  * @class
  * @constructor
@@ -11,11 +11,7 @@ import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
 export class HlsjsAdapter extends HTML5Adapter {
   hls: any;
 
-  constructor(
-    hls: any,
-    eventCallback: (event: string, eventObject: any) => void,
-    stateMachine: AnalyticsStateMachine
-  ) {
+  constructor(hls: any, eventCallback: (event: string, eventObject: any) => void, stateMachine: AnalyticsStateMachine) {
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
     /**

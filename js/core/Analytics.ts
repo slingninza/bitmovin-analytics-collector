@@ -11,17 +11,20 @@ import AnalyticsStateMachineOptions from '../types/AnalyticsStateMachineOptions'
 import {Sample} from '../types/Sample';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import {Adapter} from '../types/Adapter';
+import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
+import { AnalyicsConfig } from '../types/AnalyticsConfig';
 
+enum PAGE_LOAD_TYPE {
+  FOREGROUND= 1,
+  BACKGROUND= 2,
+};
 class Analytics {
-  static PAGE_LOAD_TYPE = {
-    FOREGROUND: 1,
-    BACKGROUND: 2,
-  };
+
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
-  private config: any;
+  private config: AnalyicsConfig;
   private licenseCall: LicenseCall;
   private analyticsCall: AnalyticsCall;
   private castClient: CastClient;
@@ -29,7 +32,7 @@ class Analytics {
   private droppedSampleFrames: number;
   private licensing: string;
   private startupTime: number;
-  private pageLoadType: any;
+  private pageLoadType: PAGE_LOAD_TYPE;
   private autoplay: boolean | undefined;
   private isCastClient: boolean;
   private isCastReceiver: boolean;
@@ -38,10 +41,10 @@ class Analytics {
   private castClientConfig: any;
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
-  private analyticsStateMachine: any;
+  private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter?: Adapter;
 
-  constructor(config: any) {
+  constructor(config: AnalyicsConfig) {
     this.config = config;
     this.licenseCall = new LicenseCall();
     this.analyticsCall = new AnalyticsCall();
@@ -51,7 +54,7 @@ class Analytics {
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
     this.startupTime = 0;
-    this.pageLoadType = Analytics.PAGE_LOAD_TYPE.FOREGROUND;
+    this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
 
     this.autoplay = undefined;
 
@@ -104,7 +107,7 @@ class Analytics {
     window.setTimeout(() => {
       //@ts-ignore
       if (document[Utils.getHiddenProp()] === true) {
-        this.pageLoadType = Analytics.PAGE_LOAD_TYPE.BACKGROUND;
+        this.pageLoadType = PAGE_LOAD_TYPE.BACKGROUND;
       }
     }, Analytics.PAGE_LOAD_TYPE_TIMEOUT);
   }
@@ -407,7 +410,7 @@ class Analytics {
     this.setCustomData(oldConfig);
   };
 
-  sourceChange = (config: any) => {
+  sourceChange = (config: AnalyicsConfig) => {
     logger.log('Processing Source Change for Analytics', config);
     this.sendAnalyticsRequestAndClearValues();
     this.setupSample();
@@ -420,7 +423,7 @@ class Analytics {
     };
     this.setConfigParameters(this.sample, newConfig);
 
-    this.analyticsStateMachine.sourceChange(Utils.getCurrentTimestamp());
+    this.analyticsStateMachine.sourceChange(newConfig,Utils.getCurrentTimestamp());
   };
 
   setCustomData = (values: any): any => {

@@ -27,4 +27,3 @@ export enum Event {
   SOURCE_UNLOADED = 'sourceUnloaded',
   MANUAL_SOURCE_CHANGE = 'manualSourceChangeInitiated',
 }
-

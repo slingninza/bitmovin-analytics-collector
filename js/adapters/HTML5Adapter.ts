@@ -2,8 +2,8 @@ import {Event} from '../enums/Event';
 import {getMIMETypeFromFileExtension} from '../enums/MIMETypes';
 import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
 import {Player} from '../enums/Player';
-import { Adapter } from '../types/Adapter';
-import { AnalyticsStateMachine } from '../types/AnalyticsStateMachine';
+import {Adapter} from '../types/Adapter';
+import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -20,7 +20,7 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
  * @class
  * @constructor
  */
-export class HTML5Adapter implements Adapter{
+export class HTML5Adapter implements Adapter {
   /**
    * @constructs
    * @param {HTMLMediaElement} mediaElement
