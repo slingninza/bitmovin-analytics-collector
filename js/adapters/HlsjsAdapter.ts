@@ -109,7 +109,6 @@ export class HlsjsAdapter extends HTML5Adapter {
       this.onMediaAttaching();
       this.onManifestLoading();
     }
-    
   }
 
   onMediaAttaching() {

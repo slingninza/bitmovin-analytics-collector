@@ -5,16 +5,17 @@ import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
+import * as dashjs from 'dashjs';
 
 export class DashjsAdapter extends HTML5Adapter {
   /**
    * @public
    * @member {dashjs.MediaPlayer}
    */
-  mediaPlayer: any;
+  mediaPlayer!: dashjs.MediaPlayerClass;
 
   constructor(
-    mediaPlayer: any,
+    mediaPlayer: dashjs.MediaPlayerClass,
     eventCallback: (event: string, eventObject: any) => void,
     stateMachine: AnalyticsStateMachine
   ) {
