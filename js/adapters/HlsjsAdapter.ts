@@ -4,7 +4,7 @@ import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
-import { QualityLevelInfo } from '../types/QualityLevelInfo';
+import {QualityLevelInfo} from '../types/QualityLevelInfo';
 /**
  * @class
  * @constructor
@@ -35,14 +35,14 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    * @returns {QualityLevelInfo}
    */
-  getCurrentQualityLevelInfo() :QualityLevelInfo | null {
+  getCurrentQualityLevelInfo(): QualityLevelInfo | null {
     const hls = this.hls;
     const currentLevelObj = hls.levels[hls.currentLevel];
     if (!currentLevelObj) {
       return null;
     }
 
-    const bitrate =currentLevelObj.bitrate;
+    const bitrate = currentLevelObj.bitrate;
     const width = currentLevelObj.width;
     const height = currentLevelObj.height;
 
@@ -85,7 +85,7 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    */
   getStreamURL() {
-    debugger
+    debugger;
     return this.hls.media.baseURI;
   }
 
@@ -107,10 +107,9 @@ export class HlsjsAdapter extends HTML5Adapter {
     // the onMediaAttaching method (avoid running it twice)
     if (hls.media) {
       this.onMediaAttaching();
-    }
-    if (hls.media) {
       this.onManifestLoading();
     }
+    
   }
 
   onMediaAttaching() {

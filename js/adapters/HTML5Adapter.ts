@@ -4,7 +4,7 @@ import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
 import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
-import { QualityLevelInfo } from '../types/QualityLevelInfo';
+import {QualityLevelInfo} from '../types/QualityLevelInfo';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -495,8 +495,9 @@ export class HTML5Adapter implements Adapter {
         return;
       }
 
-      if(this.previousMediaTime_===null)
-      this.previousMediaTime_=0;
+      if (this.previousMediaTime_ === null) {
+        this.previousMediaTime_ = 0;
+      }
 
       const timeDelta = mediaEl.currentTime - this.previousMediaTime_;
 

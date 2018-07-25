@@ -4,7 +4,7 @@ import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
-import { QualityLevelInfo } from '../types/QualityLevelInfo';
+import {QualityLevelInfo} from '../types/QualityLevelInfo';
 
 export class ShakaAdapter extends HTML5Adapter {
   shakaPlayer: any;
@@ -59,7 +59,7 @@ export class ShakaAdapter extends HTML5Adapter {
    * @override
    * @returns {QualityLevelInfo}
    */
-  getCurrentQualityLevelInfo() :QualityLevelInfo | null {
+  getCurrentQualityLevelInfo(): QualityLevelInfo | null {
     const variantTracks = this.shakaPlayer.getVariantTracks();
 
     const activeVideoTrack = variantTracks

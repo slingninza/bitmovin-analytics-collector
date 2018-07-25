@@ -5,7 +5,7 @@ import {Adapter} from '../types/Adapter';
 export class BitmovinAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
-  eventCallback: (event: Event, eventObject?: any) => void;;
+  eventCallback: (event: Event, eventObject?: any) => void;
 
   constructor(player: any, eventCallback: (event: Event, eventObject?: any) => void) {
     this.onBeforeUnLoadEvent = false;

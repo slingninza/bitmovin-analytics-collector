@@ -63,4 +63,3 @@ export class PlayerDetector {
     return typeof player.addABRCustomRule === 'function';
   }
 }
-
