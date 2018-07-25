@@ -74,7 +74,7 @@ export class DashjsAdapter extends HTML5Adapter {
    * @override
    */
   getStreamURL() {
-    return this.mediaPlayer ? this.mediaPlayer.getSource() : null;
+    return this.mediaPlayer ? this.mediaPlayer.getSource().toString() : null;
   }
   /**
    * Implemented by sub-class to deliver current quality-level info

@@ -30,7 +30,7 @@ export class HTML5Adapter implements Adapter {
    */
   public eventCallback: (event: string, eventObject: any) => void;
   public stateMachine: AnalyticsStateMachine;
-  public mediaEl: any;
+  public mediaEl: HTMLVideoElement;
   public mediaElEventHandlers: any;
   private analyticsBitrate_: number;
   private bufferingTimeout_: number | null;
@@ -111,7 +111,7 @@ export class HTML5Adapter implements Adapter {
     // if called without args we assume it's already there
     // we can also be called with args but without any being there before
     if (mediaElement) {
-      this.mediaEl = mediaElement;
+      this.mediaEl.remove();
     }
 
     if (!this.mediaEl) {
@@ -187,7 +187,7 @@ export class HTML5Adapter implements Adapter {
   }
 
   resetMedia() {
-    this.mediaEl = null;
+    this.mediaEl.remove();
     this.mediaElEventHandlers = [];
   }
 
@@ -233,8 +233,8 @@ export class HTML5Adapter implements Adapter {
         // is a DOMString that reflects the height HTML attribute,
         // which specifies the height of the display area, in CSS pixels.
         // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
-        width: parseInt(width, 10),
-        height: parseInt(height, 10),
+        width: width,
+        height: height,
         // Returns an unsigned long containing the intrinsic
         // height of the resource in CSS pixels,
         // taking into account the dimensions, aspect ratio,
@@ -293,8 +293,8 @@ export class HTML5Adapter implements Adapter {
       this.eventCallback(Event.ERROR, {
         currentTime,
         // See https://developer.mozilla.org/en-US/docs/Web/API/MediaError
-        code: error.code,
-        message: error.message,
+        code: error === null ? null : error.code,
+        message: error === null ? null : error.message,
       });
     });
 
@@ -414,8 +414,8 @@ export class HTML5Adapter implements Adapter {
       // is a DOMString that reflects the height HTML attribute,
       // which specifies the height of the display area, in CSS pixels.
       // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
-      width: parseInt(width),
-      height: parseInt(height),
+      width: width,
+      height: height,
       // Returns an unsigned long containing the intrinsic
       // height of the resource in CSS pixels,
       // taking into account the dimensions, aspect ratio,
@@ -442,7 +442,7 @@ export class HTML5Adapter implements Adapter {
     }
 
     this.mediaElEventHandlers.forEach((handler: any) => {
-      this.mediaEl.removeEventListener(handler);
+      this.mediaEl.removeEventListener(typeof handler, handler);
     });
 
     this.resetMedia();
