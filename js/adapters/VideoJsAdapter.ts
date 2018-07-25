@@ -4,17 +4,18 @@ import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
+//import videojs from '../../node_modules/@types/video.js';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 export class VideoJsAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
-  player: any;
+  player: videojs.default.Player;
   eventCallback: (event: string, eventObject: any) => void;
   stateMachine: AnalyticsStateMachine;
 
-  constructor(player: any, eventCallback: (event: string, eventObject: any) => void, stateMachine: AnalyticsStateMachine) {
+  constructor(player: videojs.default.Player, eventCallback: (event: string, eventObject: any) => void, stateMachine: AnalyticsStateMachine) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -74,29 +75,16 @@ export class VideoJsAdapter implements Adapter {
     };
   }
 
-  /**
-   * @returns {string} 'native' | 'flash' | 'html5'
-   */
-  getVideojsSourceHandlerMode_() {
-    const tech = this.player.tech({IWillNotUseThisInPlugins: true});
-
-    if (!tech.sourceHandler_) {
-      return 'native';
-    } else {
-      return tech.sourceHandler_.options_.mode;
-    }
-  }
-
   register() {
     const that = this;
     this.player.on('loadedmetadata', function(this: any) {
       const streamType = that.getStreamType(this.currentSrc());
       const sources = that.getStreamSources(this.currentSrc());
-      const mode = that.getVideojsSourceHandlerMode_();
+
+      debugger
       const info = {
         isLive: this.duration() === Infinity,
         version: videojs.VERSION,
-        type: mode,
         duration: this.duration(),
         streamType,
         autoplay: this.autoplay(),
@@ -111,11 +99,9 @@ export class VideoJsAdapter implements Adapter {
     this.player.ready(function(this: any) {
       const streamType = that.getStreamType(this.currentSrc());
       const sources = that.getStreamSources(this.currentSrc());
-      const mode = that.getVideojsSourceHandlerMode_();
       const info = {
         isLive: false,
         version: videojs.VERSION,
-        type: mode,
         duration: this.duration(),
         streamType,
         autoplay: this.autoplay(),
