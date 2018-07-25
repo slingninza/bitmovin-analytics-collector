@@ -25,7 +25,7 @@ export class Bitmovin7Adapter implements Adapter {
       progressive:
         | undefined
         | string
-        | Array<bitmovin.PlayerAPI.ProgressiveSourceConfig>
+        | bitmovin.PlayerAPI.ProgressiveSourceConfig[]
         | bitmovin.PlayerAPI.ProgressiveSourceConfig
     ) => {
       if (!progressive) {

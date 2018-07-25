@@ -85,7 +85,7 @@ export class Analytics {
     this.setupStateMachineCallbacks();
   }
 
-  updateSamplesToCastClientConfig(samples: Array<Sample>, castClientConfig: bitmovin.PlayerAPI.CastConfig) {
+  updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: bitmovin.PlayerAPI.CastConfig) {
     for (let i = 0; i < samples.length; i++) {
       this.updateSampleToCastClientConfig(samples[i], castClientConfig);
     }
