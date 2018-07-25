@@ -28,6 +28,10 @@
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@types/javascript-state-machine/-/javascript-state-machine-2.4.1.tgz#af80a8016b3a4844c4768277422ace1f452cba65"
 
+"@types/video.js@^6.2.9":
+  version "6.2.9"
+  resolved "https://registry.yarnpkg.com/@types/video.js/-/video.js-6.2.9.tgz#89225e301adea50c160dd43fe9558ed7a38cb6ea"
+
 "@webassemblyjs/ast@1.5.13":
   version "1.5.13"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.5.13.tgz#81155a570bd5803a30ec31436bc2c9c0ede38f25"
