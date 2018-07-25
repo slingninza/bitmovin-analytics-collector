@@ -7,9 +7,9 @@ import {Adapter} from '../types/Adapter';
 export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: bitmovin.PlayerAPI;
-  eventCallback: (event: string, eventObject: any) => void;
+  eventCallback: (event: Event, eventObject: any) => void;
 
-  constructor(player: bitmovin.PlayerAPI, eventCallback: (event: string, eventObject: any) => void) {
+  constructor(player: bitmovin.PlayerAPI, eventCallback: (event: Event, eventObject: any) => void) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -21,7 +21,7 @@ export class Bitmovin7Adapter implements Adapter {
   }
 
   register() {
-    const getProgConfigFromProgressiveConfig = (progressive: any) => {
+    const getProgConfigFromProgressiveConfig = (progressive: undefined | string | Array<bitmovin.PlayerAPI.ProgressiveSourceConfig>|bitmovin.PlayerAPI.ProgressiveSourceConfig) => {
       if (!progressive) {
         return {
           progUrl: undefined,
@@ -73,8 +73,8 @@ export class Bitmovin7Adapter implements Adapter {
       if (config.source) {
         source.mpdUrl = config.source.dash;
         source.m3u8Url = config.source.hls;
-        source.progUrl = progConf ? progConf.progUrl : null;
-        source.progBitrate = progConf ? progConf.progBitrate : null;
+        source.progUrl = progConf ? progConf.progUrl : undefined;
+        source.progBitrate = progConf ? progConf.progBitrate : undefined;
       }
 
       this.eventCallback(Event.SOURCE_LOADED, {
@@ -108,8 +108,8 @@ export class Bitmovin7Adapter implements Adapter {
         source.userId = config.source.userId;
         source.mpdUrl = config.source.dash;
         source.m3u8Url = config.source.hls;
-        source.progUrl = progConf ? progConf.progUrl : null;
-        source.progBitrate = progConf ? progConf.progBitrate : null;
+        source.progUrl = progConf ? progConf.progUrl : undefined;
+        source.progBitrate = progConf ? progConf.progBitrate : undefined;
       }
 
       this.eventCallback(Event.READY, {

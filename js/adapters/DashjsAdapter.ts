@@ -4,6 +4,7 @@ import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
+import { QualityLevelInfo } from '../types/QualityLevelInfo';
 
 export class DashjsAdapter extends HTML5Adapter {
   /**
@@ -80,7 +81,7 @@ export class DashjsAdapter extends HTML5Adapter {
    * @override
    * @returns {QualityLevelInfo}
    */
-  getCurrentQualityLevelInfo() {
+  getCurrentQualityLevelInfo() : QualityLevelInfo | null {
     if (this.mediaPlayer) {
       const videoBitrateInfoList = this.mediaPlayer.getBitrateInfoListFor('video');
       const currentVideoQualityIndex = this.mediaPlayer.getQualityFor('video');

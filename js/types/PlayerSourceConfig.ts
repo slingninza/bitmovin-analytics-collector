@@ -4,5 +4,5 @@ export interface PlayerSourceConfig {
   mpdUrl?: string;
   m3u8Url?: string;
   progUrl?: string;
-  progBitrate?: string;
+  progBitrate?: number;
 }

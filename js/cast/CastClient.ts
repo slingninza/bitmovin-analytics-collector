@@ -19,7 +19,7 @@ export class CastClient {
     }
 
     logger.log('adding message listener');
-    this.castSession.addMessageListener(MESSAGE_NAMESPACE, (ns: any, message: any) => {
+    this.castSession.addMessageListener(MESSAGE_NAMESPACE, (ns: string, message: string) => {
       logger.log('Received: ' + ns + ' ' + message);
 
       try {

@@ -4,14 +4,15 @@ import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
+import { QualityLevelInfo } from '../types/QualityLevelInfo';
 /**
  * @class
  * @constructor
  */
 export class HlsjsAdapter extends HTML5Adapter {
-  hls: any;
+  hls: Hls;
 
-  constructor(hls: any, eventCallback: (event: string, eventObject: any) => void, stateMachine: AnalyticsStateMachine) {
+  constructor(hls: Hls, eventCallback: (event: string, eventObject: any) => void, stateMachine: AnalyticsStateMachine) {
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
     /**
@@ -34,17 +35,16 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    * @returns {QualityLevelInfo}
    */
-  getCurrentQualityLevelInfo() {
+  getCurrentQualityLevelInfo() :QualityLevelInfo | null {
     const hls = this.hls;
     const currentLevelObj = hls.levels[hls.currentLevel];
     if (!currentLevelObj) {
-      return;
+      return null;
     }
 
-    const attributes = currentLevelObj.attrs;
-    const bitrate = parseInt(attributes.BANDWIDTH, 10);
-    const width = parseInt(attributes.RESOLUTION.width, 10);
-    const height = parseInt(attributes.RESOLUTION.height, 10);
+    const bitrate =currentLevelObj.bitrate;
+    const width = currentLevelObj.width;
+    const height = currentLevelObj.height;
 
     return {
       bitrate,
@@ -85,7 +85,8 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    */
   getStreamURL() {
-    return this.hls.url;
+    debugger
+    return this.hls.media.baseURI;
   }
 
   registerHlsEvents() {
@@ -107,8 +108,7 @@ export class HlsjsAdapter extends HTML5Adapter {
     if (hls.media) {
       this.onMediaAttaching();
     }
-
-    if (hls.url) {
+    if (hls.media) {
       this.onManifestLoading();
     }
   }

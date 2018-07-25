@@ -13,6 +13,7 @@ import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
+import { Player } from '../enums/Player';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -84,7 +85,7 @@ export class Analytics {
     this.setupStateMachineCallbacks();
   }
 
-  updateSamplesToCastClientConfig(samples: any, castClientConfig: any) {
+  updateSamplesToCastClientConfig(samples: Array<Sample>, castClientConfig: bitmovin.PlayerAPI.CastConfig) {
     for (let i = 0; i < samples.length; i++) {
       this.updateSampleToCastClientConfig(samples[i], castClientConfig);
     }
@@ -230,7 +231,7 @@ export class Analytics {
         this.sendUnloadRequest();
       },
 
-      heartbeat: (time: number, state: any, event: string) => {
+      heartbeat: (time: number, state: string, event: string) => {
         this.setDroppedFrames(event);
         this.setState(state);
         this.setDuration(time);

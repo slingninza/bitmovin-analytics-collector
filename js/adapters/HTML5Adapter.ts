@@ -4,6 +4,7 @@ import {getStreamTypeFromMIMEType} from '../enums/StreamTypes';
 import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
+import { QualityLevelInfo } from '../types/QualityLevelInfo';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -32,11 +33,11 @@ export class HTML5Adapter implements Adapter {
   public mediaEl: any;
   public mediaElEventHandlers: any;
   private analyticsBitrate_: number;
-  private bufferingTimeout_: any;
+  private bufferingTimeout_: number | null;
   private isBuffering_: boolean;
   private isLive_: boolean;
   private isPaused_: boolean;
-  private previousMediaTime_: any;
+  private previousMediaTime_: number | null;
   private needsReadyEvent_: boolean;
   private needsFirstPlayIntent_: boolean;
   private mediaElementSet_: boolean;
@@ -131,7 +132,7 @@ export class HTML5Adapter implements Adapter {
    * @returns {QualityLevelInfo}
    * @abstract
    */
-  getCurrentQualityLevelInfo(): any {
+  getCurrentQualityLevelInfo(): QualityLevelInfo | null {
     return null;
   }
 
@@ -493,6 +494,9 @@ export class HTML5Adapter implements Adapter {
       if (mediaEl.paused || (mediaEl.ended && !this.isBuffering_)) {
         return;
       }
+
+      if(this.previousMediaTime_===null)
+      this.previousMediaTime_=0;
 
       const timeDelta = mediaEl.currentTime - this.previousMediaTime_;
 

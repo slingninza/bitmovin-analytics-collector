@@ -5,7 +5,7 @@ import {Event} from '../enums/Event';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 
-enum States {
+enum State {
   SETUP = 'SETUP',
   STARTUP = 'STARTUP',
   READY = 'READY',
@@ -47,7 +47,7 @@ export class BitmovinAnalyticsStateMachine implements AnalyticsStateMachine {
     this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
-    this.States = States;
+    this.States = State;
 
     this.createStateMachine();
   }

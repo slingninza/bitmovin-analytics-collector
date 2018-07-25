@@ -7,7 +7,7 @@ import {EventDebugging} from '../utils/EventDebugging';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 
-enum States {
+enum State {
   SETUP = 'SETUP',
   STARTUP = 'STARTUP',
   READY = 'READY',
@@ -54,7 +54,7 @@ export class Bitmovin7AnalyticsStateMachine implements AnalyticsStateMachine {
     this.seekedTimeout = 0;
     this.onEnterStateTimestamp = 0;
 
-    this.States = States;
+    this.States = State;
 
     this.createStateMachine(opts);
   }

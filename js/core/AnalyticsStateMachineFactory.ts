@@ -1,4 +1,4 @@
-import PlayerDetector from '../utils/PlayerDetector';
+import {PlayerDetector} from '../utils/PlayerDetector';
 import {BitmovinAnalyticsStateMachine} from '../analyticsStateMachines/BitmovinAnalyticsStateMachine';
 import {Bitmovin7AnalyticsStateMachine} from '../analyticsStateMachines/Bitmovin7AnalyticsStateMachine';
 import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';

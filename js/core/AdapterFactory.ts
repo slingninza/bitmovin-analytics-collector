@@ -1,4 +1,4 @@
-import PlayerDetector from '../utils/PlayerDetector';
+import {PlayerDetector} from '../utils/PlayerDetector';
 
 import {BitmovinAdapter} from '../adapters/BitmovinAdapter';
 import {Bitmovin7Adapter} from '../adapters/Bitmovin7Adapter';

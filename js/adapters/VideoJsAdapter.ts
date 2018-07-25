@@ -11,10 +11,10 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 export class VideoJsAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
-  eventCallback: Function;
+  eventCallback: (event: string, eventObject: any) => void;
   stateMachine: AnalyticsStateMachine;
 
-  constructor(player: any, eventCallback: Function, stateMachine: AnalyticsStateMachine) {
+  constructor(player: any, eventCallback: (event: string, eventObject: any) => void, stateMachine: AnalyticsStateMachine) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
