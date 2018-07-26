@@ -8,10 +8,6 @@ import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import * as dashjs from 'dashjs';
 
 export class DashjsAdapter extends HTML5Adapter {
-  /**
-   * @public
-   * @member {dashjs.MediaPlayer}
-   */
   mediaPlayer!: dashjs.MediaPlayerClass;
 
   constructor(

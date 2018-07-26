@@ -15,10 +15,7 @@ export class HlsjsAdapter extends HTML5Adapter {
   constructor(hls: Hls, eventCallback: (event: string, eventObject: any) => void, stateMachine: AnalyticsStateMachine) {
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
-    /**
-     * @public
-     * @member {Hls} hls Hls.js client instance
-     */
+
     this.hls = hls;
 
     this.resetMedia();
@@ -29,12 +26,6 @@ export class HlsjsAdapter extends HTML5Adapter {
     return Player.HLSJS;
   }
 
-  /**
-   * Implemented by sub-class to deliver current quality-level info
-   * specific to media-engine.
-   * @override
-   * @returns {QualityLevelInfo}
-   */
   getCurrentQualityLevelInfo(): QualityLevelInfo | null {
     const hls = this.hls;
     const currentLevelObj = hls.levels[hls.currentLevel];
@@ -85,7 +76,6 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    */
   getStreamURL() {
-    debugger;
     return this.hls.media.baseURI;
   }
 

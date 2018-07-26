@@ -9,28 +9,15 @@ import {QualityLevelInfo} from '../types/QualityLevelInfo';
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 /**
- * @typedef QualityLevelInfo
- * @type {Object}
- * @prop {bitrate} number
- * @prop {width} number
- * @prop {height} number
- */
-
-/**
  * Base-class for all HTML5 media based playback engines
  * @class
  * @constructor
  */
+
 export class HTML5Adapter implements Adapter {
-  /**
-   * @constructs
-   * @param {HTMLMediaElement} mediaElement
-   * @param {function} eventCallback
-   * @param {AnalyticsStateMachine} stateMachine
-   */
   public eventCallback: (event: string, eventObject: any) => void;
   public stateMachine: AnalyticsStateMachine;
-  public mediaEl: HTMLVideoElement;
+  public mediaEl: HTMLVideoElement | null;
   public mediaElEventHandlers: any;
   private analyticsBitrate_: number;
   private bufferingTimeout_: number | null;
@@ -43,7 +30,7 @@ export class HTML5Adapter implements Adapter {
   private mediaElementSet_: boolean;
 
   constructor(
-    mediaElement: any,
+    mediaElement: HTMLVideoElement | null,
     eventCallback: (event: string, eventObject: any) => void,
     stateMachine: AnalyticsStateMachine
   ) {
@@ -101,7 +88,7 @@ export class HTML5Adapter implements Adapter {
    *
    
    */
-  setMediaElement(mediaElement = null) {
+  setMediaElement(mediaElement: HTMLVideoElement | null = null) {
     // replace previously existing, if calld with args
     if (mediaElement && this.mediaEl) {
       this.unregisterMediaElement();
@@ -111,7 +98,7 @@ export class HTML5Adapter implements Adapter {
     // if called without args we assume it's already there
     // we can also be called with args but without any being there before
     if (mediaElement) {
-      this.mediaEl.remove();
+      this.mediaEl = mediaElement;
     }
 
     if (!this.mediaEl) {
@@ -143,15 +130,15 @@ export class HTML5Adapter implements Adapter {
     return false;
   }
 
-  /**	+
+  /**
    * Can be overriden by sub-classes
    * @returns {string}
    *
    */
-  getMIMEType(): any {
+  getMIMEType(): string | null {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
-      return;
+      return null;
     }
 
     return getMIMETypeFromFileExtension(mediaEl.src);
@@ -161,8 +148,12 @@ export class HTML5Adapter implements Adapter {
    * Can be overriden by sub-classes
    * @returns {string}
    */
-  getStreamType(): any {
-    return getStreamTypeFromMIMEType(this.getMIMEType());
+  getStreamType(): string | undefined {
+    let mimetype = this.getMIMEType();
+    if (mimetype !== null) {
+      return getStreamTypeFromMIMEType(mimetype);
+    }
+    return undefined;
   }
 
   /**
@@ -187,7 +178,7 @@ export class HTML5Adapter implements Adapter {
   }
 
   resetMedia() {
-    this.mediaEl.remove();
+    this.mediaEl = null;
     this.mediaElEventHandlers = [];
   }
 
@@ -437,18 +428,23 @@ export class HTML5Adapter implements Adapter {
    * Should only be calld when a mediaEl is attached
    */
   unregisterMediaElement() {
-    if (!this.mediaEl) {
+    if (this.mediaEl === null) {
       throw new Error('No media attached');
     }
 
+    const mediaEl = this.mediaEl;
+
     this.mediaElEventHandlers.forEach((handler: any) => {
-      this.mediaEl.removeEventListener(typeof handler, handler);
+      mediaEl.removeEventListener(typeof handler, handler);
     });
 
     this.resetMedia();
   }
 
   onBuffering() {
+    if (this.mediaEl === null) {
+      throw new Error('No media attached');
+    }
     const {currentTime} = this.mediaEl;
 
     // this handler may be called multiple times
@@ -469,6 +465,9 @@ export class HTML5Adapter implements Adapter {
     if (this.isPaused_) {
       return;
     }
+    if (this.mediaEl === null) {
+      throw new Error('No media attached');
+    }
 
     const {currentTime} = this.mediaEl;
 
@@ -480,8 +479,10 @@ export class HTML5Adapter implements Adapter {
   }
 
   checkPlayheadProgress() {
+    if (this.mediaEl === null) {
+      throw new Error('No media attached');
+    }
     const mediaEl = this.mediaEl;
-
     if (mediaEl.paused) {
       this.onPaused();
     }
@@ -537,7 +538,7 @@ export class HTML5Adapter implements Adapter {
         width,
         height,
         bitrate,
-        currentTime: mediaEl.currentTime,
+        currentTime: mediaEl !== null ? mediaEl.currentTime : -1,
       };
 
       if (!silent) {
