@@ -5,12 +5,13 @@ import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
+import { AdapterEventCallback } from '../types/AdapterEventCallback';
 
 export class ShakaAdapter extends HTML5Adapter {
   shakaPlayer: any;
   constructor(
     shakaPlayer: any,
-    eventCallback: (event: string, eventObject: any) => void,
+    eventCallback: AdapterEventCallback,
     stateMachine: AnalyticsStateMachine
   ) {
     super(shakaPlayer.getMediaElement(), eventCallback, stateMachine);

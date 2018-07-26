@@ -5,6 +5,7 @@ import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
+import { AdapterEventCallback } from '../types/AdapterEventCallback';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -15,7 +16,7 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
  */
 
 export class HTML5Adapter implements Adapter {
-  public eventCallback: (event: string, eventObject: any) => void;
+  public eventCallback: AdapterEventCallback;
   public stateMachine: AnalyticsStateMachine;
   public mediaEl: HTMLVideoElement | null;
   public mediaElEventHandlers: any;
@@ -31,7 +32,7 @@ export class HTML5Adapter implements Adapter {
 
   constructor(
     mediaElement: HTMLVideoElement | null,
-    eventCallback: (event: string, eventObject: any) => void,
+    eventCallback: AdapterEventCallback,
     stateMachine: AnalyticsStateMachine
   ) {
     this.eventCallback = eventCallback;

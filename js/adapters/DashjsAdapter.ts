@@ -6,13 +6,14 @@ import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import * as dashjs from 'dashjs';
+import { AdapterEventCallback } from '../types/AdapterEventCallback';
 
 export class DashjsAdapter extends HTML5Adapter {
   mediaPlayer!: dashjs.MediaPlayerClass;
 
   constructor(
     mediaPlayer: dashjs.MediaPlayerClass,
-    eventCallback: (event: string, eventObject: any) => void,
+    eventCallback: AdapterEventCallback,
     stateMachine: AnalyticsStateMachine
   ) {
     super(null, eventCallback, stateMachine);

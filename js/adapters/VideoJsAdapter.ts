@@ -4,6 +4,8 @@ import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
+import {StreamSources} from '../types/StreamSources';
+import {AdapterEventCallback} from '../types/AdapterEventCallback';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -11,12 +13,12 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 export class VideoJsAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: videojs.default.Player;
-  eventCallback: (event: string, eventObject: any) => void;
+  eventCallback: AdapterEventCallback;
   stateMachine: AnalyticsStateMachine;
 
   constructor(
     player: videojs.default.Player,
-    eventCallback: (event: string, eventObject: any) => void,
+    eventCallback: AdapterEventCallback,
     stateMachine: AnalyticsStateMachine
   ) {
     this.onBeforeUnLoadEvent = false;
@@ -42,7 +44,7 @@ export class VideoJsAdapter implements Adapter {
 
   // this seems very generic. one could put it in a helper
   // and use it in many adapter implementations.
-  getStreamSources(url: string) {
+  getStreamSources(url: string): StreamSources {
     let mpdUrl = null;
     let m3u8Url = null;
     let progUrl = null;

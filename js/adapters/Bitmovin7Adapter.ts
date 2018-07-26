@@ -3,13 +3,14 @@ import {Player} from '../enums/Player';
 import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import 'bitmovin-player-ui/dist/js/framework/main';
 import {Adapter} from '../types/Adapter';
+import { AdapterEventCallback } from '../types/AdapterEventCallback';
 
 export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: bitmovin.PlayerAPI;
-  eventCallback: (event: Event, eventObject: any) => void;
+  eventCallback: AdapterEventCallback;
 
-  constructor(player: bitmovin.PlayerAPI, eventCallback: (event: Event, eventObject: any) => void) {
+  constructor(player: bitmovin.PlayerAPI, eventCallback: AdapterEventCallback) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
