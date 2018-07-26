@@ -14,6 +14,7 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
+import {CastClientConfig} from '../types/CastClientConfig';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -38,7 +39,7 @@ export class Analytics {
   private isCastReceiver: boolean;
   private isAllowedToSendSamples: boolean;
   private samplesQueue: any;
-  private castClientConfig: any;
+  private castClientConfig!: CastClientConfig;
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
@@ -85,13 +86,13 @@ export class Analytics {
     this.setupStateMachineCallbacks();
   }
 
-  updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: bitmovin.PlayerAPI.CastConfig) {
+  updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
     for (let i = 0; i < samples.length; i++) {
       this.updateSampleToCastClientConfig(samples[i], castClientConfig);
     }
   }
 
-  updateSampleToCastClientConfig(sample: Sample, castClientConfig: any) {
+  updateSampleToCastClientConfig(sample: Sample, castClientConfig: CastClientConfig) {
     const {config, userId, impressionId, domain, path, language, userAgent} = castClientConfig;
     sample.impressionId = impressionId;
     sample.userId = userId;
