@@ -14,7 +14,7 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
-import { CastClientConfig } from '../types/CastClientConfig';
+import {CastClientConfig} from '../types/CastClientConfig';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,

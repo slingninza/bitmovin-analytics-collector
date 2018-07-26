@@ -3,7 +3,7 @@ import {Player} from '../enums/Player';
 import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import 'bitmovin-player-ui/dist/js/framework/main';
 import {Adapter} from '../types/Adapter';
-import { AdapterEventCallback } from '../types/AdapterEventCallback';
+import {AdapterEventCallback} from '../types/AdapterEventCallback';
 
 export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;

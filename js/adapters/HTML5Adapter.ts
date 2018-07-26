@@ -5,7 +5,7 @@ import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
-import { AdapterEventCallback } from '../types/AdapterEventCallback';
+import {AdapterEventCallback} from '../types/AdapterEventCallback';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 

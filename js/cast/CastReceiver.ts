@@ -5,7 +5,7 @@ import {logger} from '../utils/Logger';
 
 export class CastReceiver {
   messageBus: any;
-  callback!:  (event: any) => void;
+  callback!: (event: any) => void;
   setUp() {
     const castReceiverManager = (window as any).cast.receiver.CastReceiverManager.getInstance();
     this.messageBus = castReceiverManager.getCastMessageBus(

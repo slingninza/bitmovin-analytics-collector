@@ -5,7 +5,7 @@ import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
-import { AdapterEventCallback } from '../types/AdapterEventCallback';
+import {AdapterEventCallback} from '../types/AdapterEventCallback';
 /**
  * @class
  * @constructor
