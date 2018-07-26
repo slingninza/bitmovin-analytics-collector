@@ -14,7 +14,7 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
-import {CastClientConfig} from '../types/CastClientConfig';
+import { CastClientConfig } from '../types/CastClientConfig';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -163,7 +163,7 @@ export class Analytics {
     this.stateMachineCallbacks = {
       // All of these are called in the onLeaveState Method.
       // So it's the last sample
-      setup: (time: number, state: string, event: string) => {
+      setup: (time: number, state: string, event: any) => {
         if (!this.isCastReceiver) {
           this.sample.impressionId = Utils.generateUUID();
         }
@@ -212,7 +212,7 @@ export class Analytics {
         this.setPlaybackSettingsFromLoadedEvent(playbackSettings);
       },
 
-      playing: (time: number, state: string, event: string) => {
+      playing: (time: number, state: string, event: any) => {
         this.setDuration(time);
         this.setState(state);
         this.sample.played = time;
@@ -222,7 +222,7 @@ export class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      playingAndBye: (time: number, state: string, event: string) => {
+      playingAndBye: (time: number, state: string, event: any) => {
         this.setDuration(time);
         this.setState(state);
         this.sample.played = time;
@@ -232,7 +232,7 @@ export class Analytics {
         this.sendUnloadRequest();
       },
 
-      heartbeat: (time: number, state: string, event: string) => {
+      heartbeat: (time: number, state: string, event: any) => {
         this.setDroppedFrames(event);
         this.setState(state);
         this.setDuration(time);
@@ -263,7 +263,7 @@ export class Analytics {
         this.sendAnalyticsRequestAndClearValues();
       },
 
-      videoChange: (event: string) => {
+      videoChange: (event: any) => {
         this.stateMachineCallbacks.setVideoTimeEndFromEvent(event);
         this.stateMachineCallbacks.setVideoTimeStartFromEvent(event);
         this.setPlaybackVideoPropertiesFromEvent(event);
@@ -331,7 +331,7 @@ export class Analytics {
         this.sample.impressionId = Utils.generateUUID();
       },
 
-      ad: (time: number, state: string, event: string) => {
+      ad: (time: number, state: string, event: any) => {
         this.setDuration(time);
         this.setState(state);
         this.sample.ad = time;
