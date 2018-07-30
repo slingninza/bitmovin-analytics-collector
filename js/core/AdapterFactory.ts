@@ -7,6 +7,7 @@ import {VideoJsAdapter} from '../adapters/VideoJsAdapter';
 =======
 import BitmovinAdapter from '../adapters/BitmovinAdapter';
 import Bitmovin8Adapter from '../adapters/Bitmovin8Adapter';
+import Bitmovin7Adapter from '../adapters/Bitmovin7Adapter';
 import VideoJsAdapter from '../adapters/VideoJsAdapter';
 >>>>>>> Added Bitmovin8Adapter:js/core/AdapterFactory.js
 

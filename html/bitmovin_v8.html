@@ -19,18 +19,18 @@
   <title>Bitdash Analytics</title>
 
   <script type="text/javascript" src="http://cdn.bitmovin.com/player/web/nightly/bitmovinplayer.js"></script>
-  <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
+    <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
 </head>
 <body>
 <div id="player" style="width: 400px"></div>
-    <a href="bitmovin.html">Click</a>
+    <a href="bitmovin_v8.html">Click</a>
     <a href="#" id="click">Click</a>
     <a href="#" id="change">Change Source</a>
   <script type="text/javascript">
 
     
+    //bitmovin.player.core.addModule(window.bitmovin.player['bitmovin-analytics']);
     bitmovin.player.addModule(bitmovin.analytics.PlayerModule);
-
     var player = bitmovin.player('player');
     //bitmovin.analytics.augment(player);
 
@@ -54,7 +54,14 @@
         experimentName: 'analytics-api',
         debug: true
       }
-    });
+    }).then(
+ function(player) {
+   console.log('Successfully created Bitmovin Player instance');
+ },
+ function(reason) {
+   console.log('Error while creating Bitmovin Player instance');
+ }
+);;
 
     //document.getElementById('click').onclick = function () {
     //  analytics.setCustomDataOnce({ customData1: 'after-click' });

@@ -46,7 +46,7 @@ class Bitmovin8Adapter {
       }
     };
     /* eslint-disable no-unused-vars */
-    this.player.on(this.player.Event.Sourceloaded, (event) => {
+    this.player.on(this.player.Event.SourceUnloaded, (event) => {
       this.eventCallback(Events.SOURCE_UNLOADED, {
         currentTime  : this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames()
