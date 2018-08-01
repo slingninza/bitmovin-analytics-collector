@@ -513,6 +513,10 @@ export class HTML5Adapter implements Adapter {
    * @param {boolean} silent
    */
   checkQualityLevelAttributes(silent = false) {
+    if (this.mediaEl === null) {
+      throw new Error('No media attached');
+    }
+
     const mediaEl = this.mediaEl;
 
     const qualityLevelInfo = this.getCurrentQualityLevelInfo();
@@ -539,7 +543,7 @@ export class HTML5Adapter implements Adapter {
         width,
         height,
         bitrate,
-        currentTime: mediaEl !== null ? mediaEl.currentTime : -1,
+        currentTime: mediaEl.currentTime,
       };
 
       if (!silent) {
