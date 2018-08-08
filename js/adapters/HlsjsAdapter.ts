@@ -36,7 +36,6 @@ export class HlsjsAdapter extends HTML5Adapter {
       return null;
     }
 
-    debugger;
     const bitrate = currentLevelObj.bitrate;
     const width = currentLevelObj.width;
     const height = currentLevelObj.height;
