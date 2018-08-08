@@ -467,7 +467,7 @@ export class Analytics {
   };
 
   register = (player: any, opts?: AnalyticsStateMachineOptions) => {
-    if (opts === undefined) {
+    if (!opts) {
       opts = {
         starttime: undefined,
       };
@@ -570,36 +570,38 @@ export class Analytics {
   }
 
   setupSample() {
-    (this.sample.domain = Utils.sanitizePath(window.location.hostname)),
-      (this.sample.path = Utils.sanitizePath(window.location.pathname)),
-      (this.sample.language = navigator.language || (navigator as any).userLanguage),
-      (this.sample.userAgent = navigator.userAgent),
-      (this.sample.screenWidth = screen.width),
-      (this.sample.screenHeight = screen.height),
-      (this.sample.isLive = false),
-      (this.sample.isCasting = this.isCastReceiver),
-      (this.sample.videoDuration = 0),
-      (this.sample.size = 'WINDOW'),
-      (this.sample.time = 0),
-      (this.sample.videoWindowWidth = 0),
-      (this.sample.videoWindowHeight = 0),
-      (this.sample.droppedFrames = 0),
-      (this.sample.played = 0),
-      (this.sample.buffered = 0),
-      (this.sample.paused = 0),
-      (this.sample.ad = 0),
-      (this.sample.seeked = 0),
-      (this.sample.videoPlaybackWidth = 0),
-      (this.sample.videoPlaybackHeight = 0),
-      (this.sample.videoBitrate = 0),
-      (this.sample.audioBitrate = 0),
-      (this.sample.videoTimeStart = 0),
-      (this.sample.videoTimeEnd = 0),
-      (this.sample.videoStartupTime = 0),
-      (this.sample.duration = 0),
-      (this.sample.startupTime = 0),
+    this.sample = {
+      domain: Utils.sanitizePath(window.location.hostname),
+      path: Utils.sanitizePath(window.location.pathname),
+      language: navigator.language || (navigator as any).userLanguage,
+      userAgent: navigator.userAgent,
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      isLive: false,
+      isCasting: this.isCastReceiver,
+      videoDuration: 0,
+      size: 'WINDOW',
+      time: 0,
+      videoWindowWidth: 0,
+      videoWindowHeight: 0,
+      droppedFrames: 0,
+      played: 0,
+      buffered: 0,
+      paused: 0,
+      ad: 0,
+      seeked: 0,
+      videoPlaybackWidth: 0,
+      videoPlaybackHeight: 0,
+      videoBitrate: 0,
+      audioBitrate: 0,
+      videoTimeStart: 0,
+      videoTimeEnd: 0,
+      videoStartupTime: 0,
+      duration: 0,
+      startupTime: 0,
       //@ts-ignore
-      (this.sample.analyticsVersion = __VERSION__);
+      analyticsVersion: __VERSION__,
+    };
   }
 
   checkLicensing(key: any) {

@@ -28,7 +28,6 @@ enum States {
 export class HTML5AnalyticsStateMachine implements AnalyticsStateMachine {
   private States: any;
   private stateMachineCallbacks: StateMachineCallbacks;
-  private pausedTimestamp: any;
   private onEnterStateTimestamp: number;
   private seekStartedAt: any;
   private stateMachine: any;
@@ -36,7 +35,6 @@ export class HTML5AnalyticsStateMachine implements AnalyticsStateMachine {
   constructor(stateMachineCallbacks: StateMachineCallbacks, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
-    this.pausedTimestamp = null;
     this.onEnterStateTimestamp = 0;
     this.seekStartedAt = null;
 

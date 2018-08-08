@@ -161,7 +161,6 @@ export class VideoJsAdapter implements Adapter {
 
     let analyticsBitrate: any;
     let bufferingTimeout: any;
-    // eslint-disable-next-line
     let lastTimeupdate = Date.now();
     let isStalling = false;
 

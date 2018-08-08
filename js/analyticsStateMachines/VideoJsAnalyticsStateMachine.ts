@@ -30,7 +30,6 @@ enum States {
 export class VideojsAnalyticsStateMachine implements AnalyticsStateMachine {
   private States: any;
   private stateMachineCallbacks: StateMachineCallbacks;
-  private pausedTimestamp: any;
   private seekTimestamp: number;
   private seekedTimestamp: number;
   private seekedTimeout: number;
@@ -40,7 +39,6 @@ export class VideojsAnalyticsStateMachine implements AnalyticsStateMachine {
   constructor(stateMachineCallbacks: StateMachineCallbacks, opts: AnalyticsStateMachineOptions) {
     this.stateMachineCallbacks = stateMachineCallbacks;
 
-    this.pausedTimestamp = null;
     this.seekTimestamp = 0;
     this.seekedTimestamp = 0;
     this.seekedTimeout = 0;

@@ -59,7 +59,7 @@ export class Bitmovin7Adapter implements Adapter {
         };
       }
     };
-    /* eslint-disable no-unused-vars */
+
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event: bitmovin.PlayerAPI.PlayerEvent) => {
       this.eventCallback(Event.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),

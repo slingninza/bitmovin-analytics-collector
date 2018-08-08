@@ -1,5 +1,3 @@
-/* global dashjs */
-
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
@@ -22,12 +20,10 @@ export class DashjsAdapter extends HTML5Adapter {
     let canPlay = false;
     try {
       videoEl = mediaPlayer.getVideoElement();
-    } catch (e) {
-      /* eslint-disable-line no-empty */
-    }
+    } catch (e) {}
     if (!videoEl) {
       mediaPlayer.on(
-        (window as any).dashjs.MediaPlayer.events.CAN_PLAY,
+        dashjs.MediaPlayer.events.CAN_PLAY,
         () => {
           if (canPlay) {
             return;
@@ -70,8 +66,15 @@ export class DashjsAdapter extends HTML5Adapter {
   /**
    * @override
    */
-  getStreamURL() {
-    return this.mediaPlayer ? this.mediaPlayer.getSource().toString() : null;
+  getStreamURL(): string | undefined {
+    if (!this.mediaPlayer) {
+      return;
+    }
+
+    const source = this.mediaPlayer.getSource();
+    if (source) {
+      return source.toString();
+    }
   }
   /**
    * Implemented by sub-class to deliver current quality-level info

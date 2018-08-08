@@ -6,6 +6,8 @@ import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
+
+import * as Hls from 'hls.js';
 /**
  * @class
  * @constructor
@@ -34,6 +36,7 @@ export class HlsjsAdapter extends HTML5Adapter {
       return null;
     }
 
+    debugger;
     const bitrate = currentLevelObj.bitrate;
     const width = currentLevelObj.width;
     const height = currentLevelObj.height;
@@ -64,7 +67,7 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    */
   getPlayerVersion() {
-    return (window as any).Hls.version;
+    return Hls.version;
   }
   /**
    * @override
@@ -77,19 +80,20 @@ export class HlsjsAdapter extends HTML5Adapter {
    * @override
    */
   getStreamURL() {
-    return this.hls.media.baseURI;
+    //@ts-ignore
+    return this.hls.url;
   }
 
   registerHlsEvents() {
     const hls = this.hls;
 
-    if (!(window as any).Hls) {
+    if (!Hls) {
       throw new Error('Hls.js is not defined installed (must be loaded before analytics module)');
     }
 
-    hls.on((window as any).Hls.Events.MEDIA_ATTACHING, this.onMediaAttaching.bind(this));
-    hls.on((window as any).Hls.Events.MEDIA_DETACHING, this.onMediaDetaching.bind(this));
-    hls.on((window as any).Hls.Events.MANIFEST_LOADING, this.onManifestLoading.bind(this));
+    hls.on(Hls.Events.MEDIA_ATTACHING, this.onMediaAttaching.bind(this));
+    hls.on(Hls.Events.MEDIA_DETACHING, this.onMediaDetaching.bind(this));
+    hls.on(Hls.Events.MANIFEST_LOADING, this.onManifestLoading.bind(this));
 
     // media is already attached, event has been triggered before
     // or we are in the event handler of this event itself.

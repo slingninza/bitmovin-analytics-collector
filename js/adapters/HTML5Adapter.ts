@@ -15,11 +15,11 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
  * @constructor
  */
 
-export class HTML5Adapter implements Adapter {
+export abstract class HTML5Adapter implements Adapter {
   public eventCallback: AdapterEventCallback;
   public stateMachine: AnalyticsStateMachine;
   public mediaEl: HTMLVideoElement | null;
-  public mediaElEventHandlers: any;
+  public mediaElEventHandlers: {event: string; handler: any}[];
   private analyticsBitrate_: number;
   private bufferingTimeout_: number | null;
   private isBuffering_: boolean;
@@ -115,31 +115,19 @@ export class HTML5Adapter implements Adapter {
     this.onMaybeReady();
   }
 
-  /** Implemented by sub-class to deliver current quality-level info
-   * specific to media-engine.
-   * @returns {QualityLevelInfo}
-   * @abstract
-   */
-  getCurrentQualityLevelInfo(): QualityLevelInfo | null {
-    return null;
-  }
+  abstract getCurrentQualityLevelInfo(): QualityLevelInfo | null;
 
-  /**
-   * @abstract
-   */
-  isLive(): boolean {
-    return false;
-  }
+  abstract isLive(): boolean;
 
   /**
    * Can be overriden by sub-classes
    * @returns {string}
    *
    */
-  getMIMEType(): string | null {
+  getMIMEType(): string | undefined {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
-      return null;
+      return;
     }
 
     return getMIMETypeFromFileExtension(mediaEl.src);
@@ -151,28 +139,21 @@ export class HTML5Adapter implements Adapter {
    */
   getStreamType(): string | undefined {
     let mimetype = this.getMIMEType();
-    if (mimetype !== null) {
+    if (mimetype) {
       return getStreamTypeFromMIMEType(mimetype);
     }
-    return undefined;
   }
 
-  /**
-   * @abstract
-   * @returns {string}
-   */
-  getPlayerVersion(): any {
-    return null;
-  }
+  abstract getPlayerVersion(): string;
 
   /**
    * Can be overriden by subclasses.
    * @returns {string}
    */
-  getStreamURL() {
+  getStreamURL(): string | undefined {
     const mediaEl = this.mediaEl;
     if (!mediaEl) {
-      return null;
+      return;
     }
 
     return mediaEl.src;
@@ -285,8 +266,8 @@ export class HTML5Adapter implements Adapter {
       this.eventCallback(Event.ERROR, {
         currentTime,
         // See https://developer.mozilla.org/en-US/docs/Web/API/MediaError
-        code: error === null ? null : error.code,
-        message: error === null ? null : error.message,
+        code: error ? error.code : null,
+        message: error ? error.message : null,
       });
     });
 
@@ -381,7 +362,7 @@ export class HTML5Adapter implements Adapter {
 
     const boundHandler = handler.bind(this);
 
-    this.mediaElEventHandlers.push(boundHandler);
+    this.mediaElEventHandlers.push({event, handler: boundHandler});
     this.mediaEl.addEventListener(event, boundHandler, false);
   }
 
@@ -429,21 +410,21 @@ export class HTML5Adapter implements Adapter {
    * Should only be calld when a mediaEl is attached
    */
   unregisterMediaElement() {
-    if (this.mediaEl === null) {
+    if (!this.mediaEl) {
       throw new Error('No media attached');
     }
 
     const mediaEl = this.mediaEl;
 
-    this.mediaElEventHandlers.forEach((handler: any) => {
-      mediaEl.removeEventListener(typeof handler, handler);
+    this.mediaElEventHandlers.forEach((item: {event: string; handler: any}) => {
+      mediaEl.removeEventListener(item.event, item.handler);
     });
 
     this.resetMedia();
   }
 
   onBuffering() {
-    if (this.mediaEl === null) {
+    if (!this.mediaEl) {
       throw new Error('No media attached');
     }
     const {currentTime} = this.mediaEl;
@@ -466,7 +447,7 @@ export class HTML5Adapter implements Adapter {
     if (this.isPaused_) {
       return;
     }
-    if (this.mediaEl === null) {
+    if (!this.mediaEl) {
       throw new Error('No media attached');
     }
 
@@ -480,7 +461,7 @@ export class HTML5Adapter implements Adapter {
   }
 
   checkPlayheadProgress() {
-    if (this.mediaEl === null) {
+    if (!this.mediaEl) {
       throw new Error('No media attached');
     }
     const mediaEl = this.mediaEl;
@@ -513,7 +494,7 @@ export class HTML5Adapter implements Adapter {
    * @param {boolean} silent
    */
   checkQualityLevelAttributes(silent = false) {
-    if (this.mediaEl === null) {
+    if (!this.mediaEl) {
       throw new Error('No media attached');
     }
 

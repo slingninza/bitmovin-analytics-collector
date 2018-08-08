@@ -10,7 +10,7 @@ export const MIMETypes = {
   DASH,
 };
 
-export function getMIMETypeFromFileExtension(path: string) {
+export function getMIMETypeFromFileExtension(path: string): string | undefined {
   path = path.toLowerCase();
 
   if (path.endsWith('.m3u8')) {
@@ -25,5 +25,4 @@ export function getMIMETypeFromFileExtension(path: string) {
   if (path.endsWith('.mpd')) {
     return DASH;
   }
-  return null;
 }
