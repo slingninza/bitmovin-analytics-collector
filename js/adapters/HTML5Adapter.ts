@@ -25,7 +25,7 @@ export abstract class HTML5Adapter implements Adapter {
   private isBuffering_: boolean;
   private isLive_: boolean;
   private isPaused_: boolean;
-  private previousMediaTime_: number | null;
+  private previousMediaTime_: number;
   private needsReadyEvent_: boolean;
   private needsFirstPlayIntent_: boolean;
   private mediaElementSet_: boolean;
@@ -53,7 +53,7 @@ export abstract class HTML5Adapter implements Adapter {
 
     this.isPaused_ = false;
 
-    this.previousMediaTime_ = null;
+    this.previousMediaTime_ = 0;
 
     this.needsReadyEvent_ = true;
 
@@ -476,10 +476,6 @@ export abstract class HTML5Adapter implements Adapter {
     this.bufferingTimeout_ = window.setTimeout(() => {
       if (mediaEl.paused || (mediaEl.ended && !this.isBuffering_)) {
         return;
-      }
-
-      if (this.previousMediaTime_ === null) {
-        this.previousMediaTime_ = 0;
       }
 
       const timeDelta = mediaEl.currentTime - this.previousMediaTime_;
