@@ -1,7 +1,6 @@
 import {MESSAGE_NAMESPACE} from '../utils/Settings';
 import {logger} from '../utils/Logger';
 
-/* global cast */
 
 export class CastReceiver {
   messageBus: any;

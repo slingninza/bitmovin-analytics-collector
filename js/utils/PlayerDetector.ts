@@ -1,12 +1,3 @@
-/* global shaka */
-/* global videojs */
-/* global dashjs */
-/* global Hls */
-
-/**
- * Stateless. Functions that detect players somehow.
- * @class
- */
 
 export class PlayerDetector {
   static isBitmovinVersionPre7 = (player: any) => {

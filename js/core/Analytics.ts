@@ -1,4 +1,3 @@
-/* global __VERSION__ */
 import {LicenseCall} from '../utils/LicenseCall';
 import {AnalyticsCall} from '../utils/AnalyticsCall';
 import Utils from '../utils/Utils';

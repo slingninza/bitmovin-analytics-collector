@@ -1,4 +1,3 @@
-/* global shaka */
 
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';

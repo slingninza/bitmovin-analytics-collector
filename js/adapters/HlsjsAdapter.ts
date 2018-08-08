@@ -1,5 +1,3 @@
-/* global Hls */
-
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';

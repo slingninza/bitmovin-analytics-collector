@@ -1,5 +1,3 @@
-/* global videojs */
-
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
