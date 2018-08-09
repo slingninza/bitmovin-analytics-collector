@@ -20,13 +20,12 @@ export class AdapterFactory {
    * @param {AnalyticsStateMachine} stateMachine
    */
   static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine): Adapter | undefined {
-    debugger;
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
       return new BitmovinAdapter(player, eventCallback);
-    } else if (PlayerDetector.isBitmovinVersion8Plus(player)) {
-      return new Bitmovin8Adapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7Adapter(player, eventCallback);
+    } else if (PlayerDetector.isBitmovinVersion8Plus(player)) {
+      return new Bitmovin8Adapter(player, eventCallback);
     } else if (PlayerDetector.isVideoJs(player)) {
       return new VideoJsAdapter(player, eventCallback, stateMachine);
     } else if (PlayerDetector.isHlsjs(player)) {
