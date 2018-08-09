@@ -28,40 +28,31 @@
     <a href="#" id="change">Change Source</a>
   <script type="text/javascript">
 
-    
-    //bitmovin.player.core.addModule(window.bitmovin.player['bitmovin-analytics']);
-    bitmovin.player.addModule(bitmovin.analytics.PlayerModule);
-    var player = bitmovin.player('player');
-    //bitmovin.analytics.augment(player);
+  
 
-
-    player.setup({
+    var player= new bitmovin.player.Player(document.getElementById('player'),{
       key: 'a6e31908-550a-4f75-b4bc-a9d89880a733',
       playback: {
         autoplay: true,
         muted: true
-      },
-      source:    {
-        dash: 'http://bitdash-a.akamaihd.net/content/sintel/sintel.mpd',
-        hls:  'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
-        progressive:  [{
-          url:  'https://bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
-          type: 'video/mp4'
-        }]
       },
       analytics: {
         key: 'e73a3577-d91c-4214-9e6d-938fb936818a',
         experimentName: 'analytics-api',
         debug: true
       }
-    }).then(
- function(player) {
-   console.log('Successfully created Bitmovin Player instance');
- },
- function(reason) {
-   console.log('Error while creating Bitmovin Player instance');
- }
-);;
+    });
+
+
+    player.load({
+        dash: 'http://bitdash-a.akamaihd.net/content/sintel/sintel.mpd',
+        hls:  'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
+        progressive:  [{
+          url:  'https://bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
+          type: 'video/mp4'
+        }]
+      })
+
 
     //document.getElementById('click').onclick = function () {
     //  analytics.setCustomDataOnce({ customData1: 'after-click' });

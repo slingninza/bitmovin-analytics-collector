@@ -1,4 +1,3 @@
-
 export class PlayerDetector {
   static isBitmovinVersionPre7 = (player: any) => {
     if (PlayerDetector.isDashjs(player)) {
@@ -13,7 +12,23 @@ export class PlayerDetector {
   };
 
   static isBitmovinVersion7Plus = (player: any) => {
-    const functionsToCheck = ['getAvailableLicenseServers', 'getMaxTimeShift', 'getAvailableSubtitles'];
+    const functionsToCheck = [
+      'getAvailableLicenseServers',
+      'getMaxTimeShift',
+      'getAvailableSubtitles',
+      'addEventHandler',
+    ];
+    for (const fun of functionsToCheck) {
+      if (!(typeof player[fun] === 'function')) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  static isBitmovinVersion8Plus = (player: any) => {
+    const functionsToCheck = ['on', 'off', 'getAvailableLicenseServers', 'getMaxTimeShift', 'getAvailableSubtitles'];
     for (const fun of functionsToCheck) {
       if (!(typeof player[fun] === 'function')) {
         return false;
