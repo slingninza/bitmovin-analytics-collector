@@ -173,7 +173,7 @@ class Bitmovin8Adapter {
       });
     });
 
-    this.player.on(this.player.Event. StallStarted , () => {
+    this.player.on(this.player.Event.StallStarted , () => {
       this.eventCallback(Events.START_BUFFERING, {
         currentTime  : this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames()
