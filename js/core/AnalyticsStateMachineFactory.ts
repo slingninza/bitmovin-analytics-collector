@@ -24,7 +24,7 @@ export class AnalyticsStateMachineFactory {
   ): AnalyticsStateMachine {
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
       return new BitmovinAnalyticsStateMachine(stateMachineCallbacks);
-    } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
+    } else if (PlayerDetector.isBitmovinVersion7Plus(player)|| PlayerDetector.isBitmovinVersion8Plus(player)) {
       return new Bitmovin7AnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (PlayerDetector.isVideoJs(player)) {
       return new VideojsAnalyticsStateMachine(stateMachineCallbacks, opts);
