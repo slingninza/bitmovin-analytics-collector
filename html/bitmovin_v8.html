@@ -18,7 +18,7 @@
 
   <title>Bitdash Analytics</title>
 
-  <script type="text/javascript" src="http://cdn.bitmovin.com/player/web/nightly/bitmovinplayer.js"></script>
+  <script type="text/javascript" src="https://bitmovin-a.akamaihd.net/bitmovin-player/nightly/2018/bitmovinplayer.js"></script>
     <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
 </head>
 <body>
@@ -33,7 +33,7 @@
     var player= new bitmovin.player.Player(document.getElementById('player'),{
       key: 'a6e31908-550a-4f75-b4bc-a9d89880a733',
       playback: {
-        autoplay: true,
+        //autoplay: true,
         muted: true
       },
       analytics: {
@@ -50,18 +50,21 @@
         progressive:  [{
           url:  'https://bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
           type: 'video/mp4'
-        }]
+        }],
       })
 
 
-    //document.getElementById('click').onclick = function () {
-    //  analytics.setCustomDataOnce({ customData1: 'after-click' });
-    //};
+    document.getElementById('click').onclick = function () {
+      //analytics.setCustomDataOnce({ customData1: 'after-click' });
+      player.setViewMode('fullscreen');
+    };
     document.getElementById('change').onclick = function () {
       player.load({
         dash:  'https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd',
         analytics: {
-          experimentName: 'analytics-switch'
+          experimentName: 'analytics-switch',
+          userId: 'asdf',
+          videoId: 'sdfsdf'
         }
       });
     };

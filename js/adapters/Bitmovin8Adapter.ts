@@ -59,48 +59,15 @@ class Bitmovin8Adapter implements Adapter {
         };
       }
     };
-    /* eslint-disable no-unused-vars */
-    this.player.on(this.player.Event.SourceUnloaded, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+
+    this.player.on(this.player.exports.Event.SourceUnloaded, (event: bitmovin.PlayerAPI.PlayerEvent) => {
       this.eventCallback(Event.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Sourceloaded, (event: bitmovin.PlayerAPI.PlayerEvent) => {
-      let autoplay = false;
-      if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
-        autoplay = this.player.getConfig().playback.autoplay;
-      }
-
-      const config = this.player.getConfig();
-      let source: PlayerSourceConfig = {};
-      const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
-      if (config.source) {
-        source.mpdUrl = config.source.dash;
-        source.m3u8Url = config.source.hls;
-        source.progUrl = progConf ? progConf.progUrl : undefined;
-        source.progBitrate = progConf ? progConf.progBitrate : undefined;
-      }
-
-      this.eventCallback(Event.SOURCE_LOADED, {
-        isLive: this.player.isLive(),
-        version: this.player.version,
-        type: this.player.getPlayerType(),
-        duration: this.player.getDuration(),
-        streamType: this.player.getStreamType(),
-        mpdUrl: source.mpdUrl,
-        m3u8Url: source.m3u8Url,
-        progUrl: source.progUrl,
-        progBitrate: source.progBitrate,
-        videoWindowWidth: this.player.getFigure().offsetWidth,
-        videoWindowHeight: this.player.getFigure().offsetHeight,
-        isMuted: this.player.isMuted(),
-        autoplay,
-      });
-    });
-
-    this.player.on(this.player.Event.Ready, () => {
+    this.player.on(this.player.exports.Event.SourceLoaded, (event: bitmovin.PlayerAPI.PlayerEvent) => {
       let autoplay = false;
       if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
         autoplay = this.player.getConfig().playback.autoplay;
@@ -118,7 +85,7 @@ class Bitmovin8Adapter implements Adapter {
         source.progBitrate = progConf ? progConf.progBitrate : undefined;
       }
 
-      this.eventCallback(Event.READY, {
+      this.eventCallback(Event.SOURCE_LOADED, {
         isLive: this.player.isLive(),
         version: this.player.version,
         type: this.player.getPlayerType(),
@@ -130,74 +97,80 @@ class Bitmovin8Adapter implements Adapter {
         m3u8Url: source.m3u8Url,
         progUrl: source.progUrl,
         progBitrate: source.progBitrate,
-        videoWindowWidth: this.player.getFigure().offsetWidth,
-        videoWindowHeight: this.player.getFigure().offsetHeight,
+        videoWindowWidth: this.player.getContainer().offsetWidth,
+        videoWindowHeight: this.player.getContainer().offsetHeight,
         isMuted: this.player.isMuted(),
         autoplay,
       });
     });
 
-    this.player.on(this.player.Event.CastStarted, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+    this.player.on(this.player.exports.Event.CastStarted, (event: bitmovin.PlayerAPI.PlayerEvent) => {
       this.eventCallback(Event.START_CAST, event);
     });
 
-    this.player.on(this.player.Event.CastStopped, () => {
+    this.player.on(this.player.exports.Event.CastStopped, () => {
       this.eventCallback(Event.END_CAST, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Play, () => {
+    this.player.on(this.player.exports.Event.Play, () => {
       this.eventCallback(Event.PLAY, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Paused, () => {
+    this.player.on(this.player.exports.Event.Playing, () => {
+      this.eventCallback(Event.PLAYING, {
+        currentTime: this.player.getCurrentTime(),
+      });
+    });
+
+    this.player.on(this.player.exports.Event.Paused, () => {
       this.eventCallback(Event.PAUSE, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.TimeChanged, () => {
+    this.player.on(this.player.exports.Event.TimeChanged, () => {
       this.eventCallback(Event.TIMECHANGED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Seek, () => {
+    this.player.on(this.player.exports.Event.Seek, () => {
       this.eventCallback(Event.SEEK, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Seeked, () => {
+    this.player.on(this.player.exports.Event.Seeked, () => {
       this.eventCallback(Event.SEEKED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.StallStarted, () => {
+    this.player.on(this.player.exports.Event.StallStarted, () => {
       this.eventCallback(Event.START_BUFFERING, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.StallEnded, () => {
+    this.player.on(this.player.exports.Event.StallEnded, () => {
       this.eventCallback(Event.END_BUFFERING, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.AudioPlaybackQualityChanged, () => {
+    this.player.on(this.player.exports.Event.AudioPlaybackQualityChanged, () => {
       const quality = this.player.getPlaybackAudioData();
 
       this.eventCallback(Event.AUDIO_CHANGE, {
@@ -207,7 +180,7 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.Event.VideoPlaybackQualityChanged, () => {
+    this.player.on(this.player.exports.Event.VideoPlaybackQualityChanged, () => {
       const quality = this.player.getPlaybackVideoData();
 
       this.eventCallback(Event.VIDEO_CHANGE, {
@@ -219,49 +192,50 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.Event.FullscreenEnter, () => {
-      this.eventCallback(Event.START_FULLSCREEN, {
-        currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames(),
-      });
+    this.player.on(this.player.exports.Event.ViewModeChanged, (e: any) => {
+      if(e.to === 'fullscreen') {
+        this.eventCallback(Event.START_FULLSCREEN, {
+          currentTime: this.player.getCurrentTime(),
+          droppedFrames: this.player.getDroppedFrames(),
+        });
+      }
+      else if(e.from === 'fullscreen') {
+        this.eventCallback(Event.END_FULLSCREEN, {
+          currentTime: this.player.getCurrentTime(),
+          droppedFrames: this.player.getDroppedFrames(),
+        });
+      }
     });
 
-    this.player.on(this.player.Event.FullscreenExit, () => {
-      this.eventCallback(Event.END_FULLSCREEN, {
-        currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames(),
-      });
-    });
-
-    this.player.on(this.player.Event.AdStarted, () => {
+    this.player.on(this.player.exports.Event.AdStarted, () => {
       this.eventCallback(Event.START_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.AdFinished, () => {
+    this.player.on(this.player.exports.Event.AdFinished, () => {
       this.eventCallback(Event.END_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Muted, () => {
+    this.player.on(this.player.exports.Event.Muted, () => {
       this.eventCallback(Event.MUTE, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Unmuted, () => {
+    this.player.on(this.player.exports.Event.Unmuted, () => {
       this.eventCallback(Event.UN_MUTE, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.on(this.player.Event.Error, (event: any) => {
+    this.player.on(this.player.exports.Event.Error, (event: any) => {
       this.eventCallback(Event.ERROR, {
         code: event.code,
         message: event.message,
@@ -269,7 +243,7 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.Event.PlaybackFinished, () => {
+    this.player.on(this.player.exports.Event.PlaybackFinished, () => {
       this.eventCallback(Event.PLAYBACK_FINISHED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
