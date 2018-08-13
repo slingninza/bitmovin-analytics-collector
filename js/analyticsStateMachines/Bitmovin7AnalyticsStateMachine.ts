@@ -290,15 +290,6 @@ export class Bitmovin7AnalyticsStateMachine implements AnalyticsStateMachine {
             this.stateMachineCallbacks.setVideoTimeStartFromEvent(eventObject);
           }
 
-          if (
-            event === 'PLAY_SEEK' &&
-            to === this.States.PLAY_SEEKING &&
-            to !== this.States.PLAY_SEEKING &&
-            to !== this.States.END_PLAY_SEEKING
-          ) {
-            this.seekTimestamp = this.onEnterStateTimestamp;
-          }
-
           if (event === Event.START_CAST && to === this.States.CASTING) {
             this.stateMachineCallbacks.startCasting(timestamp, eventObject);
           }
