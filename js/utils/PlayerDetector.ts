@@ -35,6 +35,11 @@ export class PlayerDetector {
       }
     }
 
+    if(!(typeof player['addEventHandler']==='function'))
+    {
+      return false;
+    }
+
     return true;
   };
 
