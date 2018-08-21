@@ -28,16 +28,11 @@ export class PlayerDetector {
   };
 
   static isBitmovinVersion8Plus = (player: any) => {
-    const functionsToCheck = ['on', 'off'];
+    const functionsToCheck = ['on', 'off','destroy', 'getMaxTimeShift',];
     for (const fun of functionsToCheck) {
       if (!(typeof player[fun] === 'function')) {
         return false;
       }
-    }
-
-    if(!(typeof player['addEventHandler']==='function'))
-    {
-      return false;
     }
 
     return true;
