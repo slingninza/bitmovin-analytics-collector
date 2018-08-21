@@ -43,9 +43,9 @@ export class VideoJsAdapter implements Adapter {
   // this seems very generic. one could put it in a helper
   // and use it in many adapter implementations.
   getStreamSources(url: string): StreamSources {
-    let mpdUrl = null;
-    let m3u8Url = null;
-    let progUrl = null;
+    let mpdUrl;
+    let m3u8Url;
+    let progUrl;
     const streamType = this.getStreamType(url);
     switch (streamType) {
       case 'hls':

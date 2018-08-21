@@ -73,8 +73,8 @@ function makeConfig() {
     module: {
       rules: [
         // all files with a `.ts` extension will be handled by `ts-loader`
-        { test: /\.ts?$/, loader: 'ts-loader' },
-        { test: /\.js?$/, loader: 'ts-loader' }
+        { test: /\.ts?$/, loader: 'awesome-typescript-loader' , exclude: /node_modules/},
+        { test: /\.js?$/, loader: 'awesome-typescript-loader' ,exclude: /node_modules/ }
       ]
     },
     externals: {

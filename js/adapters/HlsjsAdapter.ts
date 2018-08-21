@@ -5,7 +5,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 
-import * as Hls from 'hls.js';
+declare var Hls: any;
 /**
  * @class
  * @constructor

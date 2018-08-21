@@ -16,7 +16,7 @@ export class DashjsAdapter extends HTML5Adapter {
   ) {
     super(null, eventCallback, stateMachine);
 
-    let videoEl = null;
+    let videoEl;
     let canPlay = false;
     try {
       videoEl = mediaPlayer.getVideoElement();
