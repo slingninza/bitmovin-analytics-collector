@@ -14,6 +14,7 @@ class Bitmovin8Adapter implements Adapter {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
+    (window as any).player=this.player;
     this.register();
   }
 

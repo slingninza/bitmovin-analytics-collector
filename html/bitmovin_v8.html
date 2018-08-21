@@ -19,7 +19,9 @@
   <title>Bitdash Analytics</title>
 
   <script type="text/javascript" src="https://bitmovin-a.akamaihd.net/bitmovin-player/nightly/2018/bitmovinplayer.js"></script>
+  <script type="text/javascript" src="/build/bitmovinplayer-ui.js"></script>
     <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
+    <link rel="stylesheet" href="/build/bitmovinplayer-ui.css">
 </head>
 <body>
 <div id="player" style="width: 400px"></div>
@@ -32,6 +34,7 @@
 
     var player= new bitmovin.player.Player(document.getElementById('player'),{
       key: 'a6e31908-550a-4f75-b4bc-a9d89880a733',
+      ui: false,
       playback: {
         //autoplay: true,
         muted: true
@@ -42,13 +45,12 @@
         debug: true
       },
       location: {
-        ui : 'https://cdn.bitmovin.com/player/web/beta/8/bitmovinplayer-ui.js',
-        ui_css : 'https://cdn.bitmovin.com/player/web/beta/8/bitmovinplayer-ui.css'
+        // ui : 'https://cdn.bitmovin.com/player/web/beta/8/bitmovinplayer-ui.js',
+         //ui_css : 'https://cdn.bitmovin.com/player/web/beta/8/bitmovinplayer-ui.css'
       },
-      ui : false,
     });
 
-
+    var uiManager;
     player.load({
         dash: 'http://bitdash-a.akamaihd.net/content/sintel/sintel.mpd',
         hls:  'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
@@ -56,7 +58,13 @@
           url:  'https://bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
           type: 'video/mp4'
         }],
-      })
+      }).then(function() {
+     // Add UI to loaded player
+     uiManager = bitmovin.playerui.UIManager.Factory.buildDefaultUI(player);
+   }, function(errorEvent) {
+     // Play setup failed, and there’s no player UI yet to display the error in
+     console.log(errorEvent);
+   });
 
 
     document.getElementById('click').onclick = function () {
