@@ -28,7 +28,7 @@ enum State {
   MUTING_PAUSE = 'MUTING_PAUSE',
   CASTING = 'CASTING',
   SOURCE_CHANGING = 'SOURCE_CHANGING',
-  SOURCE_LOADED = 'SOURCE_LOADED'
+  SOURCE_LOADED = 'SOURCE_LOADED',
 }
 
 export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
@@ -68,7 +68,6 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
       'FINISH_QUALITYCHANGE_PAUSE',
       'FINISH_QUALITYCHANGE',
       'FINISH_QUALITYCHANGE_REBUFFERING',
-      
     ];
   }
 

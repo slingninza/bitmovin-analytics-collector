@@ -12,7 +12,12 @@ export class PlayerDetector {
   };
 
   static isBitmovinVersion7Plus = (player: any) => {
-    const functionsToCheck = ['getAvailableLicenseServers','getMaxTimeShift','getAvailableSubtitles','addEventHandler',];
+    const functionsToCheck = [
+      'getAvailableLicenseServers',
+      'getMaxTimeShift',
+      'getAvailableSubtitles',
+      'addEventHandler',
+    ];
     for (const fun of functionsToCheck) {
       if (!(typeof player[fun] === 'function')) {
         return false;

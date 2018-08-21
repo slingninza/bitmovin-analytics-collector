@@ -14,7 +14,7 @@ class Bitmovin8Adapter implements Adapter {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
-    (window as any).player=this.player;
+    (window as any).player = this.player;
     this.register();
   }
 
@@ -75,7 +75,7 @@ class Bitmovin8Adapter implements Adapter {
       }
 
       const config = {
-        source: this.player.getSource()
+        source: this.player.getSource(),
       };
       let source: PlayerSourceConfig = {};
       const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
@@ -196,13 +196,12 @@ class Bitmovin8Adapter implements Adapter {
     });
 
     this.player.on(this.player.exports.Event.ViewModeChanged, (e: any) => {
-      if(e.to === 'fullscreen') {
+      if (e.to === 'fullscreen') {
         this.eventCallback(Event.START_FULLSCREEN, {
           currentTime: this.player.getCurrentTime(),
           droppedFrames: this.player.getDroppedFrames(),
         });
-      }
-      else if(e.from === 'fullscreen') {
+      } else if (e.from === 'fullscreen') {
         this.eventCallback(Event.END_FULLSCREEN, {
           currentTime: this.player.getCurrentTime(),
           droppedFrames: this.player.getDroppedFrames(),
