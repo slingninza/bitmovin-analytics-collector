@@ -207,7 +207,6 @@ export class Analytics {
         if(drmPerformance.drmUsed) {
           this.sample.drmType = drmPerformance.drmInfo;
           this.sample.drmLoadTime = drmPerformance.drmTime;
-          this.sample.drmUsed=drmPerformance.drmUsed;
         }
         this.sendAnalyticsRequestAndClearValues();
         this.sample.autoplay = undefined;

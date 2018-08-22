@@ -58,5 +58,4 @@ export interface Sample {
   customUserId?: string;
   drmType?: string;
   drmLoadTime?: number;
-  drmUsed?: boolean;
 }
