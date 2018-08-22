@@ -150,10 +150,11 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
 
         // We are ending the seek
         {name: Event.PLAY, from: this.States.PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
-
+        
         {name: Event.START_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
         {name: Event.END_BUFFERING, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
         {name: Event.SEEKED, from: this.States.END_PLAY_SEEKING, to: this.States.END_PLAY_SEEKING},
+        {name: Event.PLAYING, from: this.States.END_PLAY_SEEKING, to: this.States.PLAYING},
         {name: Event.TIMECHANGED, from: this.States.END_PLAY_SEEKING, to: this.States.PLAYING},
 
         {name: Event.END, from: this.States.PLAY_SEEKING, to: this.States.END},
@@ -386,6 +387,7 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
 
   callEvent(eventType: string, eventObject: any, timestamp: number) {
     const exec = this.stateMachine[eventType];
+    console.log(eventType);
 
     if (exec) {
       exec.call(this.stateMachine, timestamp, eventObject);
