@@ -283,7 +283,7 @@ export class Bitmovin7Adapter implements Adapter {
 
     this.player.addEventHandler(this.player.EVENT.ON_DOWNLOAD_FINISHED, (event: any) => {
       if (event.downloadType.indexOf('drm/license/') === 0) {
-        this.drmPerformanceInfo.drmTime = event.downloadTime;
+        this.drmPerformanceInfo.drmTime = event.downloadTime * 1000;
         this.drmPerformanceInfo.drmInfo = event.downloadType.replace('drm/license/', '');
         this.drmPerformanceInfo.drmUsed = true;
       }
