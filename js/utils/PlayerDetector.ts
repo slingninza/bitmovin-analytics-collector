@@ -1,4 +1,3 @@
-
 export class PlayerDetector {
   static isBitmovinVersionPre7 = (player: any) => {
     if (PlayerDetector.isDashjs(player)) {

@@ -25,7 +25,7 @@ export class VideoJsAdapter implements Adapter {
     this.player = player;
     this.eventCallback = eventCallback;
     this.stateMachine = stateMachine;
-    this.drmPerformanceInfo = {drmUsed:false};
+    this.drmPerformanceInfo = {drmUsed: false};
     this.register();
   }
 
@@ -35,7 +35,6 @@ export class VideoJsAdapter implements Adapter {
   getDrmPerformance() {
     return this.drmPerformanceInfo;
   }
-
 
   getStreamType(url: string) {
     if (url.endsWith('.m3u8')) {

@@ -1,7 +1,6 @@
 import {MESSAGE_NAMESPACE} from '../utils/Settings';
 import {logger} from '../utils/Logger';
 
-
 export class CastReceiver {
   messageBus: any;
   callback!: (event: any) => void;

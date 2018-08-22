@@ -8,16 +8,15 @@ import {DrmPerformanceInfo} from '../types/Adapter';
 
 export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
-  player: bitmovin.PlayerAPI;
+  player: any;
   eventCallback: AdapterEventCallback;
   drmPerformanceInfo: DrmPerformanceInfo;
-
 
   constructor(player: bitmovin.PlayerAPI, eventCallback: AdapterEventCallback) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
-    this.drmPerformanceInfo = {drmUsed:false};
+    this.drmPerformanceInfo = {drmUsed: false};
 
     this.register();
   }
@@ -27,7 +26,7 @@ export class Bitmovin7Adapter implements Adapter {
   }
 
   getDrmPerformance() {
-      return this.drmPerformanceInfo;
+    return this.drmPerformanceInfo;
   }
 
   register() {
@@ -288,10 +287,9 @@ export class Bitmovin7Adapter implements Adapter {
 
     this.player.addEventHandler(this.player.EVENT.ON_DOWNLOAD_FINISHED, (event: any) => {
       if (event.downloadType.indexOf('drm/license/') === 0) {
-        this.drmPerformanceInfo.drmTime=event.downloadTime;
-        this.drmPerformanceInfo.drmInfo=event.downloadType.replace('drm/license/', '');
-        this.drmPerformanceInfo.drmUsed=true;
-        
+        this.drmPerformanceInfo.drmTime = event.downloadTime;
+        this.drmPerformanceInfo.drmInfo = event.downloadType.replace('drm/license/', '');
+        this.drmPerformanceInfo.drmUsed = true;
       }
     });
 

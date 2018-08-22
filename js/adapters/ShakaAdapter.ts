@@ -1,4 +1,3 @@
-
 import {HTML5Adapter} from './HTML5Adapter';
 import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
@@ -23,7 +22,7 @@ export class ShakaAdapter extends HTML5Adapter {
      */
     this.shakaPlayer = shakaPlayer;
 
-    this.drmPerformanceInfo = {drmUsed:false};
+    this.drmPerformanceInfo = {drmUsed: false};
   }
 
   getPlayerName() {
@@ -40,7 +39,6 @@ export class ShakaAdapter extends HTML5Adapter {
   getDrmPerformance() {
     return this.drmPerformanceInfo;
   }
-
 
   /**
    * @override

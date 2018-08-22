@@ -19,7 +19,7 @@ export class HlsjsAdapter extends HTML5Adapter {
     super(null, eventCallback, stateMachine);
 
     this.hls = hls;
-    this.drmPerformanceInfo = {drmUsed:false};
+    this.drmPerformanceInfo = {drmUsed: false};
     this.resetMedia();
     this.registerHlsEvents();
   }
@@ -30,7 +30,6 @@ export class HlsjsAdapter extends HTML5Adapter {
   getDrmPerformance() {
     return this.drmPerformanceInfo;
   }
-
 
   getCurrentQualityLevelInfo(): QualityLevelInfo | null {
     const hls = this.hls;

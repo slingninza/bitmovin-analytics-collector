@@ -209,11 +209,7 @@ export class Analytics {
           this.sample.drmLoadTime = drmPerformance.drmTime;
           this.sample.drmUsed=drmPerformance.drmUsed;
         }
-
         debugger
-          
-          
-        
         this.sendAnalyticsRequestAndClearValues();
         this.sample.autoplay = undefined;
       },

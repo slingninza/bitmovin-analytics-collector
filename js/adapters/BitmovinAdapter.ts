@@ -13,7 +13,7 @@ export class BitmovinAdapter implements Adapter {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
-    this.drmPerformanceInfo = {drmUsed:false};
+    this.drmPerformanceInfo = {drmUsed: false};
     this.register();
   }
 

@@ -39,7 +39,7 @@ export abstract class HTML5Adapter implements Adapter {
   ) {
     this.eventCallback = eventCallback;
 
-    this.drmPerformanceInfo = {drmUsed:false};
+    this.drmPerformanceInfo = {drmUsed: false};
 
     this.stateMachine = stateMachine;
 
@@ -77,7 +77,6 @@ export abstract class HTML5Adapter implements Adapter {
   getDrmPerformance() {
     return this.drmPerformanceInfo;
   }
-
 
   /**
    * Used to setup against the media element.

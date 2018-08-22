@@ -34,6 +34,6 @@ export class AdapterFactory {
     } else if (PlayerDetector.isDashjs(player)) {
       return new DashjsAdapter(player, eventCallback, stateMachine);
     }
-    throw new Error("Could not Detect Player !")
+    throw new Error('Could not Detect Player !');
   }
 }
