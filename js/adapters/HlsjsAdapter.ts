@@ -27,9 +27,6 @@ export class HlsjsAdapter extends HTML5Adapter {
   getPlayerName() {
     return Player.HLSJS;
   }
-  getDrmPerformance() {
-    return this.drmPerformanceInfo;
-  }
 
   getCurrentQualityLevelInfo(): QualityLevelInfo | null {
     const hls = this.hls;

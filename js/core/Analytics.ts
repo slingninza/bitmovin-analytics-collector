@@ -203,7 +203,7 @@ export class Analytics {
         this.sample.startupTime = this.startupTime;
         this.sample.autoplay = this.autoplay;
 
-        const drmPerformance = this.adapter.getDrmPerformance();
+        const drmPerformance = this.adapter.drmPerformanceInfo;
         if(drmPerformance.drmUsed) {
           this.sample.drmType = drmPerformance.drmInfo;
           this.sample.drmLoadTime = drmPerformance.drmTime;

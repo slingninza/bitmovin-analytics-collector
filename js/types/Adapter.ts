@@ -1,6 +1,6 @@
 export interface Adapter {
   getPlayerName: () => string;
-  getDrmPerformance: () => DrmPerformanceInfo;
+  drmPerformanceInfo: DrmPerformanceInfo;
 }
 
 export interface DrmPerformanceInfo {

@@ -74,9 +74,6 @@ export abstract class HTML5Adapter implements Adapter {
     return Player.HTML5;
   }
 
-  getDrmPerformance() {
-    return this.drmPerformanceInfo;
-  }
 
   /**
    * Used to setup against the media element.

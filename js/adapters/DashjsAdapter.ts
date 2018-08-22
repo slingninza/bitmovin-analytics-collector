@@ -54,9 +54,6 @@ export class DashjsAdapter extends HTML5Adapter {
   getPlayerVersion() {
     return this.mediaPlayer.getVersion();
   }
-  getDrmPerformance() {
-    return this.drmPerformanceInfo;
-  }
 
   isLive() {
     // FIXME: Maybe use http://cdn.dashjs.org/latest/jsdoc/module-MediaPlayer.html#getLiveDelay__anchor

@@ -36,9 +36,6 @@ export class ShakaAdapter extends HTML5Adapter {
   isLive() {
     return this.shakaPlayer ? this.shakaPlayer.isLive() : false;
   }
-  getDrmPerformance() {
-    return this.drmPerformanceInfo;
-  }
 
   /**
    * @override

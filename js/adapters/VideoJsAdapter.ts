@@ -32,9 +32,6 @@ export class VideoJsAdapter implements Adapter {
   getPlayerName() {
     return Player.VIDEOJS;
   }
-  getDrmPerformance() {
-    return this.drmPerformanceInfo;
-  }
 
   getStreamType(url: string) {
     if (url.endsWith('.m3u8')) {

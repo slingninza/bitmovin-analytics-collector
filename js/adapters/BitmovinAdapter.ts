@@ -20,9 +20,6 @@ export class BitmovinAdapter implements Adapter {
   getPlayerName() {
     return Player.BITMOVIN;
   }
-  getDrmPerformance() {
-    return this.drmPerformanceInfo;
-  }
 
   register() {
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, () => {

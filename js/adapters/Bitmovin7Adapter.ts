@@ -25,10 +25,6 @@ export class Bitmovin7Adapter implements Adapter {
     return Player.BITMOVIN;
   }
 
-  getDrmPerformance() {
-    return this.drmPerformanceInfo;
-  }
-
   register() {
     const getProgConfigFromProgressiveConfig = (
       progressive:
