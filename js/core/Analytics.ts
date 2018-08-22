@@ -485,9 +485,10 @@ export class Analytics {
       opts
     );
 
-    this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
-    if (!this.adapter) {
-      logger.error('Could not detect player.');
+    try {
+      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+    } catch (e) {
+      logger.error('Bitmovin Analytics: Could not detect player');
       return;
     }
     if (!this.sample.player) {
