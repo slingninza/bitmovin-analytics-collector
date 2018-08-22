@@ -20,7 +20,7 @@ export class AdapterFactory {
    * @param {AnalyticsEventCallback} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine): Adapter | undefined {
+  static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine): Adapter {
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
       return new BitmovinAdapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
@@ -34,5 +34,6 @@ export class AdapterFactory {
     } else if (PlayerDetector.isDashjs(player)) {
       return new DashjsAdapter(player, eventCallback, stateMachine);
     }
+    throw new Error("Could not Detect Player !")
   }
 }

@@ -1,21 +1,27 @@
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
+import {DrmPerformanceInfo} from '../types/Adapter';
 
 export class BitmovinAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
+  drmPerformanceInfo: DrmPerformanceInfo;
   eventCallback: (event: Event, eventObject?: any) => void;
 
   constructor(player: any, eventCallback: (event: Event, eventObject?: any) => void) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
+    this.drmPerformanceInfo = {drmUsed:false};
     this.register();
   }
 
   getPlayerName() {
     return Player.BITMOVIN;
+  }
+  getDrmPerformance() {
+    return this.drmPerformanceInfo;
   }
 
   register() {

@@ -4,6 +4,7 @@ import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
+import {DrmPerformanceInfo} from '../types/Adapter';
 
 declare var Hls: any;
 /**
@@ -12,13 +13,13 @@ declare var Hls: any;
  */
 export class HlsjsAdapter extends HTML5Adapter {
   hls: Hls;
-
+  drmPerformanceInfo: DrmPerformanceInfo;
   constructor(hls: Hls, eventCallback: AdapterEventCallback, stateMachine: AnalyticsStateMachine) {
     // we don't have a mediaEl yet per se
     super(null, eventCallback, stateMachine);
 
     this.hls = hls;
-
+    this.drmPerformanceInfo = {drmUsed:false};
     this.resetMedia();
     this.registerHlsEvents();
   }
@@ -26,6 +27,10 @@ export class HlsjsAdapter extends HTML5Adapter {
   getPlayerName() {
     return Player.HLSJS;
   }
+  getDrmPerformance() {
+    return this.drmPerformanceInfo;
+  }
+
 
   getCurrentQualityLevelInfo(): QualityLevelInfo | null {
     const hls = this.hls;

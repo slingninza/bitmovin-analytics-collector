@@ -5,9 +5,11 @@ import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
+import {DrmPerformanceInfo} from '../types/Adapter';
 
 export class ShakaAdapter extends HTML5Adapter {
   shakaPlayer: any;
+  drmPerformanceInfo: DrmPerformanceInfo;
   constructor(shakaPlayer: any, eventCallback: AdapterEventCallback, stateMachine: AnalyticsStateMachine) {
     super(shakaPlayer.getMediaElement(), eventCallback, stateMachine);
 
@@ -20,6 +22,8 @@ export class ShakaAdapter extends HTML5Adapter {
      * @member {shaka.Player}
      */
     this.shakaPlayer = shakaPlayer;
+
+    this.drmPerformanceInfo = {drmUsed:false};
   }
 
   getPlayerName() {
@@ -33,6 +37,10 @@ export class ShakaAdapter extends HTML5Adapter {
   isLive() {
     return this.shakaPlayer ? this.shakaPlayer.isLive() : false;
   }
+  getDrmPerformance() {
+    return this.drmPerformanceInfo;
+  }
+
 
   /**
    * @override

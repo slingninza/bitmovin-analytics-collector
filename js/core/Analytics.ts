@@ -42,7 +42,7 @@ export class Analytics {
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
-  private adapter?: Adapter;
+  private adapter!: Adapter;
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
@@ -203,6 +203,17 @@ export class Analytics {
         this.sample.startupTime = this.startupTime;
         this.sample.autoplay = this.autoplay;
 
+        const drmPerformance = this.adapter.getDrmPerformance();
+        if(drmPerformance.drmUsed) {
+          this.sample.drmType = drmPerformance.drmInfo;
+          this.sample.drmLoadTime = drmPerformance.drmTime;
+          this.sample.drmUsed=drmPerformance.drmUsed;
+        }
+
+        debugger
+          
+          
+        
         this.sendAnalyticsRequestAndClearValues();
         this.sample.autoplay = undefined;
       },

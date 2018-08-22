@@ -4,6 +4,7 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {StreamSources} from '../types/StreamSources';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
+import {DrmPerformanceInfo} from '../types/Adapter';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -13,6 +14,7 @@ export class VideoJsAdapter implements Adapter {
   player: videojs.default.Player;
   eventCallback: AdapterEventCallback;
   stateMachine: AnalyticsStateMachine;
+  drmPerformanceInfo: DrmPerformanceInfo;
 
   constructor(
     player: videojs.default.Player,
@@ -23,12 +25,17 @@ export class VideoJsAdapter implements Adapter {
     this.player = player;
     this.eventCallback = eventCallback;
     this.stateMachine = stateMachine;
+    this.drmPerformanceInfo = {drmUsed:false};
     this.register();
   }
 
   getPlayerName() {
     return Player.VIDEOJS;
   }
+  getDrmPerformance() {
+    return this.drmPerformanceInfo;
+  }
+
 
   getStreamType(url: string) {
     if (url.endsWith('.m3u8')) {
