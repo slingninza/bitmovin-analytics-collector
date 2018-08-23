@@ -5,6 +5,10 @@
       "module": "commonjs",
       "target": "ES5",
       "strict": true,
+      "noImplicitAny": false,
+      "typeRoots": [
+        "./node_modules/@types"
+      ],
       "lib": [
         "dom",
         "es2015",
@@ -15,7 +19,8 @@
       "js/**/*"
     ],
     "exclude": [
-      "**/*.spec.*"
+      "**/*.spec.*",
+      "node_modules",
     ]
   }
   

@@ -5,9 +5,11 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import * as dashjs from 'dashjs';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 
 export class DashjsAdapter extends HTML5Adapter {
   mediaPlayer!: dashjs.MediaPlayerClass;
+  drmPerformanceInfo: DrmPerformanceInfo;
 
   constructor(
     mediaPlayer: dashjs.MediaPlayerClass,
@@ -15,8 +17,8 @@ export class DashjsAdapter extends HTML5Adapter {
     stateMachine: AnalyticsStateMachine
   ) {
     super(null, eventCallback, stateMachine);
-
-    let videoEl = null;
+    this.drmPerformanceInfo = {drmUsed: false};
+    let videoEl;
     let canPlay = false;
     try {
       videoEl = mediaPlayer.getVideoElement();
