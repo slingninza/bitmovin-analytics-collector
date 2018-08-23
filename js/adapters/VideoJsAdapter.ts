@@ -4,7 +4,7 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {StreamSources} from '../types/StreamSources';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
-import {DrmPerformanceInfo} from '../types/Adapter';
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;

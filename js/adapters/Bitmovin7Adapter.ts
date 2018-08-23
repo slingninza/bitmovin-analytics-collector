@@ -4,11 +4,11 @@ import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import 'bitmovin-player-ui/dist/js/framework/main';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
-import {DrmPerformanceInfo} from '../types/Adapter';
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 
 export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
-  player: any;
+  player: bitmovin.PlayerAPI;
   eventCallback: AdapterEventCallback;
   drmPerformanceInfo: DrmPerformanceInfo;
 

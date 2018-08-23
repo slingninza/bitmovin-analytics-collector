@@ -6,8 +6,7 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
-import {DrmPerformanceInfo} from '../types/Adapter';
-
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 /**
@@ -73,7 +72,6 @@ export abstract class HTML5Adapter implements Adapter {
   getPlayerName() {
     return Player.HTML5;
   }
-
 
   /**
    * Used to setup against the media element.

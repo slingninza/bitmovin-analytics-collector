@@ -4,7 +4,7 @@ import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
-import {DrmPerformanceInfo} from '../types/Adapter';
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 
 declare var Hls: any;
 /**

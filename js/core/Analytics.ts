@@ -204,7 +204,7 @@ export class Analytics {
         this.sample.autoplay = this.autoplay;
 
         const drmPerformance = this.adapter.drmPerformanceInfo;
-        if(drmPerformance.drmUsed) {
+        if (drmPerformance.drmUsed) {
           this.sample.drmType = drmPerformance.drmInfo;
           this.sample.drmLoadTime = drmPerformance.drmTime;
         }

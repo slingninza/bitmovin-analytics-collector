@@ -1,7 +1,7 @@
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {Adapter} from '../types/Adapter';
-import {DrmPerformanceInfo} from '../types/Adapter';
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 
 export class BitmovinAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
