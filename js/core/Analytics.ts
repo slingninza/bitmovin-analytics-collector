@@ -709,6 +709,9 @@ export class Analytics {
     this.sample.duration = 0;
     this.sample.droppedFrames = 0;
     this.sample.pageLoadType = 0;
+
+    this.sample.drmType = undefined;
+    this.sample.drmLoadTime = undefined;
   }
 
   getDroppedFrames(frames: any) {
