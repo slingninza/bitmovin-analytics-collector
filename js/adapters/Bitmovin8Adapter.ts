@@ -131,11 +131,13 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.exports.Event.Paused, () => {
-      this.eventCallback(Event.PAUSE, {
-        currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedFrames(),
-      });
+    this.player.on(this.player.exports.Event.Paused, (e) => {
+      if(e.issuer !== 'ui-seek') {
+        this.eventCallback(Event.PAUSE, {
+          currentTime: this.player.getCurrentTime(),
+          droppedFrames: this.player.getDroppedFrames(),
+        });
+      }
     });
 
     this.player.on(this.player.exports.Event.TimeChanged, () => {
