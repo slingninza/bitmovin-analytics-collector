@@ -137,6 +137,7 @@ export class Analytics {
     sample.player = config.player;
     sample.cdnProvider = config.cdnProvider;
     sample.videoId = config.videoId;
+    sample.videoTitle = config.title;
     sample.customUserId = config.userId;
 
     sample.customData1 = Utils.getCustomDataString(config.customData1);
@@ -398,7 +399,8 @@ export class Analytics {
         this.isAllowedToSendSamples = true;
       },
 
-      source_changing: () => {
+      source_changing: (time: number, state: string, event: any) => {
+        this.setPlaybackSettingsFromLoadedEvent(event);
         this.sample.impressionId = Utils.generateUUID();
       },
     };
@@ -562,6 +564,9 @@ export class Analytics {
     }
     if (Utils.validBoolean(loadedEvent.autoplay)) {
       this.autoplay = loadedEvent.autoplay;
+    }
+    if (Utils.validString(loadedEvent.videoTitle)) {
+      this.sample.videoTitle = loadedEvent.videoTitle;
     }
     if (this.sample.streamFormat === 'progressive') {
       this.sample.videoBitrate = loadedEvent.progBitrate;

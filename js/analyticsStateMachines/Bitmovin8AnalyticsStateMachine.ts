@@ -66,7 +66,7 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
         logger.error('Error in statemachine: ' + errorMessage);
       },
       events: [
-        {name: Event.SOURCE_LOADED, from: [State.SETUP, State.ERROR], to: State.READY},
+        {name: Event.SOURCE_LOADED, from: [State.SETUP, State.ERROR, State.SOURCE_CHANGING], to: State.READY},
 
         {name: Event.PLAY, from: State.READY, to: State.STARTUP},
         {name: Event.PLAYING, from: State.READY, to: State.PLAYING},
@@ -193,7 +193,7 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
         {name: Event.MANUAL_SOURCE_CHANGE, from: this.getAllStates(), to: State.SOURCE_CHANGING},
         {name: Event.SOURCE_UNLOADED, from: this.getAllStates(), to: State.SOURCE_CHANGING},
 
-        {name: Event.READY, from: State.SOURCE_CHANGING, to: State.READY},
+        //{name: Event.READY, from: State.SOURCE_CHANGING, to: State.READY},
 
         {name: Event.VIDEO_CHANGE, from: State.REBUFFERING, to: State.QUALITYCHANGE_REBUFFERING},
         {name: Event.AUDIO_CHANGE, from: State.REBUFFERING, to: State.QUALITYCHANGE_REBUFFERING},

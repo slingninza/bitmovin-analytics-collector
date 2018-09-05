@@ -84,6 +84,7 @@ class Bitmovin8Adapter implements Adapter {
         source.userId = config.source.userId;
         source.mpdUrl = config.source.dash;
         source.m3u8Url = config.source.hls;
+        source.title = config.source.title;
         source.progUrl = progConf ? progConf.progUrl : undefined;
         source.progBitrate = progConf ? progConf.progBitrate : undefined;
       }
@@ -95,6 +96,7 @@ class Bitmovin8Adapter implements Adapter {
         duration: this.player.getDuration(),
         streamType: this.player.getStreamType(),
         videoId: source.videoId,
+        videoTitle: source.title,
         userId: source.userId,
         mpdUrl: source.mpdUrl,
         m3u8Url: source.m3u8Url,
