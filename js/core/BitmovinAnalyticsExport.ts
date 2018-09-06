@@ -36,7 +36,6 @@ export const analyticsWrapper = (config: AnalyicsConfig) => {
 
 const wrapPlayerLoad = (player: any, analytics: any) => {
   const originalLoad = player.load;
-  //return function() {
   player.load = function() {
     if (arguments.length > 0) {
       const analyticsConfig = arguments[0].analytics;
