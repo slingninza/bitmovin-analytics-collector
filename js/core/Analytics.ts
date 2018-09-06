@@ -400,8 +400,8 @@ export class Analytics {
       },
 
       source_changing: (time: number, state: string, event: any) => {
-        this.setPlaybackSettingsFromLoadedEvent(event);
         this.sample.impressionId = Utils.generateUUID();
+        this.setPlaybackSettingsFromLoadedEvent(event);
       },
     };
   }
@@ -412,12 +412,21 @@ export class Analytics {
     this.setCustomData(oldConfig);
   };
 
+  guardAgainstMissingVideoTitle = (oldConfig: AnalyicsConfig, newConfig: AnalyicsConfig) => {
+    if (oldConfig.title && !newConfig.title) {
+      // TODO: Better description
+      logger.error("The new analytics configuration does not contain the field title");
+    }
+  }
+
   sourceChange = (config: AnalyicsConfig) => {
     logger.log('Processing Source Change for Analytics', config);
     this.sendAnalyticsRequestAndClearValues();
     this.setupSample();
     this.startupTime = 0;
     this.init();
+
+    this.guardAgainstMissingVideoTitle(this.config, config);
 
     const newConfig = {
       ...this.config,
@@ -565,7 +574,7 @@ export class Analytics {
     if (Utils.validBoolean(loadedEvent.autoplay)) {
       this.autoplay = loadedEvent.autoplay;
     }
-    if (Utils.validString(loadedEvent.videoTitle)) {
+    if (Utils.validString(loadedEvent.videoTitle) && !this.config.title) {
       this.sample.videoTitle = loadedEvent.videoTitle;
     }
     if (this.sample.streamFormat === 'progressive') {

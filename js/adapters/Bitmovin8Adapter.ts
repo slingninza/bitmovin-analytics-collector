@@ -74,6 +74,7 @@ class Bitmovin8Adapter implements Adapter {
         autoplay = this.player.getConfig().playback.autoplay;
       }
 
+      //TODO simplify
       const config = {
         source: this.player.getSource(),
       };
