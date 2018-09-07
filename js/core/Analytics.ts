@@ -128,6 +128,7 @@ export class Analytics {
 
     this.setConfigParameters();
 
+    this.generateNewImpressionId();
     this.setUserId();
   }
 
@@ -149,6 +150,10 @@ export class Analytics {
     sample.experimentName = config.experimentName;
   }
 
+  generateNewImpressionId() {
+    this.sample.impressionId = Utils.generateUUID();
+  }
+
   setUserId() {
     const userId = Utils.getCookie('bitmovin_analytics_uuid');
     if (!userId || userId === '') {
@@ -164,9 +169,6 @@ export class Analytics {
       // All of these are called in the onLeaveState Method.
       // So it's the last sample
       setup: (time: number, state: string, event: any) => {
-        if (!this.isCastReceiver) {
-          this.sample.impressionId = Utils.generateUUID();
-        }
         logger.log(
           'Setup bitmovin analytics ' + this.sample.analyticsVersion + ' with impressionId: ' + this.sample.impressionId
         );
@@ -499,7 +501,7 @@ export class Analytics {
     try {
       this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
     } catch (e) {
-      logger.error('Bitmovin Analytics: Could not detect player');
+      logger.error('Bitmovin Analytics: Could not detect player', e);
       return;
     }
     if (!this.sample.player) {
