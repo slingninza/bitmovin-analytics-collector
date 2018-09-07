@@ -135,7 +135,9 @@ export class Analytics {
   setConfigParameters(sample = this.sample, config = this.config) {
     sample.key = config.key;
     sample.playerKey = config.playerKey;
-    sample.player = config.player;
+    if (config.player) {
+      sample.player = config.player;
+    }
     sample.cdnProvider = config.cdnProvider;
     sample.videoId = config.videoId;
     sample.videoTitle = config.title;
