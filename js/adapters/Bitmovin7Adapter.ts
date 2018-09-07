@@ -78,6 +78,7 @@ export class Bitmovin7Adapter implements Adapter {
 
       const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
       if (config.source) {
+        source.title = config.source.title;
         source.mpdUrl = config.source.dash;
         source.m3u8Url = config.source.hls;
         source.progUrl = progConf ? progConf.progUrl : undefined;
@@ -90,6 +91,7 @@ export class Bitmovin7Adapter implements Adapter {
         type: this.player.getPlayerType(),
         duration: this.player.getDuration(),
         streamType: this.player.getStreamType(),
+        videoTitle: source.title,
         mpdUrl: source.mpdUrl,
         m3u8Url: source.m3u8Url,
         progUrl: source.progUrl,
@@ -111,6 +113,7 @@ export class Bitmovin7Adapter implements Adapter {
       let source: PlayerSourceConfig = {};
       const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
       if (config.source) {
+        source.title = config.source.title;
         source.videoId = config.source.videoId;
         source.userId = config.source.userId;
         source.mpdUrl = config.source.dash;
@@ -126,6 +129,7 @@ export class Bitmovin7Adapter implements Adapter {
         duration: this.player.getDuration(),
         streamType: this.player.getStreamType(),
         videoId: source.videoId,
+        videoTitle: source.title,
         userId: source.userId,
         mpdUrl: source.mpdUrl,
         m3u8Url: source.m3u8Url,
