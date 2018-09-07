@@ -86,7 +86,8 @@ function makeConfig() {
       new webpack.DefinePlugin({
         __VERSION__: JSON.stringify(getGitVersion())
       })
-    ]
+    ],
+    watch: true
   };
 
   if (!isDevMode()) {

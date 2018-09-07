@@ -18,7 +18,7 @@
 
   <title>Bitdash Analytics</title>
 
-  <script type="text/javascript" src="https://bitmovin-a.akamaihd.net/bitmovin-player/nightly/2018/bitmovinplayer.js"></script>
+  <script type="text/javascript" src="//bitmovin-a.akamaihd.net/bitmovin-player/stable/7.8/bitmovinplayer.js"></script>
   <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
 </head>
 <body>
@@ -28,11 +28,8 @@
     <a href="#" id="change">Change Source</a>
   <script type="text/javascript">
 
-    
-    bitmovin.player.addModule(bitmovin.analytics.PlayerModule);
-
     var player = bitmovin.player('player');
-    //bitmovin.analytics.augment(player);
+    bitmovin.analytics.augment(player);
 
 
     player.setup({
@@ -42,6 +39,7 @@
         muted: true
       },
       source:    {
+        title: 'foo2',
         dash: 'http://bitdash-a.akamaihd.net/content/sintel/sintel.mpd',
         hls:  'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
         progressive:  [{
@@ -52,18 +50,20 @@
       analytics: {
         key: 'e73a3577-d91c-4214-9e6d-938fb936818a',
         experimentName: 'analytics-api',
+        title: 'foo3',
         debug: true
       }
     });
 
-    //document.getElementById('click').onclick = function () {
-    //  analytics.setCustomDataOnce({ customData1: 'after-click' });
-    //};
+    document.getElementById('click').onclick = function () {
+      player.analytics.setCustomDataOnce({ customData1: 'after-click' });
+    };
     document.getElementById('change').onclick = function () {
       player.load({
         dash:  'https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd',
         analytics: {
-          experimentName: 'analytics-switch'
+          experimentName: 'analytics-switch',
+          title: 'Title'
         }
       });
     };

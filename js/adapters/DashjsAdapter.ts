@@ -17,8 +17,10 @@ export class DashjsAdapter extends HTML5Adapter {
     stateMachine: AnalyticsStateMachine
   ) {
     super(null, eventCallback, stateMachine);
+
     this.drmPerformanceInfo = {drmUsed: false};
-    let videoEl;
+    
+    let videoEl: HTMLVideoElement | null = null;
     let canPlay = false;
     try {
       videoEl = mediaPlayer.getVideoElement();

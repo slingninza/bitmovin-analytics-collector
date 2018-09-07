@@ -2,6 +2,7 @@ export enum Event {
   READY = 'ready',
   SOURCE_LOADED = 'sourceLoaded',
   PLAY = 'play',
+  PLAYING = 'playing',
   PAUSE = 'pause',
   TIMECHANGED = 'timechanged',
   SEEK = 'seek',
