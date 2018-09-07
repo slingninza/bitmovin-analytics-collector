@@ -26,17 +26,15 @@
   "homepage": "https://github.com/bitmovin/bitanalytics-js#readme",
   "dependencies": {
     "@types/javascript-state-machine": "^2.4.1",
-    "@types/video.js": "^6.2.9",
-    "bitmovin-player-ui": "3.0.0-a1pha.4",
     "awesome-typescript-loader": "^5.2.0",
     "cross-env": "^5.2.0",
-    "dashjs": "^2.8.0",
     "javascript-state-machine": "2.4.0",
-    "npm": "^6.2.0",
     "string.prototype.endswith": "^0.2.0"
   },
   "devDependencies": {
+    "npm": "^6.2.0",
     "@types/hls.js": "^0.10.1",
+    "@types/video.js": "^6.2.9",
     "htmlhint": "^0.9.13",
     "husky": "^0.14.3",
     "jest": "^23.4.0",

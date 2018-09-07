@@ -3,16 +3,17 @@ import {MIMETypes} from '../enums/MIMETypes';
 import {Player} from '../enums/Player';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
-import * as dashjs from 'dashjs';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 
+const dashjs = (window as any).dashjs as any;
+
 export class DashjsAdapter extends HTML5Adapter {
-  mediaPlayer!: dashjs.MediaPlayerClass;
+  mediaPlayer!: any;
   drmPerformanceInfo: DrmPerformanceInfo;
 
   constructor(
-    mediaPlayer: dashjs.MediaPlayerClass,
+    mediaPlayer: any,
     eventCallback: AdapterEventCallback,
     stateMachine: AnalyticsStateMachine
   ) {

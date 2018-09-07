@@ -1,7 +1,6 @@
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
-import 'bitmovin-player-ui/dist/js/framework/main';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
@@ -34,8 +33,8 @@ export class Bitmovin7Adapter implements Adapter {
       progressive:
         | undefined
         | string
-        | bitmovin.PlayerAPI.ProgressiveSourceConfig[]
-        | bitmovin.PlayerAPI.ProgressiveSourceConfig
+        | any[]
+        | any
     ) => {
       if (!progressive) {
         return {
@@ -68,14 +67,14 @@ export class Bitmovin7Adapter implements Adapter {
       }
     };
 
-    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_UNLOADED, (event: any) => {
       this.eventCallback(Event.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+    this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event: any) => {
       let autoplay = false;
       if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
         autoplay = this.player.getConfig().playback.autoplay;
@@ -150,7 +149,7 @@ export class Bitmovin7Adapter implements Adapter {
       });
     });
 
-    this.player.addEventHandler(this.player.EVENT.ON_CAST_STARTED, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+    this.player.addEventHandler(this.player.EVENT.ON_CAST_STARTED, (event: any) => {
       this.eventCallback(Event.START_CAST, event);
     });
 

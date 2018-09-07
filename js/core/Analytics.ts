@@ -502,6 +502,7 @@ export class Analytics {
 
     try {
       this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+      //this.sample.version = this.adapter.getPlayerVersion();
     } catch (e) {
       logger.error('Bitmovin Analytics: Could not detect player', e);
       return;
@@ -622,6 +623,8 @@ export class Analytics {
       videoStartupTime: 0,
       duration: 0,
       startupTime: 0,
+      version: this.sample.version,
+      player: this.sample.player,
       //@ts-ignore
       analyticsVersion: __VERSION__,
     };

@@ -1,7 +1,6 @@
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
 import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
-import 'bitmovin-player-ui/dist/js/framework/main';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
@@ -68,14 +67,14 @@ class Bitmovin8Adapter implements Adapter {
       }
     };
     
-    this.player.on(this.player.exports.PlayerEvent.SourceUnloaded, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.SourceUnloaded, (event: any) => {
       this.eventCallback(Event.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedVideoFrames(),
       });
     });
 
-    this.player.on(this.player.exports.PlayerEvent.SourceLoaded, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.SourceLoaded, (event: any) => {
       let autoplay = false;
       if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
         autoplay = this.player.getConfig().playback.autoplay;
@@ -117,7 +116,7 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.exports.PlayerEvent.CastStarted, (event: bitmovin.PlayerAPI.PlayerEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.CastStarted, (event: any) => {
       this.eventCallback(Event.START_CAST, event);
     });
 
