@@ -25,13 +25,17 @@ class Bitmovin8Adapter implements Adapter {
     return Player.BITMOVIN;
   }
 
+  getPlayerVersion() {
+    return this.player.version;
+  }
+
   register() {
     const getProgConfigFromProgressiveConfig = (
       progressive:
         | undefined
         | string
-        | bitmovin.PlayerAPI.ProgressiveSourceConfig[]
-        | bitmovin.PlayerAPI.ProgressiveSourceConfig
+        | any[]
+        | any
     ) => {
       if (!progressive) {
         return {

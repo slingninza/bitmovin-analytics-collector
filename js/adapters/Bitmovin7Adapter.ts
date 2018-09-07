@@ -25,6 +25,10 @@ export class Bitmovin7Adapter implements Adapter {
     return Player.BITMOVIN;
   }
 
+  getPlayerVersion() {
+    return this.player.version;
+  }
+
   register() {
     const getProgConfigFromProgressiveConfig = (
       progressive:

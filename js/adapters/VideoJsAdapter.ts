@@ -33,6 +33,10 @@ export class VideoJsAdapter implements Adapter {
     return Player.VIDEOJS;
   }
 
+  getPlayerVersion() {
+    return videojs.VERSION;
+  }
+
   getStreamType(url: string) {
     if (url.endsWith('.m3u8')) {
       return 'hls';

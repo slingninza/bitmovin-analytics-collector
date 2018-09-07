@@ -21,6 +21,10 @@ export class BitmovinAdapter implements Adapter {
     return Player.BITMOVIN;
   }
 
+  getPlayerVersion() {
+    return this.player.version;
+  }
+
   register() {
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, () => {
       this.eventCallback(Event.SOURCE_LOADED);
