@@ -335,7 +335,7 @@ export class Analytics {
       },
 
       end: (time: number, state: string, event: string) => {
-        this.sample.impressionId = Utils.generateUUID();
+        this.generateNewImpressionId();
       },
 
       ad: (time: number, state: string, event: any) => {
@@ -407,7 +407,6 @@ export class Analytics {
       },
 
       source_changing: (time: number, state: string, event: any) => {
-        this.sample.impressionId = Utils.generateUUID();
         this.setPlaybackSettingsFromLoadedEvent(event);
       },
     };
@@ -428,7 +427,9 @@ export class Analytics {
 
   sourceChange = (config: AnalyicsConfig) => {
     logger.log('Processing Source Change for Analytics', config);
-    this.sendAnalyticsRequestAndClearValues();
+    if (this.sample.state) {
+      this.sendAnalyticsRequestAndClearValues();
+    }
     this.setupSample();
     this.startupTime = 0;
     this.init();
