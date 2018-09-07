@@ -504,13 +504,15 @@ export class Analytics {
 
     try {
       this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
-      //this.sample.version = this.adapter.getPlayerVersion();
     } catch (e) {
       logger.error('Bitmovin Analytics: Could not detect player', e);
       return;
     }
     if (!this.sample.player) {
       this.sample.player = this.adapter.getPlayerName();
+    }
+    if (!this.sample.version) {
+      this.sample.version = this.sample.player + '-' + this.adapter.getPlayerVersion();
     }
   };
 
