@@ -419,7 +419,8 @@ export class Analytics {
   };
 
   guardAgainstMissingVideoTitle = (oldConfig: AnalyicsConfig, newConfig: AnalyicsConfig) => {
-    if (oldConfig.title && !newConfig.title) {
+    
+    if ((oldConfig && newConfig) && oldConfig.title && !newConfig.title) {
       // TODO: Better description
       logger.error("The new analytics configuration does not contain the field title");
     }
