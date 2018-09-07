@@ -4,6 +4,7 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {StreamSources} from '../types/StreamSources';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -13,6 +14,7 @@ export class VideoJsAdapter implements Adapter {
   player: videojs.default.Player;
   eventCallback: AdapterEventCallback;
   stateMachine: AnalyticsStateMachine;
+  drmPerformanceInfo: DrmPerformanceInfo;
 
   constructor(
     player: videojs.default.Player,
@@ -23,6 +25,7 @@ export class VideoJsAdapter implements Adapter {
     this.player = player;
     this.eventCallback = eventCallback;
     this.stateMachine = stateMachine;
+    this.drmPerformanceInfo = {drmUsed: false};
     this.register();
   }
 
@@ -43,9 +46,9 @@ export class VideoJsAdapter implements Adapter {
   // this seems very generic. one could put it in a helper
   // and use it in many adapter implementations.
   getStreamSources(url: string): StreamSources {
-    let mpdUrl;
-    let m3u8Url;
-    let progUrl;
+    let mpdUrl = null;
+    let m3u8Url = null;
+    let progUrl = null;
     const streamType = this.getStreamType(url);
     switch (streamType) {
       case 'hls':

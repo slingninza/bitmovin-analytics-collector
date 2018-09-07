@@ -42,7 +42,7 @@ export class Analytics {
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
-  private adapter?: Adapter;
+  private adapter!: Adapter;
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
@@ -204,6 +204,11 @@ export class Analytics {
         this.sample.startupTime = this.startupTime;
         this.sample.autoplay = this.autoplay;
 
+        const drmPerformance = this.adapter.drmPerformanceInfo;
+        if (drmPerformance.drmUsed) {
+          this.sample.drmType = drmPerformance.drmInfo;
+          this.sample.drmLoadTime = drmPerformance.drmTime;
+        }
         this.sendAnalyticsRequestAndClearValues();
         this.sample.autoplay = undefined;
       },
@@ -491,9 +496,10 @@ export class Analytics {
       opts
     );
 
-    this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
-    if (!this.adapter) {
-      logger.error('Could not detect player.');
+    try {
+      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+    } catch (e) {
+      logger.error('Bitmovin Analytics: Could not detect player');
       return;
     }
     if (!this.sample.player) {
@@ -717,6 +723,9 @@ export class Analytics {
     this.sample.duration = 0;
     this.sample.droppedFrames = 0;
     this.sample.pageLoadType = 0;
+
+    this.sample.drmType = undefined;
+    this.sample.drmLoadTime = undefined;
   }
 
   getDroppedFrames(frames: any) {
