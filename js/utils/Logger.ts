@@ -19,12 +19,12 @@ class Logger {
     console.log(msg, ...optionalParamters);
   }
 
-  error(msg: string | undefined) {
+  error(msg: string | undefined, ...optionalParamters: any[]) {
     if (!(this as any).showLogs) {
       return;
     }
 
-    console.error(msg);
+    console.error(msg, ...optionalParamters);
   }
 
   warning(msg: string) {

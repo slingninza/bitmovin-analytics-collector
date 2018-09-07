@@ -6,6 +6,7 @@ export class AnalyticsCall extends HttpCall {
   static analyticsServerUrl = ANALYTICS_BACKEND_BASE_URL + '/analytics';
 
   sendRequest(sample: Sample, callback: Function) {
+    console.log(sample.impressionId);
     this.post(AnalyticsCall.analyticsServerUrl, sample, callback);
   }
 

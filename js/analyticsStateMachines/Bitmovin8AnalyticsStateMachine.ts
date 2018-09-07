@@ -51,6 +51,10 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
     this.createStateMachine(opts);
   }
 
+  getAllStatesBut(state: string) {
+    return this.getAllStates().filter(i => i !== state);
+  }
+
   getAllStates() {
     return Object.keys(State).map(key => State[key]);
   }
@@ -190,7 +194,9 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
         {name: Event.SEEKED, from: State.READY, to: State.READY},
         {name: Event.SEEKED, from: State.STARTUP, to: State.STARTUP},
 
-        {name: Event.MANUAL_SOURCE_CHANGE, from: this.getAllStates(), to: State.SOURCE_CHANGING},
+        
+        {name: Event.MANUAL_SOURCE_CHANGE, from: this.getAllStates()/* this.getAllStatesBut(State.SETUP)*/, to: State.SOURCE_CHANGING},
+        //{name: Event.MANUAL_SOURCE_CHANGE, from: State.SETUP, to: State.SETUP},
         {name: Event.SOURCE_UNLOADED, from: this.getAllStates(), to: State.SOURCE_CHANGING},
 
         //{name: Event.READY, from: State.SOURCE_CHANGING, to: State.READY},
