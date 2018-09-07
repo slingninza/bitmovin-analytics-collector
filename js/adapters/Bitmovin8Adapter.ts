@@ -4,16 +4,19 @@ import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import 'bitmovin-player-ui/dist/js/framework/main';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
+import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 
 class Bitmovin8Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: AdapterEventCallback;
+  drmPerformanceInfo: DrmPerformanceInfo;
 
   constructor(player: any, eventCallback: AdapterEventCallback) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
+    this.drmPerformanceInfo = {drmUsed: false};
     (window as any).player = this.player;
     this.register();
   }
@@ -255,6 +258,14 @@ class Bitmovin8Adapter implements Adapter {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),
       });
+    });
+
+    this.player.addEventHandler(this.player.exports.Event.DownloadFinished, (event: any) => {
+      if (event.downloadType.indexOf('drm/license/') === 0) {
+        this.drmPerformanceInfo.drmTime = event.downloadTime * 1000;
+        this.drmPerformanceInfo.drmInfo = event.downloadType.replace('drm/license/', '');
+        this.drmPerformanceInfo.drmUsed = true;
+      }
     });
 
     window.onunload = window.onbeforeunload = () => {
