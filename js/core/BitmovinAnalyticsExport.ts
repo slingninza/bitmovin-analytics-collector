@@ -86,3 +86,5 @@ const AnalyticsModule = {
 
 (window as any).bitmovin = (window as any).bitmovin || {};
 (window as any).bitmovin.analytics = analyticsWrapper;
+
+export default analyticsWrapper;
