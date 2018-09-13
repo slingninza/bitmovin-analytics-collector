@@ -57,7 +57,6 @@
     "build:debug": "cross-env NODE_ENV=development webpack --progress",
     "build:release": "cross-env NODE_ENV=production webpack --progress",
     "dev-server": "cross-env NODE_ENV=development webpack-dev-server --progress",
-    "precommit": "./precommit.bash",
     "start": "npm run dev-server",
     "format": "prettier --config ./.prettierrc --write \"./js/**/*.{ts,scss}\"",
     "format-tests": "prettier --config ./.prettierrc --write \"./tests/**/*.ts\"",
