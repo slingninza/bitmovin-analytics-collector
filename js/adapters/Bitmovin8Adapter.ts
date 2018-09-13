@@ -4,6 +4,7 @@ import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import {AdClickedEvent, AdQuartileEvent, ErrorEvent, AdEvent, AdBreakEvent} from 'bitmovin-player';
 
 class Bitmovin8Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
@@ -263,13 +264,41 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.exports.PlayerEvent.DownloadFinished, (event: any) => {      
+    this.player.on(this.player.exports.PlayerEvent.DownloadFinished, (event: any) => {
       if (event.downloadType.indexOf('drm/license/') === 0) {
         this.drmPerformanceInfo.drmTime = event.downloadTime * 1000;
         this.drmPerformanceInfo.drmInfo = event.downloadType.replace('drm/license/', '');
         this.drmPerformanceInfo.drmUsed = true;
       }
     });
+
+    this.player.on(this.player.exports.PlayerEvent.AdStarted, (event: AdEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdBreakEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdBreakEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdFinished, (event: AdEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdClicked, (event: AdClickedEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdQuartile, (event: AdQuartileEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdSkipped, (event: AdEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdError, (event: ErrorEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdManifestLoaded, (event: AdBreakEvent) => {
+      debugger;
+    })
 
     window.onunload = window.onbeforeunload = () => {
       if (!this.onBeforeUnLoadEvent) {
