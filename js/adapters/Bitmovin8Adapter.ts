@@ -67,7 +67,7 @@ class Bitmovin8Adapter implements Adapter {
         };
       }
     };
-    
+
     this.player.on(this.player.exports.PlayerEvent.SourceUnloaded, (event: any) => {
       this.eventCallback(Event.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),
