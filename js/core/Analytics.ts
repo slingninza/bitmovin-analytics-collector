@@ -11,9 +11,8 @@ import {Sample} from '../types/Sample';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
-import {AnalyicsConfig} from '../types/AnalyticsConfig';
+import {AnalyticsConfig} from '../types/AnalyticsConfig';
 import {CastClientConfig} from '../types/CastClientConfig';
-import { AdSample } from '../types/AdSample';
 import { AdAnalytics } from './AdAnalytics';
 
 enum PAGE_LOAD_TYPE {
@@ -25,7 +24,7 @@ export class Analytics {
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
-  private config: AnalyicsConfig;
+  private config: AnalyticsConfig;
   private licenseCall: LicenseCall;
   private analyticsCall: AnalyticsCall;
   private castClient: CastClient;
@@ -46,7 +45,7 @@ export class Analytics {
   private adapter!: Adapter;
   private adAnalytics: AdAnalytics;
 
-  constructor(config: AnalyicsConfig) {
+  constructor(config: AnalyticsConfig) {
     this.config = config;
     this.adAnalytics = new AdAnalytics(this);
     this.licenseCall = new LicenseCall();
@@ -90,6 +89,10 @@ export class Analytics {
 
   getSample(): Sample {
     return this.sample;
+  }
+
+  getConfig(): AnalyticsConfig {
+    return this.config;
   }
 
   updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
@@ -161,11 +164,6 @@ export class Analytics {
 
   generateNewImpressionId() {
     this.sample.impressionId = Utils.generateUUID();
-    this.adSample.videoImpressionId = this.sample.impressionId;
-  }
-
-  generateNewAdImpressionId() {
-    this.adSample.adImpressionId = Utils.generateUUID();
   }
 
   setUserId() {
@@ -176,7 +174,6 @@ export class Analytics {
     } else {
       this.sample.userId = userId;
     }
-    this.adSample.userId = this.sample.userId;
   }
 
   setupStateMachineCallbacks() {
@@ -440,7 +437,7 @@ export class Analytics {
     this.setCustomData(oldConfig);
   };
 
-  guardAgainstMissingVideoTitle = (oldConfig: AnalyicsConfig, newConfig: AnalyicsConfig) => {
+  guardAgainstMissingVideoTitle = (oldConfig: AnalyticsConfig, newConfig: AnalyticsConfig) => {
 
     if ((oldConfig && newConfig) && oldConfig.title && !newConfig.title) {
       // TODO: Better description
@@ -448,7 +445,7 @@ export class Analytics {
     }
   }
 
-  sourceChange = (config: AnalyicsConfig) => {
+  sourceChange = (config: AnalyticsConfig) => {
     logger.log('Processing Source Change for Analytics', config);
     if (this.sample.state) {
       this.sendAnalyticsRequestAndClearValues();
@@ -757,15 +754,6 @@ export class Analytics {
 
     this.sample.drmType = undefined;
     this.sample.drmLoadTime = undefined;
-  }
-
-  clearAdSampleValues() {
-    this.adSample.playerStartupTime = 0;
-    this.adSample.videoDuration = 0;
-    this.adSample.played = 0;
-    this.adSample.started = false;
-    this.adSample.manifestDownloadTime = 0;
-    this.adSample.startupTime = 0;
   }
 
   getDroppedFrames(frames: any) {

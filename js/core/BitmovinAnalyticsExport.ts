@@ -2,9 +2,9 @@ import {Analytics} from './Analytics';
 import {Player} from '../enums/Player';
 import {CdnProvider} from '../enums/CDNProvider';
 import {AnalyticsStateMachineOptions} from '../types/AnalyticsStateMachineOptions';
-import {AnalyicsConfig} from '../types/AnalyticsConfig';
+import {AnalyticsConfig} from '../types/AnalyticsConfig';
 
-export const analyticsWrapper = (config: AnalyicsConfig) => {
+export const analyticsWrapper = (config: AnalyticsConfig) => {
   const analytics = new Analytics(config);
   return {
     register: (player: any, opts?: AnalyticsStateMachineOptions) => {
@@ -15,7 +15,7 @@ export const analyticsWrapper = (config: AnalyicsConfig) => {
     },
     setCustomData: analytics.setCustomData,
     setCustomDataOnce: analytics.setCustomDataOnce,
-    sourceChange: (config: AnalyicsConfig) => {
+    sourceChange: (config: AnalyticsConfig) => {
       analytics.sourceChange(config);
     },
   };

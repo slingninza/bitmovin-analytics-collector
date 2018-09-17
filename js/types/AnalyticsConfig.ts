@@ -1,4 +1,4 @@
-export interface AnalyicsConfig {
+export interface AnalyticsConfig {
   cast?: any;
   debug?: any;
   key?: string;

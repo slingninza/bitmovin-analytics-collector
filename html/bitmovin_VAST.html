@@ -48,19 +48,19 @@
       advertising: {
         adBreaks: [
           {
-            id: 'unexpectedExpectedAd',
+            id: 'AdWithOffset',
             tag: addTag,
             persistent: true,
             position: '30'
           },
           {
-            id: 'whyYouPlayingAd?',
+            id: 'PrerollAd',
             tag: addTag,
             persistent: true,
             position: 'pre'
           },
           {
-            id: 'moodDestroyer3000',
+            id: 'PostRollAd',
             tag: addTag,
             persistent: true,
             position: 'post'
@@ -74,9 +74,10 @@
       progressive: 'https://bitmovin-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4',
       poster: 'https://bitmovin-a.akamaihd.net/content/MI201109210084_1/poster.jpg'
     };
+
+    bitmovin.player.Player.addModule(bitmovin.analytics.PlayerModule);
     const container = document.getElementById('player');
     const player = new bitmovin.player.Player(container, config);
-    //bitmovin.analytics.augment(player);
 
     player
       .load(source)

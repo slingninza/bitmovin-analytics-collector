@@ -8,6 +8,7 @@ import {ShakaAdapter} from '../adapters/ShakaAdapter';
 import {DashjsAdapter} from '../adapters/DashjsAdapter';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
+import { AdCallbacks } from '../types/AdCallbacks';
 
 /**
  * Stateless. Auto-maps given player instance to new adapter instances.
@@ -19,13 +20,16 @@ export class AdapterFactory {
    * @param {AnalyticsEventCallback} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine): Adapter {
+  static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine, adCallbacks?: AdCallbacks): Adapter {
     if (PlayerDetector.isBitmovinVersionPre7(player)) {
       return new BitmovinAdapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7Adapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion8Plus(player)) {
-      return new Bitmovin8Adapter(player, eventCallback);
+      if (!adCallbacks) {
+        throw new Error('AdCallbacks must be defined');
+      }
+      return new Bitmovin8Adapter(player, eventCallback, adCallbacks);
     } else if (PlayerDetector.isVideoJs(player)) {
       return new VideoJsAdapter(player, eventCallback, stateMachine);
     } else if (PlayerDetector.isHlsjs(player)) {
