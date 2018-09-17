@@ -361,7 +361,6 @@ export class Analytics {
         this.setDuration(time);
         this.setState(state);
         this.sample.ad = time;
-        debugger
         this.setDroppedFrames(event);
 
         this.sendAnalyticsRequestAndClearValues();
