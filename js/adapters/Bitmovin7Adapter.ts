@@ -253,7 +253,6 @@ export class Bitmovin7Adapter implements Adapter {
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_AD_FINISHED, (event: any) => {
-      debugger
       this.eventCallback(Event.END_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedFrames(),

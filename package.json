@@ -32,9 +32,9 @@
     "string.prototype.endswith": "^0.2.0"
   },
   "devDependencies": {
-    "npm": "^6.2.0",
     "@types/hls.js": "^0.10.1",
     "@types/video.js": "^6.2.9",
+    "bitmovin-player": "^8.0.0",
     "htmlhint": "^0.9.13",
     "husky": "^0.14.3",
     "jest": "^23.4.0",
@@ -57,7 +57,6 @@
     "build:debug": "cross-env NODE_ENV=development webpack --progress",
     "build:release": "cross-env NODE_ENV=production webpack --progress",
     "dev-server": "cross-env NODE_ENV=development webpack-dev-server --progress",
-    "precommit": "./precommit.bash",
     "start": "npm run dev-server",
     "format": "prettier --config ./.prettierrc --write \"./js/**/*.{ts,scss}\"",
     "format-tests": "prettier --config ./.prettierrc --write \"./tests/**/*.ts\"",

@@ -75,6 +75,7 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
         {name: Event.PLAY, from: State.READY, to: State.STARTUP},
         {name: Event.PLAYING, from: State.READY, to: State.PLAYING},
         {name: Event.READY, from: State.READY, to: State.READY},
+        {name: Event.START_AD, from: State.READY, to: State.AD},
         {name: Event.VIDEO_CHANGE, from: State.READY, to: State.READY},
         {name: Event.AUDIO_CHANGE, from: State.READY, to: State.READY},
 
@@ -104,6 +105,7 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
 
         {name: Event.VIDEO_CHANGE, from: State.PAUSE, to: State.QUALITYCHANGE_PAUSE},
         {name: Event.AUDIO_CHANGE, from: State.PAUSE, to: State.QUALITYCHANGE_PAUSE},
+        {name: Event.END, from: State.AD, to: State.PAUSE},
         {
           name: Event.VIDEO_CHANGE,
           from: State.QUALITYCHANGE_PAUSE,
@@ -141,7 +143,6 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
 
         {name: Event.SEEK, from: State.END_PLAY_SEEKING, to: State.PLAY_SEEKING},
 
-        
         {name: Event.START_BUFFERING, from: State.END_PLAY_SEEKING, to: State.END_PLAY_SEEKING},
         {name: Event.END_BUFFERING, from: State.END_PLAY_SEEKING, to: State.END_PLAY_SEEKING},
         {name: Event.SEEKED, from: State.END_PLAY_SEEKING, to: State.END_PLAY_SEEKING},
@@ -194,7 +195,6 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
         {name: Event.SEEKED, from: State.READY, to: State.READY},
         {name: Event.SEEKED, from: State.STARTUP, to: State.STARTUP},
 
-        
         {name: Event.MANUAL_SOURCE_CHANGE, from: this.getAllStates()/* this.getAllStatesBut(State.SETUP)*/, to: State.SOURCE_CHANGING},
         //{name: Event.MANUAL_SOURCE_CHANGE, from: State.SETUP, to: State.SETUP},
         {name: Event.SOURCE_UNLOADED, from: this.getAllStates(), to: State.SOURCE_CHANGING},

@@ -12,8 +12,8 @@ import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
-import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
+import { AdSample } from '../types/AdSample';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -40,6 +40,7 @@ export class Analytics {
   private samplesQueue: any;
   private castClientConfig!: CastClientConfig;
   private sample: Sample;
+  private adSample: AdSample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
@@ -51,6 +52,7 @@ export class Analytics {
     this.castClient = new CastClient();
     this.castReceiver = new CastReceiver();
     this.sample = {};
+    this.adSample = {};
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
     this.startupTime = 0;
@@ -154,6 +156,11 @@ export class Analytics {
 
   generateNewImpressionId() {
     this.sample.impressionId = Utils.generateUUID();
+    this.adSample.videoImpressionId = this.sample.impressionId;
+  }
+
+  generateNewAdImpressionId() {
+    this.adSample.adImpressionId = Utils.generateUUID();
   }
 
   setUserId() {
@@ -164,6 +171,7 @@ export class Analytics {
     } else {
       this.sample.userId = userId;
     }
+    this.adSample.userId = this.sample.userId;
   }
 
   setupStateMachineCallbacks() {
@@ -179,6 +187,7 @@ export class Analytics {
         this.setState(state);
         this.sample.playerStartupTime = time;
         this.sample.pageLoadType = this.pageLoadType;
+        this.adSample.playerStartupTime = time;
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
@@ -352,7 +361,6 @@ export class Analytics {
         this.setDuration(time);
         this.setState(state);
         this.sample.ad = time;
-        debugger
         this.setDroppedFrames(event);
 
         this.sendAnalyticsRequestAndClearValues();
@@ -429,7 +437,7 @@ export class Analytics {
   };
 
   guardAgainstMissingVideoTitle = (oldConfig: AnalyicsConfig, newConfig: AnalyicsConfig) => {
-    
+
     if ((oldConfig && newConfig) && oldConfig.title && !newConfig.title) {
       // TODO: Better description
       logger.error("The new analytics configuration does not contain the field title");
@@ -745,6 +753,15 @@ export class Analytics {
 
     this.sample.drmType = undefined;
     this.sample.drmLoadTime = undefined;
+  }
+
+  clearAdSampleValues() {
+    this.adSample.playerStartupTime = 0;
+    this.adSample.videoDuration = 0;
+    this.adSample.played = 0;
+    this.adSample.started = false;
+    this.adSample.manifestDownloadTime = 0;
+    this.adSample.startupTime = 0;
   }
 
   getDroppedFrames(frames: any) {

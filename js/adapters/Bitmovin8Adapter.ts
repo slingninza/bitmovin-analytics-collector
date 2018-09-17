@@ -4,6 +4,7 @@ import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import {AdClickedEvent, AdQuartileEvent, ErrorEvent, AdEvent, AdBreakEvent} from 'bitmovin-player';
 
 class Bitmovin8Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
@@ -66,7 +67,7 @@ class Bitmovin8Adapter implements Adapter {
         };
       }
     };
-    
+
     this.player.on(this.player.exports.PlayerEvent.SourceUnloaded, (event: any) => {
       this.eventCallback(Event.SOURCE_UNLOADED, {
         currentTime: this.player.getCurrentTime(),
@@ -220,20 +221,6 @@ class Bitmovin8Adapter implements Adapter {
       }
     });
 
-    this.player.on(this.player.exports.PlayerEvent.AdStarted, () => {
-      this.eventCallback(Event.START_AD, {
-        currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedVideoFrames(),
-      });
-    });
-
-    this.player.on(this.player.exports.PlayerEvent.AdFinished, () => {
-      this.eventCallback(Event.END_AD, {
-        currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedVideoFrames(),
-      });
-    });
-
     this.player.on(this.player.exports.PlayerEvent.Muted, () => {
       this.eventCallback(Event.MUTE, {
         currentTime: this.player.getCurrentTime(),
@@ -263,13 +250,49 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.exports.PlayerEvent.DownloadFinished, (event: any) => {      
+    this.player.on(this.player.exports.PlayerEvent.DownloadFinished, (event: any) => {
       if (event.downloadType.indexOf('drm/license/') === 0) {
         this.drmPerformanceInfo.drmTime = event.downloadTime * 1000;
         this.drmPerformanceInfo.drmInfo = event.downloadType.replace('drm/license/', '');
         this.drmPerformanceInfo.drmUsed = true;
       }
     });
+
+    this.player.on(this.player.exports.PlayerEvent.AdStarted, () => {
+      debugger;
+      this.eventCallback(Event.START_AD, {
+        currentTime: this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedVideoFrames(),
+      });
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdFinished, () => {
+      debugger;
+      this.eventCallback(Event.END_AD, {
+        currentTime: this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedVideoFrames(),
+      });
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdBreakEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdBreakEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdClicked, (event: AdClickedEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdQuartile, (event: AdQuartileEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdSkipped, (event: AdEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdError, (event: ErrorEvent) => {
+      debugger;
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdManifestLoaded, (event: AdBreakEvent) => {
+      debugger;
+    })
 
     window.onunload = window.onbeforeunload = () => {
       if (!this.onBeforeUnLoadEvent) {
