@@ -12,7 +12,7 @@ class Bitmovin8Adapter implements Adapter {
   eventCallback: AdapterEventCallback;
   drmPerformanceInfo: DrmPerformanceInfo;
 
-  constructor(player: any, eventCallback: AdapterEventCallback) {
+  constructor(player: any, eventCallback: AdapterEventCallback, adCallbacks: AdCallbacks) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -197,7 +197,6 @@ class Bitmovin8Adapter implements Adapter {
 
     this.player.on(this.player.exports.PlayerEvent.VideoPlaybackQualityChanged, () => {
       const quality = this.player.getPlaybackVideoData();
-
       this.eventCallback(Event.VIDEO_CHANGE, {
         width: quality.width,
         height: quality.height,

@@ -19,7 +19,8 @@
     crossorigin="anonymous"></script>
   <title>Bitdash Analytics</title>
   <link rel="stylesheet" href="style.css" />
-  <script type="text/javascript" src="https://cdn.bitmovin.com/player/web/8.0.0/bitmovinplayer.js"></script>
+
+  <script type="text/javascript" src="https://bitmovin-a.akamaihd.net/bitmovin-player/nightly/2018/bitmovinplayer.js"></script>
   <script type="text/javascript" src="/build/debug/bitmovinanalytics.min.js"></script>
 </head>
 
@@ -29,6 +30,9 @@
   <a href="#" id="click">Click</a>
   <a href="#" id="change">Change Source</a>
   <script type="text/javascript">
+    
+    bitmovin.player.Player.addModule(bitmovin.analytics.PlayerModule)
+
     const addTag = {
       url: 'https://s3-eu-west-1.amazonaws.com/bitmovin-player-eu-west1-ci-input/general/sample-vast-tags/vast-not-skippable-2s.xml',
       type: 'ima'

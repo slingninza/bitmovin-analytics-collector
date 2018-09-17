@@ -14,6 +14,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {CastClientConfig} from '../types/CastClientConfig';
 import { AdSample } from '../types/AdSample';
+import { AdAnalytics } from './AdAnalytics';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -40,19 +41,19 @@ export class Analytics {
   private samplesQueue: any;
   private castClientConfig!: CastClientConfig;
   private sample: Sample;
-  private adSample: AdSample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
+  private adAnalytics: AdAnalytics;
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
+    this.adAnalytics = new AdAnalytics(this);
     this.licenseCall = new LicenseCall();
     this.analyticsCall = new AnalyticsCall();
     this.castClient = new CastClient();
     this.castReceiver = new CastReceiver();
     this.sample = {};
-    this.adSample = {};
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
     this.startupTime = 0;
@@ -85,6 +86,10 @@ export class Analytics {
     this.setupSample();
     this.init();
     this.setupStateMachineCallbacks();
+  }
+
+  getSample(): Sample {
+    return this.sample;
   }
 
   updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
@@ -187,7 +192,6 @@ export class Analytics {
         this.setState(state);
         this.sample.playerStartupTime = time;
         this.sample.pageLoadType = this.pageLoadType;
-        this.adSample.playerStartupTime = time;
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
@@ -519,7 +523,7 @@ export class Analytics {
     );
 
     try {
-      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine, this.adAnalytics);
     } catch (e) {
       logger.error('Bitmovin Analytics: Could not detect player', e);
       return;
