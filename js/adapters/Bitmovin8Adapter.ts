@@ -221,20 +221,6 @@ class Bitmovin8Adapter implements Adapter {
       }
     });
 
-    this.player.on(this.player.exports.PlayerEvent.AdStarted, () => {
-      this.eventCallback(Event.START_AD, {
-        currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedVideoFrames(),
-      });
-    });
-
-    this.player.on(this.player.exports.PlayerEvent.AdFinished, () => {
-      this.eventCallback(Event.END_AD, {
-        currentTime: this.player.getCurrentTime(),
-        droppedFrames: this.player.getDroppedVideoFrames(),
-      });
-    });
-
     this.player.on(this.player.exports.PlayerEvent.Muted, () => {
       this.eventCallback(Event.MUTE, {
         currentTime: this.player.getCurrentTime(),
@@ -272,16 +258,24 @@ class Bitmovin8Adapter implements Adapter {
       }
     });
 
-    this.player.on(this.player.exports.PlayerEvent.AdStarted, (event: AdEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.AdStarted, () => {
       debugger;
+      this.eventCallback(Event.START_AD, {
+        currentTime: this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedVideoFrames(),
+      });
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdFinished, () => {
+      debugger;
+      this.eventCallback(Event.END_AD, {
+        currentTime: this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedVideoFrames(),
+      });
     });
     this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdBreakEvent) => {
       debugger;
     });
     this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdBreakEvent) => {
-      debugger;
-    });
-    this.player.on(this.player.exports.PlayerEvent.AdFinished, (event: AdEvent) => {
       debugger;
     });
     this.player.on(this.player.exports.PlayerEvent.AdClicked, (event: AdClickedEvent) => {
