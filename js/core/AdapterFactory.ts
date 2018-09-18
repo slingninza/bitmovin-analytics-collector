@@ -8,7 +8,7 @@ import {ShakaAdapter} from '../adapters/ShakaAdapter';
 import {DashjsAdapter} from '../adapters/DashjsAdapter';
 import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
-import { AdCallbacks } from '../types/AdCallbacks';
+import { AdCallbacks } from '../types/ads/AdCallbacks';
 
 /**
  * Stateless. Auto-maps given player instance to new adapter instances.

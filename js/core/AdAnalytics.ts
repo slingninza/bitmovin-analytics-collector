@@ -1,9 +1,9 @@
-import { Analytics } from "./Analytics";
-import { AdSample } from "../types/AdSample";
-import { AdCallbacks } from "../types/AdCallbacks";
+import { Analytics } from './Analytics';
+import { AdSample } from '../types/ads/AdSample';
+import { AdCallbacks } from '../types/ads/AdCallbacks';
 import Utils from '../utils/Utils';
 import { AdBreakEvent, AdClickedEvent, ErrorEvent, AdEvent, AdLinearityChangedEvent, AdQuartileEvent, AdQuartile } from 'bitmovin-player';
-import { CreativeType } from '../enums/ad/CreativeType';
+import { CreativeType } from '../enums/ads/CreativeType';
 
 declare var __VERSION__: any;
 
@@ -72,6 +72,7 @@ export class AdAnalytics implements AdCallbacks {
     this.sample.strategy = event.adBreak.tag.type;
     this.sample.manifestDownloadTime = event.timestamp;
     // TODO: calculate manifest download time + add relevant info to adSample
+    debugger;
   }
 
   onAdQuartile(event: AdQuartileEvent) {

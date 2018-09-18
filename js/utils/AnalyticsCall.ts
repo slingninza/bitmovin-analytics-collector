@@ -1,7 +1,7 @@
 import {HttpCall} from './HttpCall';
 import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
 import {Sample} from '../types/Sample';
-import { AdSample } from '../types/AdSample';
+import { AdSample } from '../types/ads/AdSample';
 
 export class AnalyticsCall extends HttpCall {
   static analyticsServerUrl = ANALYTICS_BACKEND_BASE_URL + '/analytics';
