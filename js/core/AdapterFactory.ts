@@ -26,9 +26,6 @@ export class AdapterFactory {
     } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7Adapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion8Plus(player)) {
-      if (!adCallbacks) {
-        throw new Error('AdCallbacks must be defined');
-      }
       return new Bitmovin8Adapter(player, eventCallback, adCallbacks);
     } else if (PlayerDetector.isVideoJs(player)) {
       return new VideoJsAdapter(player, eventCallback, stateMachine);

@@ -14,11 +14,8 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyticsConfig} from '../types/AnalyticsConfig';
 import {CastClientConfig} from '../types/CastClientConfig';
 import { AdAnalytics } from './AdAnalytics';
+import { PageLoadType } from '../enums/PageLoadType';
 
-enum PAGE_LOAD_TYPE {
-  FOREGROUND = 1,
-  BACKGROUND = 2,
-}
 export class Analytics {
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
@@ -32,7 +29,7 @@ export class Analytics {
   private droppedSampleFrames: number;
   private licensing: string;
   private startupTime: number;
-  private pageLoadType: PAGE_LOAD_TYPE;
+  private pageLoadType: PageLoadType;
   private autoplay: boolean | undefined;
   private isCastClient: boolean;
   private isCastReceiver: boolean;
@@ -43,10 +40,11 @@ export class Analytics {
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
-  private adAnalytics: AdAnalytics;
+  private adAnalytics?: AdAnalytics;
 
   constructor(config: AnalyticsConfig) {
     this.config = config;
+    // TODO: Set adAnalytics depending on license features
     this.adAnalytics = new AdAnalytics(this);
     this.licenseCall = new LicenseCall();
     this.analyticsCall = new AnalyticsCall();
@@ -56,7 +54,7 @@ export class Analytics {
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
     this.startupTime = 0;
-    this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
+    this.pageLoadType = PageLoadType.FOREGROUND;
 
     this.autoplay = undefined;
 
@@ -117,7 +115,7 @@ export class Analytics {
     window.setTimeout(() => {
       //@ts-ignore
       if (document[Utils.getHiddenProp()] === true) {
-        this.pageLoadType = PAGE_LOAD_TYPE.BACKGROUND;
+        this.pageLoadType = PageLoadType.BACKGROUND;
       }
     }, Analytics.PAGE_LOAD_TYPE_TIMEOUT);
   }

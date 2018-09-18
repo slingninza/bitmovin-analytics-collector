@@ -11,10 +11,10 @@ class Bitmovin8Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: AdapterEventCallback;
-  adCallbacks: AdCallbacks;
+  adCallbacks?: AdCallbacks;
   drmPerformanceInfo: DrmPerformanceInfo;
 
-  constructor(player: any, eventCallback: AdapterEventCallback, adCallbacks: AdCallbacks) {
+  constructor(player: any, eventCallback: AdapterEventCallback, adCallbacks?: AdCallbacks) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
@@ -261,40 +261,58 @@ class Bitmovin8Adapter implements Adapter {
     });
 
     this.player.on(this.player.exports.PlayerEvent.AdStarted, (event: AdEvent & PlayerEventBase) => {
-      this.adCallbacks.onAdStarted(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdStarted(event);
+      }
       this.eventCallback(Event.START_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedVideoFrames(),
       });
     });
     this.player.on(this.player.exports.PlayerEvent.AdFinished, (event: AdEvent & PlayerEventBase) => {
-      this.adCallbacks.onAdFinished(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdFinished(event);
+      }
       this.eventCallback(Event.END_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedVideoFrames(),
       });
     });
     this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdBreakEvent) => {
-      this.adCallbacks.onAdBreakStarted(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdBreakStarted(event);
+      }
     });
     this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdBreakEvent) => {
-      this.adCallbacks.onAdBreakFinished(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdBreakFinished(event);
+      }
     });
     this.player.on(this.player.exports.PlayerEvent.AdClicked, (event: AdClickedEvent) => {
-      this.adCallbacks.onAdClicked(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdClicked(event);
+      }
     });
     this.player.on(this.player.exports.PlayerEvent.AdQuartile, (event: AdQuartileEvent) => {
-      this.adCallbacks.onAdQuartile(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdQuartile(event);
+      }
     });
     this.player.on(this.player.exports.PlayerEvent.AdSkipped, (event: AdEvent & PlayerEventBase) => {
-      this.adCallbacks.onAdSkipped(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdSkipped(event);
+      }
     });
     this.player.on(this.player.exports.PlayerEvent.AdError, (event: ErrorEvent) => {
-      this.adCallbacks.onAdError(event);
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdError(event);
+      }
     });
     this.player.on(this.player.exports.PlayerEvent.AdManifestLoaded, (event: AdBreakEvent) => {
-      this.adCallbacks.onAdManifestLoaded(event);
-    })
+      if (this.adCallbacks) {
+        this.adCallbacks.onAdManifestLoaded(event);
+      }
+    });
 
     window.onunload = window.onbeforeunload = () => {
       if (!this.onBeforeUnLoadEvent) {

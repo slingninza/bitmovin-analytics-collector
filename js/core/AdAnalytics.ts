@@ -12,15 +12,40 @@ export class AdAnalytics implements AdCallbacks {
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
-    this.sample = {};
     this.manifestLoaded = false;
+    this.sample = {};
+    this.setupSample();
   }
 
   generateNewAdImpressionId() {
     this.sample.adImpressionId = Utils.generateUUID();
   }
 
+  setVideoSampleData() {
+    const videoSample = this.analytics.getSample();
+    this.sample.analyticsVersion = videoSample.analyticsVersion;
+    this.sample.player = videoSample.player;
+    this.sample.playerKey = videoSample.playerKey;
+    this.sample.playerStartupTime = videoSample.playerStartupTime;
+    this.sample.playerTech = videoSample.playerTech;
+    this.sample.playerVersion = videoSample.version;
+    this.sample.cdnProvider = videoSample.cdnProvider;
+    this.sample.userId = videoSample.userId;
+    this.sample.videoId = videoSample.videoId;
+  }
+
   onAdBreakFinished(event: AdBreakEvent) {
+    debugger;
+  }
+
+  onAdStarted(event: AdEvent) {
+    this.sample.started = true;
+    debugger;
+  }
+
+  onAdFinished(event: AdEvent) {
+    this.sample.completed = event.timestamp;
+    // TODO: Send AdAnalyticsRequest
     debugger;
   }
 
@@ -35,12 +60,6 @@ export class AdAnalytics implements AdCallbacks {
 
   onAdError(event: ErrorEvent) {
     this.sample.errorCode = event.code;
-    // TODO: Send AdAnalyticsRequest
-    debugger;
-  }
-
-  onAdFinished(event: AdEvent) {
-    this.sample.completed = event.timestamp;
     // TODO: Send AdAnalyticsRequest
     debugger;
   }
@@ -77,10 +96,6 @@ export class AdAnalytics implements AdCallbacks {
     debugger;
   }
 
-  onAdStarted(event: AdEvent) {
-    debugger;
-  }
-
   onOverlayAdStarted(event: AdEvent) {
     debugger;
   }
@@ -92,6 +107,32 @@ export class AdAnalytics implements AdCallbacks {
     this.sample.started = false;
     this.sample.manifestDownloadTime = 0;
     this.sample.startupTime = 0;
+  }
+
+  setupSample() {
+    this.sample = {
+      domain: Utils.sanitizePath(window.location.hostname),
+      path: Utils.sanitizePath(window.location.pathname),
+      language: navigator.language || (navigator as any).userLanguage,
+      userAgent: navigator.userAgent,
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      videoDuration: 0,
+      size: 'WINDOW',
+      time: 0,
+      videoWindowWidth: 0,
+      videoWindowHeight: 0,
+      played: 0,
+      videoPlaybackWidth: 0,
+      videoPlaybackHeight: 0,
+      videoBitrate: 0,
+      audioBitrate: 0,
+      duration: 0,
+      startupTime: 0,
+      player: this.sample.player,
+      //@ts-ignore
+      analyticsVersion: __VERSION__,
+    };
   }
 
   //   sendAnalyticsRequestAndClearValues() {
