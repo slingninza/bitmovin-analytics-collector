@@ -1,5 +1,5 @@
-import { StrategyType } from "../enums/ad/StrategyType";
-import { CreativeType } from "../enums/ad/CreativeType";
+import { StrategyType } from '../enums/ad/StrategyType';
+import { CreativeType } from '../enums/ad/CreativeType';
 
 export interface AdSample {
   adImpressionId?: string;
@@ -9,8 +9,6 @@ export interface AdSample {
   advertiserName?: string;
   analyticsVersion?: string;
   apiFramework?: string;
-  apiOrgId?: string;
-  apiUserId?: string;
   audioBitrate?: number;
   autoplay?: boolean;
   canceled?: boolean;
@@ -46,7 +44,7 @@ export interface AdSample {
   offset?: any;
   offsetType?: string;
   pageLoadTime?: number;
-  pageLoadType?: string;
+  pageLoadType?: number;
   path?: string;
   percentageInViewport?: number;
   persistent?: boolean;

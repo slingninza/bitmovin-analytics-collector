@@ -4,16 +4,20 @@ import { AdCallbacks } from "../types/AdCallbacks";
 import Utils from '../utils/Utils';
 import { AdBreakEvent, AdClickedEvent, ErrorEvent, AdEvent, AdLinearityChangedEvent, AdQuartileEvent, AdQuartile } from 'bitmovin-player';
 
+declare var __VERSION__: any;
 
 export class AdAnalytics implements AdCallbacks {
   private analytics: Analytics;
   private sample: AdSample;
   private manifestLoaded: boolean;
 
+  private adStartTime: number;
+
   constructor(analytics: Analytics) {
     this.analytics = analytics;
     this.manifestLoaded = false;
     this.sample = {};
+    this.adStartTime = 0;
     this.setupSample();
   }
 
@@ -21,30 +25,19 @@ export class AdAnalytics implements AdCallbacks {
     this.sample.adImpressionId = Utils.generateUUID();
   }
 
-  setVideoSampleData() {
-    const videoSample = this.analytics.getSample();
-    this.sample.analyticsVersion = videoSample.analyticsVersion;
-    this.sample.player = videoSample.player;
-    this.sample.playerKey = videoSample.playerKey;
-    this.sample.playerStartupTime = videoSample.playerStartupTime;
-    this.sample.playerTech = videoSample.playerTech;
-    this.sample.playerVersion = videoSample.version;
-    this.sample.cdnProvider = videoSample.cdnProvider;
-    this.sample.userId = videoSample.userId;
-    this.sample.videoId = videoSample.videoId;
-  }
-
   onAdBreakFinished(event: AdBreakEvent) {
+    // TODO: tbi
     debugger;
   }
 
   onAdStarted(event: AdEvent) {
     this.sample.started = true;
-    debugger;
+    this.adStartTime = event.timestamp;
   }
 
   onAdFinished(event: AdEvent) {
     this.sample.completed = event.timestamp;
+    this.sample.played = event.timestamp - this.adStartTime;
     // TODO: Send AdAnalyticsRequest
     debugger;
   }
@@ -55,7 +48,8 @@ export class AdAnalytics implements AdCallbacks {
 
   onAdClicked(event: AdClickedEvent) {
     this.sample.clicked = event.timestamp;
-    debugger;
+    this.sample.clickThroughUrl = event.clickThroughUrl;
+    this.sample.clickedPosition = event.timestamp;
   }
 
   onAdError(event: ErrorEvent) {
@@ -65,21 +59,23 @@ export class AdAnalytics implements AdCallbacks {
   }
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) {
+    // TODO: tbi
     debugger;
   }
 
   onAdManifestLoaded(event: any) {
-    debugger;
+    this.manifestLoaded = true;
+
     this.generateNewAdImpressionId();
-    const videoSample = this.analytics.getSample();
-    this.sample.videoId = videoSample.videoId;
-    this.sample.videoImpressionId = videoSample.impressionId;
+    this.setVideoSampleData();
+    this.sample.strategy = event.adBreak.tag.type;
+    this.sample.manifestDownloadTime = event.timestamp;
 
     if (event.vastResponse) { // event is of type ImaAdBreak
       event.adBreak.vastResponse.then(response => console.log(response)); // how to get Ad Id from ad manifest, IMA ??
     }
-    this.manifestLoaded = true;
-    this.sample.strategy = event.adBreak.tag.type;
+    // TODO: calculate manifest download time + add relevant info to adSample
+    debugger;
   }
 
   onAdQuartile(event: AdQuartileEvent) {
@@ -93,46 +89,71 @@ export class AdAnalytics implements AdCallbacks {
   }
 
   onAdSkipped(event: AdEvent) {
+    this.sample.skipped = true;
+    this.sample.skippedPosition = event.timestamp;
     debugger;
   }
 
   onOverlayAdStarted(event: AdEvent) {
+    // TODO: tbi
     debugger;
   }
 
   clearAdSampleValues() {
-    this.sample.playerStartupTime = 0;
-    this.sample.videoDuration = 0;
+    this.sample.completed = 0;
+    this.sample.duration = 0;
     this.sample.played = 0;
     this.sample.started = false;
-    this.sample.manifestDownloadTime = 0;
-    this.sample.startupTime = 0;
+    this.sample.time = 0;
+    this.sample.videoDuration = 0;
+    this.sample.adLoadTime = 0;
   }
 
   setupSample() {
     this.sample = {
+      adLoadTime: 0,
+      analyticsVersion: __VERSION__,
+      audioBitrate: 0,
+      autoplay: false,
+      closed: false,
+      completed: 0,
       domain: Utils.sanitizePath(window.location.hostname),
-      path: Utils.sanitizePath(window.location.pathname),
+      duration: 0,
       language: navigator.language || (navigator as any).userLanguage,
-      userAgent: navigator.userAgent,
+      manifestDownloadTime: 0,
+      minSuggestedDuration: 0,
+      pageLoadType: this.analytics.getPageLoadType(),
+      path: Utils.sanitizePath(window.location.pathname),
+      played: 0,
       screenWidth: screen.width,
       screenHeight: screen.height,
-      videoDuration: 0,
-      size: 'WINDOW',
       time: 0,
-      videoWindowWidth: 0,
-      videoWindowHeight: 0,
-      played: 0,
-      videoPlaybackWidth: 0,
-      videoPlaybackHeight: 0,
-      videoBitrate: 0,
-      audioBitrate: 0,
-      duration: 0,
-      startupTime: 0,
-      player: this.sample.player,
-      //@ts-ignore
-      analyticsVersion: __VERSION__,
+      userAgent: navigator.userAgent,
     };
+  }
+
+  setVideoSampleData() {
+    const videoSample = this.analytics.getSample();
+    this.sample.analyticsVersion = videoSample.analyticsVersion;
+    this.sample.cdnProvider = videoSample.cdnProvider;
+    this.sample.pageLoadTime = videoSample.pageLoadTime;
+    this.sample.pageLoadType = videoSample.pageLoadType;
+    this.sample.player = videoSample.player;
+    this.sample.playerKey = videoSample.key;
+    this.sample.playerStartupTime = videoSample.playerStartupTime;
+    this.sample.playerTech = videoSample.playerTech;
+    this.sample.playerVersion = videoSample.version;
+    this.sample.size = videoSample.size;
+    this.sample.startupTime = videoSample.startupTime;
+    this.sample.userId = videoSample.userId;
+    this.sample.videoId = videoSample.videoId;
+    this.sample.videoImpressionId = videoSample.impressionId;
+    this.sample.videoDuration = videoSample.videoDuration;
+    this.sample.videoWindowWidth = videoSample.videoWindowWidth;
+    this.sample.videoWindowHeight = videoSample.videoWindowHeight;
+    this.sample.videoPlaybackWidth = videoSample.videoPlaybackWidth;
+    this.sample.videoPlaybackHeight = videoSample.videoPlaybackHeight;
+    this.sample.videoBitrate = videoSample.videoBitrate;
   }
 
   //   sendAnalyticsRequestAndClearValues() {
