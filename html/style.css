@@ -1,4 +1,24 @@
-#player {
+body {
+  height: 200vh;
+}
+
+.container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#container-player {
   width: 400px;
   height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#player-buttons {
+  display: flex;
+}
+
+#player-buttons a {
+  flex-grow: 1;
+  text-align: center;
 }
