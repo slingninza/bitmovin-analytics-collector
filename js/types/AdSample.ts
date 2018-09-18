@@ -33,6 +33,7 @@ export interface AdSample {
   dealId?: string;
   description?: string;
   errorCode?: any;
+  language?: string;
   manifestDownloadTime?: number;
   mediaUrl?: string;
   midpoint?: number;
@@ -62,6 +63,7 @@ export interface AdSample {
   title?: string;
   universalAdIdRegistry?: string;
   universalAdIdValue?: string;
+  userAgent?: string;
   userId?: string;
   videoBitrate?: number;
   videoDuration?: number;
