@@ -75,7 +75,6 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
         {name: Event.PLAY, from: State.READY, to: State.STARTUP},
         {name: Event.PLAYING, from: State.READY, to: State.PLAYING},
         {name: Event.READY, from: State.READY, to: State.READY},
-        {name: Event.START_AD, from: State.READY, to: State.AD},
         {name: Event.VIDEO_CHANGE, from: State.READY, to: State.READY},
         {name: Event.AUDIO_CHANGE, from: State.READY, to: State.READY},
 
@@ -103,9 +102,8 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
         {name: Event.AUDIO_CHANGE, from: State.QUALITYCHANGE, to: State.QUALITYCHANGE},
         {name: 'FINISH_QUALITYCHANGE', from: State.QUALITYCHANGE, to: State.PLAYING},
 
-        {name: Event.VIDEO_CHANGE, from: State.PAUSE, to: State.QUALITYCHANGE_PAUSE},
-        {name: Event.AUDIO_CHANGE, from: State.PAUSE, to: State.QUALITYCHANGE_PAUSE},
-        {name: Event.END, from: State.AD, to: State.PAUSE},
+        {name: Event.VIDEO_CHANGE,  from: State.PAUSE, to: State.QUALITYCHANGE_PAUSE},
+        {name: Event.AUDIO_CHANGE,  from: State.PAUSE, to: State.QUALITYCHANGE_PAUSE},
         {
           name: Event.VIDEO_CHANGE,
           from: State.QUALITYCHANGE_PAUSE,
@@ -167,8 +165,10 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
 
         {name: Event.UNLOAD, from: this.getAllStates(), to: State.END},
 
+        {name: Event.START_AD, from: State.READY, to: State.AD},
         {name: Event.START_AD, from: State.PLAYING, to: State.AD},
-        {name: Event.END_AD, from: State.AD, to: State.PLAYING},
+        {name: Event.START_AD, from: State.PAUSE, to: State.AD},
+        {name: Event.END_AD,   from: State.AD, to: State.PAUSE},
 
         {name: Event.MUTE, from: State.READY, to: State.MUTING_READY},
         {name: Event.UN_MUTE, from: State.READY, to: State.MUTING_READY},
