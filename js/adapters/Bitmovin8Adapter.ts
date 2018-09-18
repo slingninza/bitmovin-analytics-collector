@@ -4,7 +4,7 @@ import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
-import {AdClickedEvent, AdQuartileEvent, ErrorEvent, AdEvent, AdBreakEvent, PlayerEventBase} from 'bitmovin-player';
+import {AdClickedEvent, AdQuartileEvent, ErrorEvent, AdEvent, AdBreakEvent} from 'bitmovin-player';
 import { AdCallbacks } from '../types/AdCallbacks';
 
 class Bitmovin8Adapter implements Adapter {
@@ -260,7 +260,7 @@ class Bitmovin8Adapter implements Adapter {
       }
     });
 
-    this.player.on(this.player.exports.PlayerEvent.AdStarted, (event: AdEvent & PlayerEventBase) => {
+    this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdEvent) => {
       if (this.adCallbacks) {
         this.adCallbacks.onAdStarted(event);
       }
@@ -269,7 +269,7 @@ class Bitmovin8Adapter implements Adapter {
         droppedFrames: this.player.getDroppedVideoFrames(),
       });
     });
-    this.player.on(this.player.exports.PlayerEvent.AdFinished, (event: AdEvent & PlayerEventBase) => {
+    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdEvent) => {
       if (this.adCallbacks) {
         this.adCallbacks.onAdFinished(event);
       }
@@ -298,7 +298,7 @@ class Bitmovin8Adapter implements Adapter {
         this.adCallbacks.onAdQuartile(event);
       }
     });
-    this.player.on(this.player.exports.PlayerEvent.AdSkipped, (event: AdEvent & PlayerEventBase) => {
+    this.player.on(this.player.exports.PlayerEvent.AdSkipped, (event: AdEvent) => {
       if (this.adCallbacks) {
         this.adCallbacks.onAdSkipped(event);
       }

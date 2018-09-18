@@ -3,6 +3,7 @@ import { AdSample } from "../types/AdSample";
 import { AdCallbacks } from "../types/AdCallbacks";
 import Utils from '../utils/Utils';
 import { AdBreakEvent, AdClickedEvent, ErrorEvent, AdEvent, AdLinearityChangedEvent, AdQuartileEvent, AdQuartile } from 'bitmovin-player';
+import { CreativeType } from '../enums/ad/CreativeType';
 
 declare var __VERSION__: any;
 
@@ -16,8 +17,8 @@ export class AdAnalytics implements AdCallbacks {
   constructor(analytics: Analytics) {
     this.analytics = analytics;
     this.manifestLoaded = false;
-    this.sample = {};
     this.adStartTime = 0;
+    this.sample = {};
     this.setupSample();
   }
 
@@ -31,13 +32,16 @@ export class AdAnalytics implements AdCallbacks {
   }
 
   onAdStarted(event: AdEvent) {
+    this.generateNewAdImpressionId();
     this.sample.started = true;
     this.adStartTime = event.timestamp;
+    debugger;
   }
 
   onAdFinished(event: AdEvent) {
     this.sample.completed = event.timestamp;
     this.sample.played = event.timestamp - this.adStartTime;
+    this.setVideoSampleData();
     // TODO: Send AdAnalyticsRequest
     debugger;
   }
@@ -54,28 +58,20 @@ export class AdAnalytics implements AdCallbacks {
 
   onAdError(event: ErrorEvent) {
     this.sample.errorCode = event.code;
-    // TODO: Send AdAnalyticsRequest
-    debugger;
   }
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) {
-    // TODO: tbi
-    debugger;
+    if (event.isLinear) {
+      this.sample.creativeType = CreativeType.LINEAR;
+    }
+    // TODO: set creative type for nonlinear ads
   }
 
   onAdManifestLoaded(event: any) {
     this.manifestLoaded = true;
-
-    this.generateNewAdImpressionId();
-    this.setVideoSampleData();
     this.sample.strategy = event.adBreak.tag.type;
     this.sample.manifestDownloadTime = event.timestamp;
-
-    if (event.vastResponse) { // event is of type ImaAdBreak
-      event.adBreak.vastResponse.then(response => console.log(response)); // how to get Ad Id from ad manifest, IMA ??
-    }
     // TODO: calculate manifest download time + add relevant info to adSample
-    debugger;
   }
 
   onAdQuartile(event: AdQuartileEvent) {
@@ -91,7 +87,6 @@ export class AdAnalytics implements AdCallbacks {
   onAdSkipped(event: AdEvent) {
     this.sample.skipped = true;
     this.sample.skippedPosition = event.timestamp;
-    debugger;
   }
 
   onOverlayAdStarted(event: AdEvent) {
@@ -100,18 +95,26 @@ export class AdAnalytics implements AdCallbacks {
   }
 
   clearAdSampleValues() {
+    this.sample.adLoadTime = 0;
+    this.sample.adSystem = '';
+    this.sample.advertiserName = '';
     this.sample.completed = 0;
     this.sample.duration = 0;
+    this.sample.midpoint = 0;
+    this.sample.minSuggestedDuration = 0;
     this.sample.played = 0;
+    this.sample.quartile1 = 0;
+    this.sample.quartile3 = 0;
     this.sample.started = false;
     this.sample.time = 0;
     this.sample.videoDuration = 0;
-    this.sample.adLoadTime = 0;
   }
 
   setupSample() {
     this.sample = {
       adLoadTime: 0,
+      adSystem: '',
+      advertiserName: '',
       analyticsVersion: __VERSION__,
       audioBitrate: 0,
       autoplay: false,
