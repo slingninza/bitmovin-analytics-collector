@@ -28,6 +28,12 @@ class Bitmovin8Adapter implements Adapter {
     return this.player.version;
   }
 
+  private getAutoPlay(): boolean {
+    if (this.player.getConfig().playback) {
+      return this.player.getConfig().playback.autoplay || false;
+    }
+    return false
+  }
   register() {
     const getProgConfigFromProgressiveConfig = (
       progressive:
@@ -75,10 +81,7 @@ class Bitmovin8Adapter implements Adapter {
     });
 
     this.player.on(this.player.exports.PlayerEvent.SourceLoaded, (event: any) => {
-      let autoplay = false;
-      if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
-        autoplay = this.player.getConfig().playback.autoplay;
-      }
+      const autoplay = this.getAutoPlay()
 
       //TODO simplify
       const config = {

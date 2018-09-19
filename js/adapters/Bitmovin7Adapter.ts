@@ -28,6 +28,12 @@ export class Bitmovin7Adapter implements Adapter {
     return this.player.version;
   }
 
+  private getAutoPlay(): boolean {
+    if (this.player.getConfig().playback) {
+      return this.player.getConfig().playback.autoplay || false;
+    }
+    return false
+  }
   register() {
     const getProgConfigFromProgressiveConfig = (
       progressive:
@@ -75,10 +81,7 @@ export class Bitmovin7Adapter implements Adapter {
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event: any) => {
-      let autoplay = false;
-      if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
-        autoplay = this.player.getConfig().playback.autoplay;
-      }
+      const autoplay = this.getAutoPlay();
 
       const config = this.player.getConfig();
       let source: PlayerSourceConfig = {};
@@ -111,10 +114,7 @@ export class Bitmovin7Adapter implements Adapter {
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_READY, () => {
-      let autoplay = false;
-      if (this.player.getConfig().playback && this.player.getConfig().playback.autoplay) {
-        autoplay = this.player.getConfig().playback.autoplay;
-      }
+      const autoplay = this.getAutoPlay();
 
       const config = this.player.getConfig();
       let source: PlayerSourceConfig = {};
