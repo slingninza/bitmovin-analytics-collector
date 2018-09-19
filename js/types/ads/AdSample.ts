@@ -1,5 +1,5 @@
-import { StrategyType } from '../../enums/ad/StrategyType';
-import { CreativeType } from '../../enums/ad/CreativeType';
+import { StrategyType } from '../../enums/ads/StrategyType';
+import { CreativeType } from '../../enums/ads/CreativeType';
 
 export interface AdSample {
   adImpressionId?: string;
