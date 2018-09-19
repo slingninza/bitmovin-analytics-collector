@@ -29,7 +29,7 @@
     <div id="container-player">
       <div id="player"></div>
       <div id="player-buttons">
-        <a href="bitmovin_IMA.html">Reload</a>
+        <a href="bitmovin_VMAP.html">Reload</a>
         <a href="#" id="click">Click</a>
         <a href="#" id="change">Change Source</a>
       </div>
@@ -37,12 +37,8 @@
   </div>
   <script type="text/javascript">
     const addTag = {
-      url: 'https://s3-eu-west-1.amazonaws.com/bitmovin-player-eu-west1-ci-input/general/sample-vast-tags/vast-not-skippable-2s.xml',
-      type: 'ima'
-    };
-    const addTagSkipable = {
-      url: 'https://s3-eu-west-1.amazonaws.com/bitmovin-player-eu-west1-ci-input/general/sample-vast-tags/vast-skippable.xml',
-      type: 'ima'
+      url: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/ad_rule_samples&ciu_szs=300x250&ad_rule=1&impl=s&gdfp_req=1&env=vp&output=vmap&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostpod&cmsid=496&vid=short_onecue&correlator=',
+      type: 'vmap'
     };
     const config = {
       key: 'a6e31908-550a-4f75-b4bc-a9d89880a733',
@@ -58,22 +54,9 @@
       advertising: {
         adBreaks: [
           {
-            id: 'AdWithOffset',
+            id: 'SomeAdId',
             tag: addTag,
-            persistent: true,
-            position: '30'
-          },
-          {
-            id: 'PrerollAd',
-            tag: addTagSkipable,
-            persistent: true,
-            position: 'pre'
-          },
-          {
-            id: 'PostRollAd',
-            tag: addTag,
-            persistent: true,
-            position: 'post'
+            persistent: true
           }
         ]
       }
