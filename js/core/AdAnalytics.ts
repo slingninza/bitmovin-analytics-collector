@@ -2,117 +2,124 @@ import { Analytics } from './Analytics';
 import { AdSample } from '../types/ads/AdSample';
 import { AdCallbacks } from '../types/ads/AdCallbacks';
 import Utils from '../utils/Utils';
-import { AdBreakEvent, AdClickedEvent, ErrorEvent, AdEvent, AdLinearityChangedEvent, AdQuartileEvent, AdQuartile } from 'bitmovin-player';
+import { AdBreakEvent, AdClickedEvent, ErrorEvent, AdEvent, AdLinearityChangedEvent, AdQuartileEvent, AdQuartile, AdBreak } from 'bitmovin-player';
 import { CreativeType } from '../enums/ads/CreativeType';
+import { mapStringToStrategyType } from '../enums/ads/StrategyType';
 
 declare var __VERSION__: any;
 
 export class AdAnalytics implements AdCallbacks {
   private analytics: Analytics;
-  private sample: AdSample;
-  private manifestLoaded: boolean;
-
-  private adStartTime: number;
+  private currentAdBreak: AdBreak | null;
+  private currentAdSample: AdSample | null;
+  private currentAdSampleStartTime: number;
+  private adBreaks : Array<AdBreak>;
+  private samples: Array<AdSample>;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
-    this.manifestLoaded = false;
-    this.adStartTime = 0;
-    this.sample = {};
-    this.setupSample();
+    this.currentAdBreak = null;
+    this.currentAdSample = null;
+    this.adBreaks = [];
+    this.samples = [];
+    this.currentAdSampleStartTime = 0;
   }
 
   generateNewAdImpressionId() {
-    this.sample.adImpressionId = Utils.generateUUID();
-  }
-
-  onAdBreakFinished(event: AdBreakEvent) {
-    // TODO: tbi
-    debugger;
-  }
-
-  onAdStarted(event: AdEvent) {
-    this.generateNewAdImpressionId();
-    this.sample.started = true;
-    this.adStartTime = event.timestamp;
-    debugger;
-  }
-
-  onAdFinished(event: AdEvent) {
-    this.sample.completed = event.timestamp;
-    this.sample.played = event.timestamp - this.adStartTime;
-    this.setVideoSampleData();
-    // TODO: Send AdAnalyticsRequest
-    debugger;
+    return Utils.generateUUID();
   }
 
   onAdBreakStarted(event: AdBreakEvent) {
-    this.sample.started = true;
+    this.currentAdBreak = event.adBreak;
+  }
+  onAdBreakFinished(event: AdBreakEvent) {
+    this.currentAdBreak = null;
   }
 
+  onAdStarted(event: AdEvent) {
+    const ad = event.ad;
+    const sample: AdSample = this.setupSample();
+    sample.clickThroughUrl = ad.clickThroughUrl;
+    sample.mediaUrl = ad.mediaFileUrl;
+    sample.duration = ad.duration;
+    sample.creativeAdId = ad.id;
+    sample.started = true;
+    if (ad.isLinear) {
+      sample.creativeType = CreativeType.LINEAR;
+    }
+    if (this.currentAdBreak) {
+      sample.strategy = mapStringToStrategyType(this.currentAdBreak.tag.type);
+    }
+    this.samples.push(sample);
+    this.currentAdSample = sample;
+    this.currentAdSampleStartTime = event.timestamp;
+  }
+
+  onAdFinished(event: AdEvent) {
+    if (this.currentAdSample) {
+      this.currentAdSample.completed = event.timestamp;
+      this.currentAdSample.played = event.timestamp - this.currentAdSampleStartTime;
+      debugger;
+      // TODO: Send AdAnalyticsRequest
+      this.currentAdSample = null;
+    }
+  }
+
+
   onAdClicked(event: AdClickedEvent) {
-    this.sample.clicked = event.timestamp;
-    this.sample.clickThroughUrl = event.clickThroughUrl;
-    this.sample.clickedPosition = event.timestamp;
+    const sample = {
+      clicked: true,
+      clickThroughUrl: event.clickThroughUrl,
+      clickedPosition: event.timestamp
+    }
   }
 
   onAdError(event: ErrorEvent) {
-    this.sample.errorCode = event.code;
+    // Is this error really related to the current adBreak??
+    if (!this.currentAdSample) {
+      this.currentAdSample = this.setupSample();
+    }
+
+    this.currentAdSample.errorCode = event.code;
+    // TODO: Send AdAnalyticsRequest
+    this.currentAdSample = null;
   }
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) {
-    if (event.isLinear) {
-      this.sample.creativeType = CreativeType.LINEAR;
+    if (this.currentAdSample && event.isLinear) {
+      this.currentAdSample.creativeType = CreativeType.LINEAR;
     }
     // TODO: set creative type for nonlinear ads
   }
 
-  onAdManifestLoaded(event: any) {
-    this.manifestLoaded = true;
-    this.sample.strategy = event.adBreak.tag.type;
-    this.sample.manifestDownloadTime = event.timestamp;
-    // TODO: calculate manifest download time + add relevant info to adSample
-    debugger;
+  onAdManifestLoaded(event: AdBreakEvent) {
+    this.adBreaks.push(event.adBreak);
   }
 
   onAdQuartile(event: AdQuartileEvent) {
+    const sample = this.currentAdSample;
+    if (!sample) {
+      return;
+    }
     if (event.quartile === AdQuartile.FIRST_QUARTILE) {
-      this.sample.quartile1 = event.timestamp;
+      sample.quartile1 = event.timestamp;
     } else if (event.quartile === AdQuartile.MIDPOINT) {
-      this.sample.midpoint = event.timestamp;
+      sample.midpoint = event.timestamp;
     } else if (event.quartile === AdQuartile.THIRD_QUARTILE) {
-      this.sample.quartile3 = event.timestamp
+      sample.quartile3 = event.timestamp
     }
   }
 
   onAdSkipped(event: AdEvent) {
-    this.sample.skipped = true;
-    this.sample.skippedPosition = event.timestamp;
-  }
-
-  onOverlayAdStarted(event: AdEvent) {
-    // TODO: tbi
-    debugger;
-  }
-
-  clearAdSampleValues() {
-    this.sample.adLoadTime = 0;
-    this.sample.adSystem = '';
-    this.sample.advertiserName = '';
-    this.sample.completed = 0;
-    this.sample.duration = 0;
-    this.sample.midpoint = 0;
-    this.sample.minSuggestedDuration = 0;
-    this.sample.played = 0;
-    this.sample.quartile1 = 0;
-    this.sample.quartile3 = 0;
-    this.sample.started = false;
-    this.sample.time = 0;
-    this.sample.videoDuration = 0;
+    if (this.currentAdSample) {
+      this.currentAdSample.skipped = true;
+      this.currentAdSample.skippedPosition = event.timestamp;
+    }
   }
 
   setupSample() {
-    this.sample = {
+    const sample: AdSample = {
+      adImpressionId: this.generateNewAdImpressionId(),
       adLoadTime: 0,
       adSystem: '',
       advertiserName: '',
@@ -133,31 +140,33 @@ export class AdAnalytics implements AdCallbacks {
       screenHeight: screen.height,
       time: 0,
       userAgent: navigator.userAgent,
+      videoDuration: 0
     };
+    this.setVideoSampleData(sample);
+    return sample;
   }
 
-  setVideoSampleData() {
+  setVideoSampleData(sample: AdSample) {
     const videoSample = this.analytics.getSample();
-    this.sample.analyticsVersion = videoSample.analyticsVersion;
-    this.sample.cdnProvider = videoSample.cdnProvider;
-    this.sample.pageLoadTime = videoSample.pageLoadTime;
-    this.sample.pageLoadType = videoSample.pageLoadType;
-    this.sample.player = videoSample.player;
-    this.sample.playerKey = videoSample.key;
-    this.sample.playerStartupTime = videoSample.playerStartupTime;
-    this.sample.playerTech = videoSample.playerTech;
-    this.sample.playerVersion = videoSample.version;
-    this.sample.size = videoSample.size;
-    this.sample.startupTime = videoSample.startupTime;
-    this.sample.userId = videoSample.userId;
-    this.sample.videoId = videoSample.videoId;
-    this.sample.videoImpressionId = videoSample.impressionId;
-    this.sample.videoDuration = videoSample.videoDuration;
-    this.sample.videoWindowWidth = videoSample.videoWindowWidth;
-    this.sample.videoWindowHeight = videoSample.videoWindowHeight;
-    this.sample.videoPlaybackWidth = videoSample.videoPlaybackWidth;
-    this.sample.videoPlaybackHeight = videoSample.videoPlaybackHeight;
-    this.sample.videoBitrate = videoSample.videoBitrate;
+    sample.cdnProvider = videoSample.cdnProvider;
+    sample.pageLoadTime = videoSample.pageLoadTime;
+    sample.pageLoadType = videoSample.pageLoadType;
+    sample.player = videoSample.player;
+    sample.playerKey = videoSample.key;
+    sample.playerStartupTime = videoSample.playerStartupTime;
+    sample.playerTech = videoSample.playerTech;
+    sample.playerVersion = videoSample.version;
+    sample.size = videoSample.size;
+    sample.startupTime = videoSample.startupTime;
+    sample.userId = videoSample.userId;
+    sample.videoId = videoSample.videoId;
+    sample.videoImpressionId = videoSample.impressionId;
+    sample.videoDuration = videoSample.videoDuration;
+    sample.videoWindowWidth = videoSample.videoWindowWidth;
+    sample.videoWindowHeight = videoSample.videoWindowHeight;
+    sample.videoPlaybackWidth = videoSample.videoPlaybackWidth;
+    sample.videoPlaybackHeight = videoSample.videoPlaybackHeight;
+    sample.videoBitrate = videoSample.videoBitrate;
   }
 
   //   sendAnalyticsRequestAndClearValues() {

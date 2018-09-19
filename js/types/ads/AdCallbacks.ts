@@ -11,5 +11,4 @@ export interface AdCallbacks {
   onAdQuartile: (event: AdQuartileEvent) => void;
   onAdSkipped: (event: AdEvent) => void;
   onAdStarted: (event: AdEvent) => void;
-  onOverlayAdStarted: (event: AdEvent) => void;
 }
