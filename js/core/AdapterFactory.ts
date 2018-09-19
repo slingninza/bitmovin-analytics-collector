@@ -1,5 +1,4 @@
 import {PlayerDetector} from '../utils/PlayerDetector';
-import {BitmovinAdapter} from '../adapters/BitmovinAdapter';
 import {Bitmovin7Adapter} from '../adapters/Bitmovin7Adapter';
 import Bitmovin8Adapter from '../adapters/Bitmovin8Adapter';
 import {VideoJsAdapter} from '../adapters/VideoJsAdapter';
@@ -20,9 +19,7 @@ export class AdapterFactory {
    * @param {AnalyticsStateMachine} stateMachine
    */
   static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine): Adapter {
-    if (PlayerDetector.isBitmovinVersionPre7(player)) {
-      return new BitmovinAdapter(player, eventCallback);
-    } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
+    if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7Adapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion8Plus(player)) {
       return new Bitmovin8Adapter(player, eventCallback);
