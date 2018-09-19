@@ -260,32 +260,32 @@ class Bitmovin8Adapter implements Adapter {
       }
     });
 
-    this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdBreakEvent) => {
       if (this.adCallbacks) {
-        this.adCallbacks.onAdStarted(event);
+        this.adCallbacks.onAdBreakStarted(event);
       }
       this.eventCallback(Event.START_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedVideoFrames(),
       });
     });
-    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdBreakEvent) => {
       if (this.adCallbacks) {
-        this.adCallbacks.onAdFinished(event);
+        this.adCallbacks.onAdBreakFinished(event);
       }
       this.eventCallback(Event.END_AD, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedVideoFrames(),
       });
     });
-    this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdBreakEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.AdStarted, (event: AdEvent) => {
       if (this.adCallbacks) {
-        this.adCallbacks.onAdBreakStarted(event);
+        this.adCallbacks.onAdStarted(event);
       }
     });
-    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdBreakEvent) => {
+    this.player.on(this.player.exports.PlayerEvent.AdFinished, (event: AdEvent) => {
       if (this.adCallbacks) {
-        this.adCallbacks.onAdBreakFinished(event);
+        this.adCallbacks.onAdFinished(event);
       }
     });
     this.player.on(this.player.exports.PlayerEvent.AdClicked, (event: AdClickedEvent) => {
