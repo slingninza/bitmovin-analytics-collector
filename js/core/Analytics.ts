@@ -187,7 +187,7 @@ export class Analytics {
 
         this.startupTime = time;
 
-        this.setPlaybackSettingsFromLoadedEvent(event);
+        this.setPlaybackInfoFromAdapter();
 
         this.sendAnalyticsRequestAndClearValues();
 
@@ -217,8 +217,8 @@ export class Analytics {
         this.sample.autoplay = undefined;
       },
 
-      updateSample: (playbackSettings: any) => {
-        this.setPlaybackSettingsFromLoadedEvent(playbackSettings);
+      updateSample: () => {
+        this.setPlaybackInfoFromAdapter();
       },
 
       playing: (time: number, state: string, event: any) => {
@@ -409,7 +409,7 @@ export class Analytics {
       },
 
       source_changing: (time: number, state: string, event: any) => {
-        this.setPlaybackSettingsFromLoadedEvent(event);
+        this.setPlaybackInfoFromAdapter();
       },
     };
   }
@@ -552,7 +552,7 @@ export class Analytics {
     }
   };
 
-  setPlaybackSettingsFromLoadedEvent(loadedEvent: any) {
+  setPlaybackInfoFromAdapter() {
     const info = this.adapter.getCurrentPlaybackInfo()
     if (!info) {
       return;

@@ -2,7 +2,7 @@ export interface StateMachineCallbacks {
   [key: string]: any;
   setup: (time: number, state: string, event: string) => void;
   startup: (time: number, state: string) => void;
-  updateSample: (playbackSettings: any) => void;
+  updateSample: () => void;
   playing: (time: number, state: string, event: string) => void;
   playingAndBye: (time: number, state: string, event: string) => void;
   heartbeat: (time: number, state: any, event: string) => void;
