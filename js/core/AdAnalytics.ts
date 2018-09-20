@@ -17,8 +17,7 @@ export class AdAnalytics implements AdCallbacks {
   private licensing: AnalyticsLicensingStatus;
   private isAllowedToSendSamples: boolean;
   private currentAdBreak: AdBreak | null;
-  private currentAdSample: AdSample;
-  private currentAdSampleStartTime: number;
+  private currentAdSample: AdSample | null;
   private adBreaks : Array<AdBreak>;
   private samples: Array<AdSample>;
   private samplesQueue: Array<AdSample>;
@@ -31,7 +30,6 @@ export class AdAnalytics implements AdCallbacks {
     this.currentAdSample = {};
     this.adBreaks = [];
     this.samples = [];
-    this.currentAdSampleStartTime = 0;
     this.isAllowedToSendSamples = true;
     this.samplesQueue = [];
   }
@@ -40,8 +38,13 @@ export class AdAnalytics implements AdCallbacks {
     return Utils.generateUUID();
   }
 
-  clearSampleValues() {
-    this.currentAdSample = this.setupSample();
+  getSample(adId: string): AdSample {
+    let sample = this.samples.find(s => s.adId === adId);
+    if (!sample) {
+      sample = this.setupSample();
+      this.samples.push(sample);
+    }
+    return sample;
   }
 
   onAdBreakStarted(event: AdBreakEvent) {
@@ -52,56 +55,64 @@ export class AdAnalytics implements AdCallbacks {
   }
 
   onAdStarted(event: AdEvent) {
+    const adBreak: any = this.currentAdBreak;
+    if (!adBreak) {
+      return;
+    }
     const ad = event.ad;
-    const sample: AdSample = this.setupSample();
-    sample.clickThroughUrl = ad.clickThroughUrl;
+    const sample: AdSample = this.getSample(ad.id || '');
+    sample.adIsPersistent = adBreak.persistent;
+    sample.adPosition = adBreak.position;
+    sample.adClickthroughUrl = ad.clickThroughUrl;
     sample.mediaUrl = ad.mediaFileUrl;
-    sample.duration = ad.duration;
+    sample.adDuration = ad.duration;
     sample.creativeAdId = ad.id;
-    sample.started = true;
+    sample.started = 1;
+    sample.isLinear = ad.isLinear;
+    sample.adSkippable = true;
     if (ad.isLinear) {
-      sample.creativeType = CreativeType.LINEAR;
+      sample.adCreativeType = CreativeType.LINEAR;
     }
     if (this.currentAdBreak) {
-      sample.strategy = mapStringToStrategyType(this.currentAdBreak.tag.type);
+      sample.adTagType = mapStringToStrategyType(this.currentAdBreak.tag.type);
     }
-    this.samples.push(sample);
     this.currentAdSample = sample;
-    this.currentAdSampleStartTime = event.timestamp;
   }
 
   onAdFinished(event: AdEvent) {
-    if (this.currentAdSample) {
-      this.currentAdSample.completed = event.timestamp;
-      this.currentAdSample.played = event.timestamp - this.currentAdSampleStartTime;
-      this.sendAnalyticsRequestAndClearValues();
+    if (!this.currentAdSample) {
+      return;
     }
+    if (this.currentAdSample.skipped === 0 && !this.currentAdSample.errorCode) {
+      this.currentAdSample.completed = 1;
+    }
+    this.sendAnalyticsRequestAndClearValues(this.currentAdSample);
   }
 
 
   onAdClicked(event: AdClickedEvent) {
-    const sample = {
-      clicked: true,
-      clickThroughUrl: event.clickThroughUrl,
-      clickedPosition: event.timestamp
+    if (!this.currentAdSample) {
+      return;
     }
+    this.currentAdSample.clicked = 1,
+    this.currentAdSample.clickPosition = event.timestamp
+
+    this.sendAnalyticsRequestAndClearValues(this.currentAdSample);
   }
 
   onAdError(event: ErrorEvent) {
-    // Is this error really related to the current adBreak??
     if (!this.currentAdSample) {
-      this.currentAdSample = this.setupSample();
+      return;
     }
-
     this.currentAdSample.errorCode = event.code;
-    this.sendAnalyticsRequestAndClearValues();
+    this.sendAnalyticsRequestAndClearValues(this.currentAdSample);
   }
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) {
     if (this.currentAdSample && event.isLinear) {
-      this.currentAdSample.creativeType = CreativeType.LINEAR;
+      this.currentAdSample.adCreativeType = CreativeType.LINEAR;
     }
-    // TODO: set creative type for nonlinear ads
+    // TODO: set creative type for nonlinear/companion ads
   }
 
   onAdManifestLoaded(event: AdBreakEvent) {
@@ -109,50 +120,48 @@ export class AdAnalytics implements AdCallbacks {
   }
 
   onAdQuartile(event: AdQuartileEvent) {
-    const sample = this.currentAdSample;
-    if (!sample) {
+    if (!this.currentAdSample) {
       return;
     }
     if (event.quartile === AdQuartile.FIRST_QUARTILE) {
-      sample.quartile1 = event.timestamp;
+      this.currentAdSample.quartile1 = 1;
     } else if (event.quartile === AdQuartile.MIDPOINT) {
-      sample.midpoint = event.timestamp;
+      this.currentAdSample.midpoint = 1;
     } else if (event.quartile === AdQuartile.THIRD_QUARTILE) {
-      sample.quartile3 = event.timestamp
+      this.currentAdSample.quartile3 = 1
     }
   }
 
   onAdSkipped(event: AdEvent) {
-    if (this.currentAdSample) {
-      this.currentAdSample.skipped = true;
-      this.currentAdSample.skippedPosition = event.timestamp;
+    if (!this.currentAdSample) {
+      return;
     }
+    this.currentAdSample.skipped = 1;
+    this.currentAdSample.skipPosition = this.currentAdSample.started ?  event.timestamp - this.currentAdSample.started : 0;
   }
 
   setupSample() {
     const sample: AdSample = {
       adImpressionId: this.generateNewAdImpressionId(),
-      adLoadTime: 0,
       adSystem: '',
       advertiserName: '',
       analyticsVersion: __VERSION__,
-      audioBitrate: 0,
       autoplay: false,
-      closed: false,
+      clicked: 0,
+      closed: 0,
       completed: 0,
       domain: Utils.sanitizePath(window.location.hostname),
-      duration: 0,
       language: navigator.language || (navigator as any).userLanguage,
-      manifestDownloadTime: 0,
-      minSuggestedDuration: 0,
+      midpoint: 0,
       pageLoadType: this.analytics.getPageLoadType(),
       path: Utils.sanitizePath(window.location.pathname),
-      played: 0,
+      quartile1: 0,
+      quartile3: 0,
       screenWidth: screen.width,
       screenHeight: screen.height,
-      time: 0,
-      userAgent: navigator.userAgent,
-      videoDuration: 0
+      skipped: 0,
+      started: 0,
+      userAgent: navigator.userAgent
     };
     this.setVideoSampleData(sample);
     return sample;
@@ -160,30 +169,31 @@ export class AdAnalytics implements AdCallbacks {
 
   setVideoSampleData(sample: AdSample) {
     const videoSample = this.analytics.getSample();
+    // TODO: get videoPlaybackWidth/Height from AdEvents because it fails for preroll ads
+    sample.adPlaybackHeight = videoSample.videoPlaybackHeight;
+    sample.adPlaybackWidth = videoSample.videoPlaybackWidth;
     sample.cdnProvider = videoSample.cdnProvider;
+    sample.key = videoSample.key;
+    sample.language = videoSample.language;
     sample.pageLoadTime = videoSample.pageLoadTime;
     sample.pageLoadType = videoSample.pageLoadType;
     sample.player = videoSample.player;
     sample.playerKey = videoSample.key;
     sample.playerStartupTime = videoSample.playerStartupTime;
     sample.playerTech = videoSample.playerTech;
-    sample.playerVersion = videoSample.version;
     sample.size = videoSample.size;
-    sample.startupTime = videoSample.startupTime;
-    sample.userId = videoSample.userId;
+    sample.version = videoSample.version;
     sample.videoId = videoSample.videoId;
     sample.videoImpressionId = videoSample.impressionId;
-    sample.videoDuration = videoSample.videoDuration;
     sample.videoWindowWidth = videoSample.videoWindowWidth;
     sample.videoWindowHeight = videoSample.videoWindowHeight;
-    sample.videoPlaybackWidth = videoSample.videoPlaybackWidth;
-    sample.videoPlaybackHeight = videoSample.videoPlaybackHeight;
+    sample.userId = videoSample.userId;
     sample.videoBitrate = videoSample.videoBitrate;
   }
 
-    sendAnalyticsRequestAndClearValues() {
-      this.sendAnalyticsRequest(this.currentAdSample);
-      this.clearSampleValues();
+    sendAnalyticsRequestAndClearValues(sample: AdSample) {
+      this.samples = this.samples.filter(s => s.adImpressionId !== sample.adImpressionId);
+      this.sendAnalyticsRequest(sample);
     }
 
     sendAnalyticsRequest(sample: AdSample) {
