@@ -8,6 +8,7 @@ import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 import {PlaybackInfo} from '../types/PlaybackInfo';
+import { HTML5AnalyticsStateMachine } from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
@@ -19,7 +20,7 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 export abstract class HTML5Adapter implements Adapter {
   public eventCallback: AdapterEventCallback;
-  public stateMachine: AnalyticsStateMachine;
+  public stateMachine: HTML5AnalyticsStateMachine;
   public mediaEl: HTMLVideoElement | null;
   public mediaElEventHandlers: {event: string; handler: any}[];
   private analyticsBitrate_: number;
@@ -36,7 +37,7 @@ export abstract class HTML5Adapter implements Adapter {
   constructor(
     mediaElement: HTMLVideoElement | null,
     eventCallback: AdapterEventCallback,
-    stateMachine: AnalyticsStateMachine
+    stateMachine: HTML5AnalyticsStateMachine
   ) {
     this.eventCallback = eventCallback;
 

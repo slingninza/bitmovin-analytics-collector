@@ -5,6 +5,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import { HTML5AnalyticsStateMachine } from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 const dashjs = (window as any).dashjs as any;
 
@@ -15,7 +16,7 @@ export class DashjsAdapter extends HTML5Adapter {
   constructor(
     mediaPlayer: any,
     eventCallback: AdapterEventCallback,
-    stateMachine: AnalyticsStateMachine
+    stateMachine: HTML5AnalyticsStateMachine
   ) {
     super(null, eventCallback, stateMachine);
     this.mediaPlayer = mediaPlayer;

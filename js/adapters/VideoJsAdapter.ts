@@ -6,6 +6,7 @@ import {StreamSources} from '../types/StreamSources';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 import {PlaybackInfo} from '../types/PlaybackInfo';
+import { VideojsAnalyticsStateMachine } from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -14,13 +15,13 @@ export class VideoJsAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: videojs.default.Player;
   eventCallback: AdapterEventCallback;
-  stateMachine: AnalyticsStateMachine;
+  stateMachine: VideojsAnalyticsStateMachine;
   drmPerformanceInfo: DrmPerformanceInfo;
 
   constructor(
     player: videojs.default.Player,
     eventCallback: AdapterEventCallback,
-    stateMachine: AnalyticsStateMachine
+    stateMachine: VideojsAnalyticsStateMachine
   ) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
