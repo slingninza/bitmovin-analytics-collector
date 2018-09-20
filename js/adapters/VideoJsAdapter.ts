@@ -5,6 +5,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {StreamSources} from '../types/StreamSources';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import {PlaybackInfo} from '../types/PlaybackInfo';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -73,6 +74,27 @@ export class VideoJsAdapter implements Adapter {
       videoWidth: tech.videoWidth(),
       videoHeight: tech.videoHeight(),
     };
+  }
+
+  getCurrentPlaybackInfo(): PlaybackInfo {
+    const streamType = this.getStreamType(this.player.currentSrc());
+    const sources = this.getStreamSources(this.player.currentSrc());
+    const autoplay = (this.player.autoplay() as any) === true;
+
+    const info = {
+      isLive: this.player.duration() === Infinity,
+      version: videojs.VERSION,
+      duration: this.player.duration(),
+      streamType,
+      autoplay: autoplay,
+      ...sources,
+      ...this.getVideoWindowDimensions(this.player),
+      videoWindowWidth: (this.player as any).videoWidth(),
+      videoWindowHeight: (this.player as any).videoHeight(),
+      muted: this.player.muted()
+    }
+    debugger;
+    return info
   }
 
   register() {
