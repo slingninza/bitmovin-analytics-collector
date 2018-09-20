@@ -31,14 +31,14 @@ export class Analytics {
   private castClient: CastClient;
   private castReceiver: CastReceiver;
   private droppedSampleFrames: number;
-  private licensing: string;
+  private licensing: AnalyticsLicensingStatus;
   private startupTime: number;
   private pageLoadType: PageLoadType;
   private autoplay: boolean | undefined;
   private isCastClient: boolean;
   private isCastReceiver: boolean;
   private isAllowedToSendSamples: boolean;
-  private samplesQueue: any;
+  private samplesQueue: Array<Sample>;
   private castClientConfig!: CastClientConfig;
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
@@ -54,7 +54,7 @@ export class Analytics {
     this.castReceiver = new CastReceiver();
     this.sample = {};
     this.droppedSampleFrames = 0;
-    this.licensing = 'waiting';
+    this.licensing = AnalyticsLicensingStatus.WAITING;
     this.startupTime = 0;
     this.pageLoadType = PageLoadType.FOREGROUND;
 
@@ -80,6 +80,7 @@ export class Analytics {
       });
     }
 
+    // TODO: PageLoadType is asynchronous, first send analytics sample may be incorrect
     this.setPageLoadType();
     this.sample.pageLoadType = this.pageLoadType;
 
@@ -658,11 +659,11 @@ export class Analytics {
   }
 
   sendAnalyticsRequest() {
-    if (this.licensing === 'denied') {
+    if (this.licensing === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
-    if (this.licensing === 'granted') {
+    if (this.licensing === AnalyticsLicensingStatus.GRANTED) {
       this.sample.time = Utils.getCurrentTimestamp();
 
       if (!this.isCastClient && !this.isCastReceiver) {
@@ -681,7 +682,7 @@ export class Analytics {
 
         this.analyticsCall.sendRequest(this.sample, Utils.noOp);
       }
-    } else if (this.licensing === 'waiting') {
+    } else if (this.licensing === AnalyticsLicensingStatus.WAITING) {
       this.sample.time = Utils.getCurrentTimestamp();
 
       logger.log('Licensing callback still pending, waiting...');
@@ -700,7 +701,7 @@ export class Analytics {
   }
 
   sendUnloadRequest() {
-    if (this.licensing === 'denied') {
+    if (this.licensing === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
@@ -715,7 +716,7 @@ export class Analytics {
   }
 
   sendAnalyticsRequestSynchronous() {
-    if (this.licensing === 'denied') {
+    if (this.licensing === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
@@ -749,5 +750,13 @@ export class Analytics {
     } else {
       return 0;
     }
+  }
+
+  getIsCastClient() {
+    return this.isCastClient;
+  }
+
+  getIsCastReceiver() {
+    return this.isCastReceiver;
   }
 }
