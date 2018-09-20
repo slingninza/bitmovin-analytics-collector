@@ -1,4 +1,5 @@
 export enum AnalyticsLicensingStatus {
   GRANTED = 'granted',
-  DENIED = 'denied'
+  DENIED = 'denied',
+  WAITING = 'waiting'
 };
