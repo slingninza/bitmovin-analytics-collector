@@ -557,7 +557,6 @@ export class Analytics {
     if (!info) {
       return;
     }
-    logger.log("Got isLive: ", info.isLive)
     if (Utils.validBoolean(info.isLive)) {
       this.sample.isLive = info.isLive;
     }
