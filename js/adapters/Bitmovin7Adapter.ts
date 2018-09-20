@@ -4,6 +4,7 @@ import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import {PlaybackInfo} from '../types/PlaybackInfo';
 
 export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
@@ -34,6 +35,31 @@ export class Bitmovin7Adapter implements Adapter {
     }
     return false
   }
+
+  getCurrentPlaybackInfo(): PlaybackInfo {
+    const sourceInfo: any = {}
+    const source = this.player.getConfig().source
+    if (source) {
+      sourceInfo.videoTitle = source.title;
+      sourceInfo.mpdUrl = source.mpdUrl;
+      sourceInfo.m3u8Url = source.m3u8Url;
+      sourceInfo.progUrl = source.progUrl;
+      sourceInfo.progBitrate = source.progBitrate;
+    }
+    return {
+      isLive: this.player.isLive(),
+      version: this.player.version,
+      playerTech: this.player.getPlayerType(),
+      videoDuration: this.player.getDuration(),
+      streamFormat: this.player.getStreamType(),
+      videoWindowWidth: this.player.getFigure().offsetWidth,
+      videoWindowHeight: this.player.getFigure().offsetHeight,
+      isMuted: this.player.isMuted(),
+      autoplay: this.getAutoPlay(),
+      ...sourceInfo
+    }
+  }
+
   register() {
     const getProgConfigFromProgressiveConfig = (
       progressive:
