@@ -1,32 +1,47 @@
 import { Analytics } from './Analytics';
+import {logger} from '../utils/Logger';
 import { AdSample } from '../types/ads/AdSample';
 import { AdCallbacks } from '../types/ads/AdCallbacks';
 import Utils from '../utils/Utils';
 import { AdBreakEvent, AdClickedEvent, ErrorEvent, AdEvent, AdLinearityChangedEvent, AdQuartileEvent, AdQuartile, AdBreak } from 'bitmovin-player';
 import { CreativeType } from '../enums/ads/CreativeType';
 import { mapStringToStrategyType } from '../enums/ads/StrategyType';
+import { AnalyticsCall } from '../utils/AnalyticsCall';
+import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
 
 declare var __VERSION__: any;
 
 export class AdAnalytics implements AdCallbacks {
   private analytics: Analytics;
+  private analyticsCall: AnalyticsCall;
+  private licensing: AnalyticsLicensingStatus;
+  private isAllowedToSendSamples: boolean;
   private currentAdBreak: AdBreak | null;
-  private currentAdSample: AdSample | null;
+  private currentAdSample: AdSample;
   private currentAdSampleStartTime: number;
   private adBreaks : Array<AdBreak>;
   private samples: Array<AdSample>;
+  private samplesQueue: Array<AdSample>;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
+    this.analyticsCall = new AnalyticsCall();
+    this.licensing = AnalyticsLicensingStatus.WAITING;
     this.currentAdBreak = null;
-    this.currentAdSample = null;
+    this.currentAdSample = {};
     this.adBreaks = [];
     this.samples = [];
     this.currentAdSampleStartTime = 0;
+    this.isAllowedToSendSamples = true;
+    this.samplesQueue = [];
   }
 
   generateNewAdImpressionId() {
     return Utils.generateUUID();
+  }
+
+  clearSampleValues() {
+    this.currentAdSample = this.setupSample();
   }
 
   onAdBreakStarted(event: AdBreakEvent) {
@@ -59,9 +74,7 @@ export class AdAnalytics implements AdCallbacks {
     if (this.currentAdSample) {
       this.currentAdSample.completed = event.timestamp;
       this.currentAdSample.played = event.timestamp - this.currentAdSampleStartTime;
-      debugger;
-      // TODO: Send AdAnalyticsRequest
-      this.currentAdSample = null;
+      this.sendAnalyticsRequestAndClearValues();
     }
   }
 
@@ -81,8 +94,7 @@ export class AdAnalytics implements AdCallbacks {
     }
 
     this.currentAdSample.errorCode = event.code;
-    // TODO: Send AdAnalyticsRequest
-    this.currentAdSample = null;
+    this.sendAnalyticsRequestAndClearValues();
   }
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) {
@@ -169,44 +181,45 @@ export class AdAnalytics implements AdCallbacks {
     sample.videoBitrate = videoSample.videoBitrate;
   }
 
-  //   sendAnalyticsRequestAndClearValues() {
-  //     this.sendAnalyticsRequest();
-  //     this.clearValues();
-  //   }
+    sendAnalyticsRequestAndClearValues() {
+      this.sendAnalyticsRequest(this.currentAdSample);
+      this.clearSampleValues();
+    }
 
-  //   sendAnalyticsRequest() {
-  //     if (this.analytics.licensing === 'denied') {
-  //       return;
-  //     }
+    sendAnalyticsRequest(sample: AdSample) {
+      if (this.licensing === AnalyticsLicensingStatus.DENIED) {
+        return;
+      }
 
-  //     if (this.licensing === 'granted') {
-  //       this.sample.time = Utils.getCurrentTimestamp();
+      if (this.licensing === AnalyticsLicensingStatus.GRANTED) {
+        sample.time = Utils.getCurrentTimestamp();
 
-  //       if (!this.isCastClient && !this.isCastReceiver) {
-  //         this.analyticsCall.sendRequest(this.sample, Utils.noOp);
-  //         return;
-  //       }
+        if (!this.analytics.getIsCastClient() && !this.analytics.getIsCastReceiver()) {
+          this.analyticsCall.sendAdRequest(sample, Utils.noOp);
+          return;
+        }
 
-  //       if (!this.isAllowedToSendSamples) {
-  //         const copySample = {...this.sample};
-  //         this.samplesQueue.push(copySample);
-  //       } else {
-  //         for (let i = 0; i < this.samplesQueue.length; i++) {
-  //           this.analyticsCall.sendRequest(this.samplesQueue[i], Utils.noOp);
-  //         }
-  //         this.samplesQueue = [];
+        if (!this.isAllowedToSendSamples) {
+          const copySample = {...sample};
+          this.samplesQueue.push(copySample);
+        } else {
+          for (let i = 0; i < this.samplesQueue.length; i++) {
+            this.analyticsCall.sendAdRequest(this.samplesQueue[i], Utils.noOp);
+          }
+          this.samplesQueue = [];
 
-  //         this.analyticsCall.sendRequest(this.sample, Utils.noOp);
-  //       }
-  //     } else if (this.licensing === 'waiting') {
-  //       this.sample.time = Utils.getCurrentTimestamp();
+          this.analyticsCall.sendAdRequest(sample, Utils.noOp);
+        }
+      } else if (this.licensing === AnalyticsLicensingStatus.WAITING) {
+        sample.time = Utils.getCurrentTimestamp();
 
-  //       logger.log('Licensing callback still pending, waiting...');
+        logger.log('Licensing callback still pending, waiting...');
 
-  //       const copySample = {...this.sample};
+        const copySample = {...sample};
 
-  //       window.setTimeout(() => {
-  //         this.analyticsCall.sendRequest(copySample, Utils.noOp);
-  //       }, Analytics.LICENSE_CALL_PENDING_TIMEOUT);
-  //     }
+        window.setTimeout(() => {
+          this.analyticsCall.sendAdRequest(copySample, Utils.noOp);
+        }, Analytics.LICENSE_CALL_PENDING_TIMEOUT);
+      }
+    }
 }
