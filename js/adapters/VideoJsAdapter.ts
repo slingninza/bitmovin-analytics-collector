@@ -50,25 +50,15 @@ export class VideoJsAdapter implements Adapter {
   // this seems very generic. one could put it in a helper
   // and use it in many adapter implementations.
   getStreamSources(url: string): StreamSources {
-    let mpdUrl: string | null = null;
-    let m3u8Url: string | null = null;
-    let progUrl: string | null = null;
     const streamType = this.getStreamType(url);
     switch (streamType) {
       case 'hls':
-        m3u8Url = url;
-        break;
+        return { m3u8Url: url }
       case 'dash':
-        mpdUrl = url;
-        break;
+        return { mpdUrl: url }
       default:
-        progUrl = url;
+        return { progUrl: url }
     }
-    return {
-      mpdUrl,
-      m3u8Url,
-      progUrl,
-    };
   }
 
   getVideoWindowDimensions(player: any) {
