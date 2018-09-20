@@ -93,7 +93,6 @@ export class VideoJsAdapter implements Adapter {
       videoWindowHeight: (this.player as any).videoHeight(),
       muted: this.player.muted()
     }
-    debugger;
     return info
   }
 
