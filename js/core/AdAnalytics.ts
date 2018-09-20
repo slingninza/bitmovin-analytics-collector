@@ -12,10 +12,10 @@ import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
 declare var __VERSION__: any;
 
 export class AdAnalytics implements AdCallbacks {
+
+  static readonly MODULE_NAME = 'ads';
+
   private analytics: Analytics;
-  private analyticsCall: AnalyticsCall;
-  private licensing: AnalyticsLicensingStatus;
-  private isAllowedToSendSamples: boolean;
   private currentAdBreak: AdBreak | null;
   private currentAdSample: AdSample | null;
   private adBreaks : Array<AdBreak>;
@@ -24,13 +24,10 @@ export class AdAnalytics implements AdCallbacks {
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
-    this.analyticsCall = new AnalyticsCall();
-    this.licensing = AnalyticsLicensingStatus.WAITING;
     this.currentAdBreak = null;
     this.currentAdSample = {};
     this.adBreaks = [];
     this.samples = [];
-    this.isAllowedToSendSamples = true;
     this.samplesQueue = [];
   }
 
@@ -65,7 +62,7 @@ export class AdAnalytics implements AdCallbacks {
     sample.adPosition = adBreak.position;
     sample.adClickthroughUrl = ad.clickThroughUrl;
     sample.mediaUrl = ad.mediaFileUrl;
-    sample.adDuration = ad.duration;
+    //sample.adDuration = ad.duration;
     sample.creativeAdId = ad.id;
     sample.started = 1;
     sample.isLinear = ad.isLinear;
@@ -74,7 +71,7 @@ export class AdAnalytics implements AdCallbacks {
       sample.adCreativeType = CreativeType.LINEAR;
     }
     if (this.currentAdBreak) {
-      sample.adTagType = mapStringToStrategyType(this.currentAdBreak.tag.type);
+      //sample.adTagType = mapStringToStrategyType(this.currentAdBreak.tag.type);
     }
     this.currentAdSample = sample;
   }
@@ -168,7 +165,7 @@ export class AdAnalytics implements AdCallbacks {
   }
 
   setVideoSampleData(sample: AdSample) {
-    const videoSample = this.analytics.getSample();
+    const videoSample = this.analytics.sample;
     // TODO: get videoPlaybackWidth/Height from AdEvents because it fails for preroll ads
     sample.adPlaybackHeight = videoSample.videoPlaybackHeight;
     sample.adPlaybackWidth = videoSample.videoPlaybackWidth;
@@ -197,38 +194,24 @@ export class AdAnalytics implements AdCallbacks {
     }
 
     sendAnalyticsRequest(sample: AdSample) {
-      if (this.licensing === AnalyticsLicensingStatus.DENIED) {
+      if (this.analytics.licensing.status === AnalyticsLicensingStatus.DENIED) {
         return;
       }
+      
+      sample.time = Utils.getCurrentTimestamp();
 
-      if (this.licensing === AnalyticsLicensingStatus.GRANTED) {
-        sample.time = Utils.getCurrentTimestamp();
-
-        if (!this.analytics.getIsCastClient() && !this.analytics.getIsCastReceiver()) {
-          this.analyticsCall.sendAdRequest(sample, Utils.noOp);
+      if (this.analytics.licensing.status === AnalyticsLicensingStatus.GRANTED) {
+        if(this.analytics.licensing.allowedModules.indexOf(AdAnalytics.MODULE_NAME) < 0) {
           return;
         }
-
-        if (!this.isAllowedToSendSamples) {
-          const copySample = {...sample};
-          this.samplesQueue.push(copySample);
-        } else {
-          for (let i = 0; i < this.samplesQueue.length; i++) {
-            this.analyticsCall.sendAdRequest(this.samplesQueue[i], Utils.noOp);
-          }
-          this.samplesQueue = [];
-
-          this.analyticsCall.sendAdRequest(sample, Utils.noOp);
-        }
-      } else if (this.licensing === AnalyticsLicensingStatus.WAITING) {
-        sample.time = Utils.getCurrentTimestamp();
-
+        this.analytics.analyticsCall.sendAdRequest(sample, Utils.noOp);
+      } else if (this.analytics.licensing.status === AnalyticsLicensingStatus.WAITING) {
         logger.log('Licensing callback still pending, waiting...');
 
         const copySample = {...sample};
 
         window.setTimeout(() => {
-          this.analyticsCall.sendAdRequest(copySample, Utils.noOp);
+          this.analytics.analyticsCall.sendAdRequest(copySample, Utils.noOp);
         }, Analytics.LICENSE_CALL_PENDING_TIMEOUT);
       }
     }

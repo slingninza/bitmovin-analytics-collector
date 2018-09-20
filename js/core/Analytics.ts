@@ -13,10 +13,11 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyticsConfig} from '../types/AnalyticsConfig';
 import {CastClientConfig} from '../types/CastClientConfig';
-import { AdAnalytics } from './AdAnalytics';
-import { PageLoadType } from '../enums/PageLoadType';
-import { identifyPageLoadType, checkLicensing } from '../utils/AnalyticsUtils';
-import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
+import {AdAnalytics} from './AdAnalytics';
+import {PageLoadType} from '../enums/PageLoadType';
+import {identifyPageLoadType, checkLicensing} from '../utils/AnalyticsUtils';
+import {AnalyticsLicensingStatus} from '../enums/AnalyticsLicensingStatus';
+import {LicensingStatus} from '../types/LicensingStatus';
 
 declare var __VERSION__: any;
 
@@ -25,13 +26,14 @@ export class Analytics {
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
-  private config: AnalyticsConfig;
+  config: AnalyticsConfig;
+  analyticsCall: AnalyticsCall;
+  licensing: LicensingStatus;
+  sample: Sample;
   private licenseCall: LicenseCall;
-  private analyticsCall: AnalyticsCall;
   private castClient: CastClient;
   private castReceiver: CastReceiver;
   private droppedSampleFrames: number;
-  private licensing: AnalyticsLicensingStatus;
   private startupTime: number;
   private pageLoadType: PageLoadType;
   private autoplay: boolean | undefined;
@@ -40,7 +42,6 @@ export class Analytics {
   private isAllowedToSendSamples: boolean;
   private samplesQueue: Array<Sample>;
   private castClientConfig!: CastClientConfig;
-  private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
@@ -54,7 +55,7 @@ export class Analytics {
     this.castReceiver = new CastReceiver();
     this.sample = {};
     this.droppedSampleFrames = 0;
-    this.licensing = AnalyticsLicensingStatus.WAITING;
+    this.licensing = {status: AnalyticsLicensingStatus.WAITING, allowedModules: []};
     this.startupTime = 0;
     this.pageLoadType = PageLoadType.FOREGROUND;
 
@@ -91,14 +92,6 @@ export class Analytics {
 
     // TODO: Set adAnalytics depending on license features
     this.adAnalytics = new AdAnalytics(this);
-  }
-
-  getSample(): Sample {
-    return this.sample;
-  }
-
-  getConfig(): AnalyticsConfig {
-    return this.config;
   }
 
   updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
@@ -139,9 +132,9 @@ export class Analytics {
     logger.setLogging(this.config.debug || false);
 
     if (!this.isCastReceiver) {
-      checkLicensing(this.config.key, this.sample.domain, this.sample.analyticsVersion, this.licenseCall).then(licensing => this.licensing = licensing);
+      this.checkLicensing(this.config.key);
     } else {
-      this.licensing = AnalyticsLicensingStatus.GRANTED;
+      this.licensing.status = AnalyticsLicensingStatus.GRANTED;
     }
 
     this.setConfigParameters();
@@ -446,12 +439,11 @@ export class Analytics {
   };
 
   guardAgainstMissingVideoTitle = (oldConfig: AnalyticsConfig, newConfig: AnalyticsConfig) => {
-
-    if ((oldConfig && newConfig) && oldConfig.title && !newConfig.title) {
+    if (oldConfig && newConfig && oldConfig.title && !newConfig.title) {
       // TODO: Better description
-      logger.error("The new analytics configuration does not contain the field title");
+      logger.error('The new analytics configuration does not contain the field title');
     }
-  }
+  };
 
   sourceChange = (config: AnalyticsConfig) => {
     logger.log('Processing Source Change for Analytics', config);
@@ -658,12 +650,33 @@ export class Analytics {
     };
   }
 
+  checkLicensing(key: any) {	
+    this.licenseCall.sendRequest(	
+      key,	
+      this.sample.domain,	
+      this.sample.analyticsVersion,	
+      this.handleLicensingResponse.bind(this)	
+    );	
+  }	
+   handleLicensingResponse(licensingResponse: any) {	
+    if (licensingResponse.status === 'granted') {	
+      this.licensing.status = AnalyticsLicensingStatus.GRANTED;
+      this.licensing.allowedModules = [AdAnalytics.MODULE_NAME];
+    } else if (licensingResponse.status === 'skip') {	
+      this.licensing.status = AnalyticsLicensingStatus.DENIED;
+      logger.log('Impression should not be sampled');	
+    } else {	
+      this.licensing.status = AnalyticsLicensingStatus.DENIED;
+      logger.log('Analytics license denied, reason: ' + licensingResponse.message);	
+    }	
+  }
+
   sendAnalyticsRequest() {
-    if (this.licensing === AnalyticsLicensingStatus.DENIED) {
+    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
-    if (this.licensing === AnalyticsLicensingStatus.GRANTED) {
+    if (this.licensing.status === AnalyticsLicensingStatus.GRANTED) {
       this.sample.time = Utils.getCurrentTimestamp();
 
       if (!this.isCastClient && !this.isCastReceiver) {
@@ -682,7 +695,7 @@ export class Analytics {
 
         this.analyticsCall.sendRequest(this.sample, Utils.noOp);
       }
-    } else if (this.licensing === AnalyticsLicensingStatus.WAITING) {
+    } else if (this.licensing.status === AnalyticsLicensingStatus.WAITING) {
       this.sample.time = Utils.getCurrentTimestamp();
 
       logger.log('Licensing callback still pending, waiting...');
@@ -701,7 +714,7 @@ export class Analytics {
   }
 
   sendUnloadRequest() {
-    if (this.licensing === AnalyticsLicensingStatus.DENIED) {
+    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
@@ -716,7 +729,7 @@ export class Analytics {
   }
 
   sendAnalyticsRequestSynchronous() {
-    if (this.licensing === AnalyticsLicensingStatus.DENIED) {
+    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
