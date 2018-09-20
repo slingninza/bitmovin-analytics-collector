@@ -5,6 +5,6 @@ export interface Adapter {
   getPlayerName: () => string;
   drmPerformanceInfo: DrmPerformanceInfo;
   getPlayerVersion: () => string;
-  getCurrentPlaybackInfo: () => PlaybackInfo | undefined;
+  getCurrentPlaybackInfo: () => PlaybackInfo;
 }
 
