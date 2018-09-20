@@ -52,8 +52,8 @@ class Bitmovin8Adapter implements Adapter {
       playerTech: this.player.getPlayerType(),
       videoDuration: this.player.getDuration(),
       streamFormat: this.player.getStreamType(),
-      videoWindowWidth: this.player.getFigure().offsetWidth,
-      videoWindowHeight: this.player.getFigure().offsetHeight,
+      videoWindowWidth: this.player.getContainer().offsetWidth,
+      videoWindowHeight: this.player.getContainer().offsetHeight,
       isMuted: this.player.isMuted(),
       autoplay: this.getAutoPlay(),
       ...sourceInfo
