@@ -293,7 +293,7 @@ export class HTML5AnalyticsStateMachine implements AnalyticsStateMachine {
   }
 
   updateMetadata(metadata: any) {
-    this.stateMachineCallbacks.updateSample(metadata);
+    this.stateMachineCallbacks.updateSample();
   }
   sourceChange(config: any, timestamp: number) {}
 }

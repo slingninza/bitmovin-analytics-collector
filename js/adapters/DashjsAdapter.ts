@@ -5,6 +5,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import { HTML5AnalyticsStateMachine } from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
 
 const dashjs = (window as any).dashjs as any;
 
@@ -15,9 +16,10 @@ export class DashjsAdapter extends HTML5Adapter {
   constructor(
     mediaPlayer: any,
     eventCallback: AdapterEventCallback,
-    stateMachine: AnalyticsStateMachine
+    stateMachine: HTML5AnalyticsStateMachine
   ) {
     super(null, eventCallback, stateMachine);
+    this.mediaPlayer = mediaPlayer;
 
     this.drmPerformanceInfo = {drmUsed: false};
     
@@ -26,6 +28,7 @@ export class DashjsAdapter extends HTML5Adapter {
     try {
       videoEl = mediaPlayer.getVideoElement();
     } catch (e) {}
+
     if (!videoEl) {
       mediaPlayer.on(
         dashjs.MediaPlayer.events.CAN_PLAY,
@@ -36,18 +39,13 @@ export class DashjsAdapter extends HTML5Adapter {
           videoEl = mediaPlayer.getVideoElement();
           console.log('CAN_PLAY');
           canPlay = true;
-          this._initialize(mediaPlayer, videoEl);
+          this.setMediaElement(videoEl);
         },
         this
       );
     } else {
-      this._initialize(mediaPlayer, videoEl);
+      this.setMediaElement(videoEl);
     }
-  }
-
-  _initialize(mediaPlayer: any, videoEl: any) {
-    this.mediaPlayer = mediaPlayer;
-    this.setMediaElement(videoEl);
   }
 
   getPlayerName() {

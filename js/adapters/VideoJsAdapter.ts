@@ -5,6 +5,8 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {StreamSources} from '../types/StreamSources';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import {PlaybackInfo} from '../types/PlaybackInfo';
+import { VideojsAnalyticsStateMachine } from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
 declare var videojs: any;
 
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
@@ -13,13 +15,13 @@ export class VideoJsAdapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: videojs.default.Player;
   eventCallback: AdapterEventCallback;
-  stateMachine: AnalyticsStateMachine;
+  stateMachine: VideojsAnalyticsStateMachine;
   drmPerformanceInfo: DrmPerformanceInfo;
 
   constructor(
     player: videojs.default.Player,
     eventCallback: AdapterEventCallback,
-    stateMachine: AnalyticsStateMachine
+    stateMachine: VideojsAnalyticsStateMachine
   ) {
     this.onBeforeUnLoadEvent = false;
     this.player = player;
@@ -50,25 +52,15 @@ export class VideoJsAdapter implements Adapter {
   // this seems very generic. one could put it in a helper
   // and use it in many adapter implementations.
   getStreamSources(url: string): StreamSources {
-    let mpdUrl: string | null = null;
-    let m3u8Url: string | null = null;
-    let progUrl: string | null = null;
     const streamType = this.getStreamType(url);
     switch (streamType) {
       case 'hls':
-        m3u8Url = url;
-        break;
+        return { m3u8Url: url }
       case 'dash':
-        mpdUrl = url;
-        break;
+        return { mpdUrl: url }
       default:
-        progUrl = url;
+        return { progUrl: url }
     }
-    return {
-      mpdUrl,
-      m3u8Url,
-      progUrl,
-    };
   }
 
   getVideoWindowDimensions(player: any) {
@@ -83,6 +75,26 @@ export class VideoJsAdapter implements Adapter {
       videoWidth: tech.videoWidth(),
       videoHeight: tech.videoHeight(),
     };
+  }
+
+  getCurrentPlaybackInfo(): PlaybackInfo {
+    const streamType = this.getStreamType(this.player.currentSrc());
+    const sources = this.getStreamSources(this.player.currentSrc());
+    const autoplay = (this.player.autoplay() as any) === true;
+
+    const info = {
+      isLive: this.player.duration() === Infinity,
+      version: videojs.VERSION,
+      duration: this.player.duration(),
+      streamType,
+      autoplay: autoplay,
+      ...sources,
+      ...this.getVideoWindowDimensions(this.player),
+      videoWindowWidth: (this.player as any).videoWidth(),
+      videoWindowHeight: (this.player as any).videoHeight(),
+      muted: this.player.muted()
+    }
+    return info
   }
 
   register() {

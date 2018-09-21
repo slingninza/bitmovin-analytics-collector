@@ -302,7 +302,11 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
           else {
             const callbackFunction = this.stateMachineCallbacks[fnName];
             if (typeof callbackFunction === 'function') {
-              callbackFunction(stateDuration, fnName, eventObject);
+              try {
+                callbackFunction(stateDuration, fnName, eventObject);
+              } catch (e) {
+                logger.error('Exception occured in State Machine callback ' + fnName, eventObject, e)
+              }
             } else {
               logger.error('Could not find callback function for ' + fnName);
             }
@@ -355,7 +359,11 @@ export class Bitmovin8AnalyticsStateMachine implements AnalyticsStateMachine {
     const exec = this.stateMachine[eventType];
 
     if (exec) {
-      exec.call(this.stateMachine, timestamp, eventObject);
+      try {
+        exec.call(this.stateMachine, timestamp, eventObject);
+      } catch (e) {
+        logger.error('Exception occured in State Machine callback ' + eventType, exec, eventObject, e)
+      }
     } else {
       logger.log('Ignored Event: ' + eventType);
     }

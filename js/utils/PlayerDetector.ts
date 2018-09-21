@@ -1,16 +1,4 @@
 export class PlayerDetector {
-  static isBitmovinVersionPre7 = (player: any) => {
-    if (PlayerDetector.isDashjs(player)) {
-      return false;
-    }
-
-    if (typeof player.getVersion === 'function') {
-      return player.getVersion() < '7';
-    }
-
-    return false;
-  };
-
   static isBitmovinVersion7Plus = (player: any) => {
     const functionsToCheck = [
       'getAvailableLicenseServers',

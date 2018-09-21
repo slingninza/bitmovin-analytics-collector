@@ -187,7 +187,7 @@ export class Analytics {
 
         this.startupTime = time;
 
-        this.setPlaybackSettingsFromLoadedEvent(event);
+        this.setPlaybackInfoFromAdapter();
 
         this.sendAnalyticsRequestAndClearValues();
 
@@ -217,8 +217,8 @@ export class Analytics {
         this.sample.autoplay = undefined;
       },
 
-      updateSample: (playbackSettings: any) => {
-        this.setPlaybackSettingsFromLoadedEvent(playbackSettings);
+      updateSample: () => {
+        this.setPlaybackInfoFromAdapter();
       },
 
       playing: (time: number, state: string, event: any) => {
@@ -409,7 +409,7 @@ export class Analytics {
       },
 
       source_changing: (time: number, state: string, event: any) => {
-        this.setPlaybackSettingsFromLoadedEvent(event);
+        this.setPlaybackInfoFromAdapter();
       },
     };
   }
@@ -552,48 +552,52 @@ export class Analytics {
     }
   };
 
-  setPlaybackSettingsFromLoadedEvent(loadedEvent: any) {
-    if (Utils.validBoolean(loadedEvent.isLive)) {
-      this.sample.isLive = loadedEvent.isLive;
+  setPlaybackInfoFromAdapter() {
+    const info = this.adapter.getCurrentPlaybackInfo()
+    if (!info) {
+      return;
     }
-    if (Utils.validString(loadedEvent.version)) {
-      this.sample.version = this.sample.player + '-' + loadedEvent.version;
+    if (Utils.validBoolean(info.isLive)) {
+      this.sample.isLive = info.isLive;
     }
-    if (Utils.validString(loadedEvent.type)) {
-      this.sample.playerTech = loadedEvent.type;
+    if (Utils.validString(info.version)) {
+      this.sample.version = this.sample.player + '-' + info.version;
     }
-    if (Utils.validNumber(loadedEvent.duration)) {
-      this.sample.videoDuration = Utils.calculateTime(loadedEvent.duration);
+    if (Utils.validString(info.playerTech)) {
+      this.sample.playerTech = info.playerTech;
     }
-    if (Utils.validString(loadedEvent.streamType)) {
-      this.sample.streamFormat = loadedEvent.streamType;
+    if (Utils.validNumber(info.videoDuration)) {
+      this.sample.videoDuration = Utils.calculateTime(info.videoDuration || 0);
     }
-    if (Utils.validString(loadedEvent.mpdUrl)) {
-      this.sample.mpdUrl = loadedEvent.mpdUrl;
+    if (Utils.validString(info.streamFormat)) {
+      this.sample.streamFormat = info.streamFormat;
     }
-    if (Utils.validString(loadedEvent.m3u8Url)) {
-      this.sample.m3u8Url = loadedEvent.m3u8Url;
+    if (Utils.validString(info.mpdUrl)) {
+      this.sample.mpdUrl = info.mpdUrl;
     }
-    if (Utils.validString(loadedEvent.progUrl)) {
-      this.sample.progUrl = loadedEvent.progUrl;
+    if (Utils.validString(info.m3u8Url)) {
+      this.sample.m3u8Url = info.m3u8Url;
     }
-    if (Utils.validNumber(loadedEvent.videoWindowWidth)) {
-      this.sample.videoWindowWidth = loadedEvent.videoWindowWidth;
+    if (Utils.validString(info.progUrl)) {
+      this.sample.progUrl = info.progUrl;
     }
-    if (Utils.validNumber(loadedEvent.videoWindowHeight)) {
-      this.sample.videoWindowHeight = loadedEvent.videoWindowHeight;
+    if (Utils.validNumber(info.videoWindowWidth)) {
+      this.sample.videoWindowWidth = info.videoWindowWidth;
     }
-    if (Utils.validBoolean(loadedEvent.isMuted)) {
-      this.sample.isMuted = loadedEvent.isMuted;
+    if (Utils.validNumber(info.videoWindowHeight)) {
+      this.sample.videoWindowHeight = info.videoWindowHeight;
     }
-    if (Utils.validBoolean(loadedEvent.autoplay)) {
-      this.autoplay = loadedEvent.autoplay;
+    if (Utils.validBoolean(info.isMuted)) {
+      this.sample.isMuted = info.isMuted;
     }
-    if (Utils.validString(loadedEvent.videoTitle) && !this.config.title) {
-      this.sample.videoTitle = loadedEvent.videoTitle;
+    if (Utils.validBoolean(info.autoplay)) {
+      this.autoplay = info.autoplay;
+    }
+    if (Utils.validString(info.videoTitle) && !this.config.title) {
+      this.sample.videoTitle = info.videoTitle;
     }
     if (this.sample.streamFormat === 'progressive') {
-      this.sample.videoBitrate = loadedEvent.progBitrate;
+      this.sample.videoBitrate = info.progBitrate;
     }
   }
 

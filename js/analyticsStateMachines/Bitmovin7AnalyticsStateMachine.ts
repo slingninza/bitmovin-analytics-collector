@@ -380,7 +380,11 @@ export class Bitmovin7AnalyticsStateMachine implements AnalyticsStateMachine {
     const exec = this.stateMachine[eventType];
 
     if (exec) {
-      exec.call(this.stateMachine, timestamp, eventObject);
+      try {
+        exec.call(this.stateMachine, timestamp, eventObject);
+      } catch (e) {
+        logger.error('Exception occured in State Machine callback ' + eventType, exec, eventObject, e)
+      }
     } else {
       logger.log('Ignored Event: ' + eventType);
     }

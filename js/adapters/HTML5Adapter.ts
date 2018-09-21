@@ -7,6 +7,9 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {QualityLevelInfo} from '../types/QualityLevelInfo';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
+import {PlaybackInfo} from '../types/PlaybackInfo';
+import { HTML5AnalyticsStateMachine } from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
+
 const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 /**
@@ -17,7 +20,7 @@ const BUFFERING_TIMECHANGED_TIMEOUT = 1000;
 
 export abstract class HTML5Adapter implements Adapter {
   public eventCallback: AdapterEventCallback;
-  public stateMachine: AnalyticsStateMachine;
+  public stateMachine: HTML5AnalyticsStateMachine;
   public mediaEl: HTMLVideoElement | null;
   public mediaElEventHandlers: {event: string; handler: any}[];
   private analyticsBitrate_: number;
@@ -34,7 +37,7 @@ export abstract class HTML5Adapter implements Adapter {
   constructor(
     mediaElement: HTMLVideoElement | null,
     eventCallback: AdapterEventCallback,
-    stateMachine: AnalyticsStateMachine
+    stateMachine: HTML5AnalyticsStateMachine
   ) {
     this.eventCallback = eventCallback;
 
@@ -72,6 +75,37 @@ export abstract class HTML5Adapter implements Adapter {
   getPlayerName() {
     return Player.HTML5;
   }
+
+  getCurrentPlaybackInfo(): PlaybackInfo {
+    const {duration, autoplay, width, height, videoWidth, videoHeight, muted} = (this.mediaEl as any);
+    const info = {
+      type: 'html5',
+      isLive: this.isLive(),
+      version: this.getPlayerVersion(),
+      streamType: this.getStreamType(),
+      streamUrl: this.getStreamURL(),
+      duration,
+      autoplay,
+      // HTMLVideoElement.width and HTMLVideoElement.height
+      // is a DOMString that reflects the height HTML attribute,
+      // which specifies the height of the display area, in CSS pixels.
+      // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
+      width: width,
+      height: height,
+      // Returns an unsigned long containing the intrinsic
+      // height of the resource in CSS pixels,
+      // taking into account the dimensions, aspect ratio,
+      // clean aperture, resolution, and so forth,
+      // as defined for the format used by the resource.
+      // If the element's ready state is HAVE_NOTHING, the value is 0.
+      // See https://developer.mozilla.org/en-US/docs/Web/API/HTMLVideoElement
+      videoWindowWidth: videoWidth,
+      videoWindowHeight: videoHeight,
+      muted,
+    };
+    return info;
+  }
+
 
   /**
    * Used to setup against the media element.
