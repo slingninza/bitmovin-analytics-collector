@@ -8,6 +8,7 @@ import { CreativeType } from '../enums/ads/CreativeType';
 import { mapStringToStrategyType } from '../enums/ads/StrategyType';
 import { AnalyticsCall } from '../utils/AnalyticsCall';
 import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
+import { getHostnameAndPathFromUrl } from '../utils/AnalyticsUtils';
 
 declare var __VERSION__: any;
 
@@ -58,15 +59,18 @@ export class AdAnalytics implements AdCallbacks {
     }
     const ad = event.ad;
     const sample: AdSample = this.getSample(ad.id || '');
+    const mediaUrlDetails = getHostnameAndPathFromUrl(ad.mediaFileUrl || '');
+    sample.adDuration = ad.duration;
     sample.adIsPersistent = adBreak.persistent;
     sample.adPosition = adBreak.position;
     sample.adClickthroughUrl = ad.clickThroughUrl;
-    sample.mediaUrl = ad.mediaFileUrl;
-    //sample.adDuration = ad.duration;
-    sample.creativeAdId = ad.id;
-    sample.started = 1;
-    sample.isLinear = ad.isLinear;
     sample.adSkippable = true;
+    sample.creativeAdId = ad.id;
+    sample.isLinear = ad.isLinear;
+    sample.mediaUrl = ad.mediaFileUrl;
+    sample.mediaPath = Utils.sanitizePath(mediaUrlDetails.path);
+    sample.mediaServer = Utils.sanitizePath(mediaUrlDetails.hostname);
+    sample.started = 1;
     if (ad.isLinear) {
       sample.adCreativeType = CreativeType.LINEAR;
     }
@@ -197,7 +201,7 @@ export class AdAnalytics implements AdCallbacks {
       if (this.analytics.licensing.status === AnalyticsLicensingStatus.DENIED) {
         return;
       }
-      
+
       sample.time = Utils.getCurrentTimestamp();
 
       if (this.analytics.licensing.status === AnalyticsLicensingStatus.GRANTED) {

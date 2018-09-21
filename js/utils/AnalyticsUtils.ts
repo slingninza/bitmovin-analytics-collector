@@ -41,3 +41,9 @@ const handleLicensingResponse = (licensingResponse: any): AnalyticsLicensingStat
   }
   return AnalyticsLicensingStatus.DENIED
 }
+
+export const getHostnameAndPathFromUrl = (url: string) => {
+  const domElement = document.createElement('a');
+  domElement.href = url;
+  return {hostname: domElement.hostname, path: domElement.pathname};
+}
