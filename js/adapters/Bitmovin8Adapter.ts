@@ -1,10 +1,12 @@
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
-import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 import {PlaybackInfo} from '../types/PlaybackInfo';
+import { SourceInfo } from '../types/SourceInfo';
+import { ProgressiveSourceConfig } from '../types/ProgressiveSourceConfig';
+import { getSourceInfoFromBitmovinSourceConfig } from '../utils/BitmovinProgressiveSourceHelper';
 
 class Bitmovin8Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
@@ -36,15 +38,17 @@ class Bitmovin8Adapter implements Adapter {
     return false
   }
 
+
   getCurrentPlaybackInfo(): PlaybackInfo {
     const sourceInfo: any = {}
     const source = this.player.getSource()
     if (source) {
+      const progSourceInfo = getSourceInfoFromBitmovinSourceConfig(source.progressive, this.player);
       sourceInfo.videoTitle = source.title;
-      sourceInfo.mpdUrl = source.mpdUrl;
-      sourceInfo.m3u8Url = source.m3u8Url;
-      sourceInfo.progUrl = source.progUrl;
-      sourceInfo.progBitrate = source.progBitrate;
+      sourceInfo.mpdUrl = source.dash;
+      sourceInfo.m3u8Url = source.hls;
+      sourceInfo.progUrl = progSourceInfo.progUrl;
+      sourceInfo.progBitrate = progSourceInfo.progBitrate;
     }
     return {
       isLive: this.player.isLive(),
@@ -61,43 +65,6 @@ class Bitmovin8Adapter implements Adapter {
   }
 
   register() {
-    const getProgConfigFromProgressiveConfig = (
-      progressive:
-        | undefined
-        | string
-        | any[]
-        | any
-    ) => {
-      if (!progressive) {
-        return {
-          progUrl: undefined,
-          progBitrate: undefined,
-        };
-      }
-
-      if (typeof progressive === 'string') {
-        return {
-          progUrl: progressive,
-          progBitrate: 0,
-        };
-      }
-
-      if (Array.isArray(progressive)) {
-        const playbackVideoData = this.player.getPlaybackVideoData();
-        const progressiveArrayIndex = parseInt(playbackVideoData.id) || 0;
-        return {
-          progUrl: progressive[progressiveArrayIndex].url,
-          progBitrate: progressive[progressiveArrayIndex].bitrate || 0,
-        };
-      }
-
-      if (typeof progressive === 'object') {
-        return {
-          progUrl: progressive.url,
-          progBitrate: progressive.bitrate || 0,
-        };
-      }
-    };
     
     this.player.on(this.player.exports.PlayerEvent.SourceUnloaded, (event: any) => {
       this.eventCallback(Event.SOURCE_UNLOADED, {
@@ -107,42 +74,7 @@ class Bitmovin8Adapter implements Adapter {
     });
 
     this.player.on(this.player.exports.PlayerEvent.SourceLoaded, (event: any) => {
-      const autoplay = this.getAutoPlay()
-
-      //TODO simplify
-      const config = {
-        source: this.player.getSource(),
-      };
-      let source: PlayerSourceConfig = {};
-      const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
-      if (config.source) {
-        source.videoId = config.source.videoId;
-        source.userId = config.source.userId;
-        source.mpdUrl = config.source.dash;
-        source.m3u8Url = config.source.hls;
-        source.title = config.source.title;
-        source.progUrl = progConf ? progConf.progUrl : undefined;
-        source.progBitrate = progConf ? progConf.progBitrate : undefined;
-      }
-
-      this.eventCallback(Event.SOURCE_LOADED, {
-        isLive: this.player.isLive(),
-        version: this.player.version,
-        type: this.player.getPlayerType(),
-        duration: this.player.getDuration(),
-        streamType: this.player.getStreamType(),
-        videoId: source.videoId,
-        videoTitle: source.title,
-        userId: source.userId,
-        mpdUrl: source.mpdUrl,
-        m3u8Url: source.m3u8Url,
-        progUrl: source.progUrl,
-        progBitrate: source.progBitrate,
-        videoWindowWidth: this.player.getContainer().offsetWidth,
-        videoWindowHeight: this.player.getContainer().offsetHeight,
-        isMuted: this.player.isMuted(),
-        autoplay,
-      });
+      this.eventCallback(Event.SOURCE_LOADED, {});
     });
 
     this.player.on(this.player.exports.PlayerEvent.CastStarted, (event: any) => {

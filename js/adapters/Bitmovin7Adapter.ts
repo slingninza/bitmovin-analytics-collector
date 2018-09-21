@@ -1,10 +1,11 @@
 import {Event} from '../enums/Event';
 import {Player} from '../enums/Player';
-import {PlayerSourceConfig} from '../types/PlayerSourceConfig';
+import {SourceInfo} from '../types/SourceInfo';
 import {Adapter} from '../types/Adapter';
 import {AdapterEventCallback} from '../types/AdapterEventCallback';
 import {DrmPerformanceInfo} from '../types/DrmPerformanceInfo';
 import {PlaybackInfo} from '../types/PlaybackInfo';
+import { getSourceInfoFromBitmovinSourceConfig } from '../utils/BitmovinProgressiveSourceHelper';
 
 export class Bitmovin7Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
@@ -40,11 +41,12 @@ export class Bitmovin7Adapter implements Adapter {
     const sourceInfo: any = {}
     const source = this.player.getConfig().source
     if (source) {
+      const progSourceInfo = getSourceInfoFromBitmovinSourceConfig(source.progressive, this.player);
       sourceInfo.videoTitle = source.title;
       sourceInfo.mpdUrl = source.mpdUrl;
       sourceInfo.m3u8Url = source.m3u8Url;
-      sourceInfo.progUrl = source.progUrl;
-      sourceInfo.progBitrate = source.progBitrate;
+      sourceInfo.progUrl = progSourceInfo.progUrl;
+      sourceInfo.progBitrate = progSourceInfo.progBitrate;
     }
     return {
       isLive: this.player.isLive(),
@@ -107,72 +109,11 @@ export class Bitmovin7Adapter implements Adapter {
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_SOURCE_LOADED, (event: any) => {
-      const autoplay = this.getAutoPlay();
-
-      const config = this.player.getConfig();
-      let source: PlayerSourceConfig = {};
-
-      const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
-      if (config.source) {
-        source.title = config.source.title;
-        source.mpdUrl = config.source.dash;
-        source.m3u8Url = config.source.hls;
-        source.progUrl = progConf ? progConf.progUrl : undefined;
-        source.progBitrate = progConf ? progConf.progBitrate : undefined;
-      }
-
-      this.eventCallback(Event.SOURCE_LOADED, {
-        isLive: this.player.isLive(),
-        version: this.player.version,
-        type: this.player.getPlayerType(),
-        duration: this.player.getDuration(),
-        streamType: this.player.getStreamType(),
-        videoTitle: source.title,
-        mpdUrl: source.mpdUrl,
-        m3u8Url: source.m3u8Url,
-        progUrl: source.progUrl,
-        progBitrate: source.progBitrate,
-        videoWindowWidth: this.player.getFigure().offsetWidth,
-        videoWindowHeight: this.player.getFigure().offsetHeight,
-        isMuted: this.player.isMuted(),
-        autoplay,
-      });
+      this.eventCallback(Event.SOURCE_LOADED, {});
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_READY, () => {
-      const autoplay = this.getAutoPlay();
-
-      const config = this.player.getConfig();
-      let source: PlayerSourceConfig = {};
-      const progConf = getProgConfigFromProgressiveConfig(config.source.progressive);
-      if (config.source) {
-        source.title = config.source.title;
-        source.videoId = config.source.videoId;
-        source.userId = config.source.userId;
-        source.mpdUrl = config.source.dash;
-        source.m3u8Url = config.source.hls;
-        source.progUrl = progConf ? progConf.progUrl : undefined;
-        source.progBitrate = progConf ? progConf.progBitrate : undefined;
-      }
-
-      this.eventCallback(Event.READY, {
-        isLive: this.player.isLive(),
-        version: this.player.version,
-        type: this.player.getPlayerType(),
-        duration: this.player.getDuration(),
-        streamType: this.player.getStreamType(),
-        videoId: source.videoId,
-        videoTitle: source.title,
-        userId: source.userId,
-        mpdUrl: source.mpdUrl,
-        m3u8Url: source.m3u8Url,
-        progUrl: source.progUrl,
-        progBitrate: source.progBitrate,
-        videoWindowWidth: this.player.getFigure().offsetWidth,
-        videoWindowHeight: this.player.getFigure().offsetHeight,
-        isMuted: this.player.isMuted(),
-        autoplay,
-      });
+      this.eventCallback(Event.READY, {});
     });
 
     this.player.addEventHandler(this.player.EVENT.ON_CAST_STARTED, (event: any) => {

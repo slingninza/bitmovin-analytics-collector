@@ -1,4 +1,4 @@
-export interface PlayerSourceConfig {
+export interface SourceInfo {
   videoId?: string;
   userId?: string;
   mpdUrl?: string;
@@ -6,4 +6,9 @@ export interface PlayerSourceConfig {
   progUrl?: string;
   progBitrate?: number;
   title?: string;
+}
+
+export interface ProgressiveSourceInfo {
+  progUrl? : string;
+  progBitrate?: number;
 }
