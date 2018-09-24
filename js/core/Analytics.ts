@@ -17,7 +17,7 @@ import {AdAnalytics} from './AdAnalytics';
 import {PageLoadType} from '../enums/PageLoadType';
 import {identifyPageLoadType, checkLicensing} from '../utils/AnalyticsUtils';
 import {AnalyticsLicensingStatus} from '../enums/AnalyticsLicensingStatus';
-import {LicensingStatus} from '../types/LicensingStatus';
+import {Licensing} from '../types/Licensing';
 
 declare var __VERSION__: any;
 
@@ -28,7 +28,7 @@ export class Analytics {
 
   config: AnalyticsConfig;
   analyticsCall: AnalyticsCall;
-  licensing: LicensingStatus;
+  licensing: Licensing;
   sample: Sample;
   private licenseCall: LicenseCall;
   private castClient: CastClient;
@@ -55,7 +55,7 @@ export class Analytics {
     this.castReceiver = new CastReceiver();
     this.sample = {};
     this.droppedSampleFrames = 0;
-    this.licensing = {status: AnalyticsLicensingStatus.WAITING, allowedModules: []};
+    this.licensing = new Licensing();
     this.startupTime = 0;
     this.pageLoadType = PageLoadType.FOREGROUND;
 

@@ -205,7 +205,7 @@ export class AdAnalytics implements AdCallbacks {
       sample.time = Utils.getCurrentTimestamp();
 
       if (this.analytics.licensing.status === AnalyticsLicensingStatus.GRANTED) {
-        if(this.analytics.licensing.allowedModules.indexOf(AdAnalytics.MODULE_NAME) < 0) {
+        if(this.analytics.licensing.isModuleAllowed(AdAnalytics.MODULE_NAME)) {
           return;
         }
         this.analytics.analyticsCall.sendAdRequest(sample, Utils.noOp);
