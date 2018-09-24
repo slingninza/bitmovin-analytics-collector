@@ -346,7 +346,7 @@ export class VideojsAnalyticsStateMachine implements AnalyticsStateMachine {
   }
 
   updateMetadata(metadata: any) {
-    this.stateMachineCallbacks.updateSample(metadata);
+    this.stateMachineCallbacks.updateSample();
   }
   sourceChange(config: any, timestamp: number) {}
 }

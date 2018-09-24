@@ -1,5 +1,4 @@
 import {PlayerDetector} from '../utils/PlayerDetector';
-import {BitmovinAnalyticsStateMachine} from '../analyticsStateMachines/BitmovinAnalyticsStateMachine';
 import {Bitmovin7AnalyticsStateMachine} from '../analyticsStateMachines/Bitmovin7AnalyticsStateMachine';
 import {Bitmovin8AnalyticsStateMachine} from '../analyticsStateMachines/Bitmovin8AnalyticsStateMachine';
 import {VideojsAnalyticsStateMachine} from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
@@ -23,9 +22,7 @@ export class AnalyticsStateMachineFactory {
     stateMachineCallbacks: StateMachineCallbacks,
     opts: AnalyticsStateMachineOptions
   ): AnalyticsStateMachine {
-    if (PlayerDetector.isBitmovinVersionPre7(player)) {
-      return new BitmovinAnalyticsStateMachine(stateMachineCallbacks);
-    } else if (PlayerDetector.isBitmovinVersion7Plus(player)) {
+    if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7AnalyticsStateMachine(stateMachineCallbacks, opts);
     } else if (PlayerDetector.isBitmovinVersion8Plus(player)) {
       return new Bitmovin8AnalyticsStateMachine(stateMachineCallbacks, opts);
