@@ -4,8 +4,6 @@ import Utils from '../utils/Utils';
 import {logger} from '../utils/Logger';
 import {AdapterFactory} from './AdapterFactory';
 import {AnalyticsStateMachineFactory} from './AnalyticsStateMachineFactory';
-import {CastClient} from '../cast/CastClient';
-import {CastReceiver} from '../cast/CastReceiver';
 import {AnalyticsStateMachineOptions} from '../types/AnalyticsStateMachineOptions';
 import {Sample} from '../types/Sample';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
@@ -27,18 +25,13 @@ export class Analytics {
   private config: AnalyicsConfig;
   private licenseCall: LicenseCall;
   private analyticsCall: AnalyticsCall;
-  private castClient: CastClient;
-  private castReceiver: CastReceiver;
   private droppedSampleFrames: number;
   private licensing: string;
   private startupTime: number;
   private pageLoadType: PAGE_LOAD_TYPE;
   private autoplay: boolean | undefined;
-  private isCastClient: boolean;
-  private isCastReceiver: boolean;
   private isAllowedToSendSamples: boolean;
   private samplesQueue: any;
-  private castClientConfig!: CastClientConfig;
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
@@ -48,8 +41,6 @@ export class Analytics {
     this.config = config;
     this.licenseCall = new LicenseCall();
     this.analyticsCall = new AnalyticsCall();
-    this.castClient = new CastClient();
-    this.castReceiver = new CastReceiver();
     this.sample = {};
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
@@ -58,25 +49,8 @@ export class Analytics {
 
     this.autoplay = undefined;
 
-    this.isCastClient = false;
-    this.isCastReceiver = false;
     this.isAllowedToSendSamples = false;
     this.samplesQueue = [];
-
-    if (this.config.cast && this.config.cast.receiver) {
-      this.isCastReceiver = true;
-      this.castReceiver.setUp();
-      this.castReceiver.setCallback((event: any) => {
-        switch (event.type) {
-          case Analytics.CAST_RECEIVER_CONFIG_MESSAGE:
-            this.castClientConfig = event.data;
-            this.updateSampleToCastClientConfig(this.sample, this.castClientConfig);
-            this.updateSamplesToCastClientConfig(this.samplesQueue, event.data);
-            this.isAllowedToSendSamples = true;
-            break;
-        }
-      });
-    }
 
     this.setPageLoadType();
 
@@ -113,19 +87,14 @@ export class Analytics {
   }
 
   init() {
-    if (!this.isCastReceiver && (this.config.key == '' || !Utils.validString(this.config.key))) {
+    if (this.config.key == '' || !Utils.validString(this.config.key)) {
       console.error('Invalid analytics license key provided');
       return;
     }
 
     logger.setLogging(this.config.debug || false);
 
-    if (!this.isCastReceiver) {
       this.checkLicensing(this.config.key);
-    } else {
-      this.licensing = 'granted';
-    }
-
     this.setConfigParameters();
 
     this.generateNewImpressionId();
@@ -374,40 +343,6 @@ export class Analytics {
         }
       },
 
-      startCasting: (timestamp: number, event: any) => {
-        if (event && event.resuming) {
-          this.isAllowedToSendSamples = false;
-          logger.warning('Player started casting but a session is already casting!');
-          return;
-        }
-
-        this.isCastClient = true;
-        this.isAllowedToSendSamples = false;
-
-        const {domain, path, language, userAgent, userId, impressionId} = this.sample;
-        const castStartMessage = {
-          type: Analytics.CAST_RECEIVER_CONFIG_MESSAGE,
-          data: {
-            config: this.config,
-            userId,
-            domain,
-            path,
-            language,
-            userAgent,
-            impressionId,
-          },
-        };
-
-        this.castClient.setUp();
-        this.castClient.sendMessage(castStartMessage);
-      },
-
-      casting: () => {
-        this.isCastClient = false;
-        this.samplesQueue = [];
-        this.isAllowedToSendSamples = true;
-      },
-
       source_changing: (time: number, state: string, event: any) => {
         this.setPlaybackInfoFromAdapter();
       },
@@ -610,7 +545,6 @@ export class Analytics {
       screenWidth: screen.width,
       screenHeight: screen.height,
       isLive: false,
-      isCasting: this.isCastReceiver,
       videoDuration: 0,
       size: 'WINDOW',
       time: 0,
@@ -666,11 +600,6 @@ export class Analytics {
 
     if (this.licensing === 'granted') {
       this.sample.time = Utils.getCurrentTimestamp();
-
-      if (!this.isCastClient && !this.isCastReceiver) {
-        this.analyticsCall.sendRequest(this.sample, Utils.noOp);
-        return;
-      }
 
       if (!this.isAllowedToSendSamples) {
         const copySample = {...this.sample};
