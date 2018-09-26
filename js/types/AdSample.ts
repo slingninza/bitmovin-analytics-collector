@@ -2,7 +2,7 @@ export interface AdSample {
     adClickthroughUrl?: string;
     adDescription?: string;
     adDuration?: number;
-    adFallbackLevel?: number;
+    adWrapperCount?: number;
     adId?: string;
     adIdPlayer?: string;
     adImpressionId?: string;

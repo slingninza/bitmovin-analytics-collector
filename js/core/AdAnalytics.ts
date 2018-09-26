@@ -17,9 +17,15 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   private sample: AdSample = {};
   private container?: HTMLElement;
   private viewportTracker?: ViewportTracker;
+  private adBreak?: any;
+  private adModule?: string;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
+  }
+
+  setAdModule(adModule: string) {
+    this.adModule = this.sample.adModule = adModule;
   }
 
   setContainer(container: HTMLElement) {
@@ -51,11 +57,11 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdBreakStarted(event: AdBreakEvent) {
-    console.log('onAdBreakStarted');
+    this.setAdBreak(event.adBreak);
   }
 
   onAdBreakFinished(event: AdBreakEvent) {
-    console.log('onAdBreakFinished');
+    this.setAdBreak(undefined);
   }
 
   onAdStarted(event: AdEvent) {
@@ -92,6 +98,54 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.setAnalyticsSampleValues();
     this.sendAnalyticsRequest(this.sample);
     this.clearValues();
+  }
+
+  setAdBreak(adBreak) {
+    this.adBreak = adBreak;
+    this.clearAdBreakValues();
+
+    // this.sample.adModule = this.analytics.adapter.getAnalyticsModule();
+
+    if(!adBreak) {
+      return;
+    }
+
+    if (adBreak.position === 'pre' || adBreak.position === 'post') {
+      this.sample.adPosition = adBreak.position;
+    } else {
+      this.sample.adPosition = 'mid';
+      this.sample.adOffset = adBreak.position;
+    }
+    this.sample.adScheduleTime = adBreak.scheduleTime;
+    this.sample.adReplaceContentDuration = adBreak.replaceContentDuration;
+    this.sample.adPreloadOffset = adBreak.preloadOffset;
+    this.sample.adSkipAfter = adBreak.skipAfter;
+    this.sample.adTagType = adBreak.tag ? adBreak.tag.type : undefined;
+    this.sample.adIsPersistent = adBreak.persistent;
+    this.sample.adIdPlayer = adBreak.id;
+    this.sample.adTagUrl = adBreak.tag ? adBreak.tag.url : undefined;
+    if (this.sample.adTagUrl) {
+      const adTagDetails = Utils.getHostnameAndPathFromUrl(this.sample.adTagUrl);
+      this.sample.adTagServer = adTagDetails.hostname;
+      this.sample.adTagPath = adTagDetails.path;
+    }
+    //this.sample.adWrapperCount = adBreak.adWrapperIds ? adBreak.adWrapperIds.length : 0;
+  }
+
+  clearAdBreakValues() {
+    this.sample.adPosition = undefined;
+    this.sample.adOffset = undefined;
+    this.sample.adScheduleTime = undefined;
+    this.sample.adReplaceContentDuration = undefined;
+    this.sample.adPreloadOffset = undefined;
+    this.sample.adSkipAfter = undefined;
+    this.sample.adTagUrl = undefined;
+    this.sample.adTagServer = undefined;
+    this.sample.adTagPath = undefined;
+    this.sample.adTagType = undefined;
+    this.sample.adIsPersistent = undefined;
+    this.sample.adWrapperCount = 0;
+    this.sample.adIdPlayer = undefined;
   }
 
   setAnalyticsSampleValues() {

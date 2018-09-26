@@ -26,6 +26,7 @@ class Bitmovin8Adapter implements Adapter {
     (window as any).player = this.player;
     this.register();
     this.adCallbacks.setContainer(this.player.getContainer());
+    this.adCallbacks.setAdModule('IMAModule');
   }
 
   getPlayerName() {

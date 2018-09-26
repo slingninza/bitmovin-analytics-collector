@@ -4,6 +4,7 @@ export interface AdAnalyticsCallbacks {
     onPlay: (e: any) => void;
     onPause: (e: any) => void;
     setContainer: (container: HTMLElement) => void;
+    setAdModule: (adModule: string) => void;
     onAdBreakFinished: (event: AdBreakEvent) => void;
     onAdBreakStarted: (event: AdBreakEvent) => void;
     onAdClicked: (event: AdClickedEvent) => void;
