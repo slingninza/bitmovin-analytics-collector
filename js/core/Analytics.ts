@@ -23,7 +23,6 @@ export class Analytics {
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
   private config: AnalyicsConfig;
-  private licenseCall: LicenseCall;
   private analyticsCall: AnalyticsCall;
   private droppedSampleFrames: number;
   private licensing: string;
@@ -39,7 +38,6 @@ export class Analytics {
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
-    this.licenseCall = new LicenseCall();
     this.analyticsCall = new AnalyticsCall();
     this.sample = {};
     this.droppedSampleFrames = 0;
@@ -573,12 +571,12 @@ export class Analytics {
   }
 
   checkLicensing(key: any) {
-    this.licenseCall.sendRequest(
+    LicenseCall(
       key,
       this.sample.domain,
-      this.sample.analyticsVersion,
-      this.handleLicensingResponse.bind(this)
-    );
+      this.sample.analyticsVersion).then(response => {
+        this.handleLicensingResponse(response);
+      })
   }
 
   handleLicensingResponse(licensingResponse: any) {

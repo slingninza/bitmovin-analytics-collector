@@ -1,16 +1,19 @@
 import {post} from './Http';
 import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
+import { LicensingResponse } from '../types/LicensingRequest';
 
-export class LicenseCall {
-  static licenseServerUrl = ANALYTICS_BACKEND_BASE_URL + '/licensing';
+const licenseServerUrl = ANALYTICS_BACKEND_BASE_URL + '/licensing';
 
-  sendRequest(key: string, domain: string, version: string, callback: Function) {
-    const licensingRequest = {
-      key: key,
-      domain: domain,
-      analyticsVersion: version,
-    };
+export function LicenseCall (key: string, domain: string, version: string): Promise<LicensingResponse> {
+  const licensingRequest = {
+    key: key,
+    domain: domain,
+    analyticsVersion: version,
+  };
 
-    post(LicenseCall.licenseServerUrl, licensingRequest, callback);
-  }
+  return new Promise<LicensingResponse>((resolve) => {
+    post(licenseServerUrl, licensingRequest, (response) => {
+      resolve(response);
+    });
+  });
 }
