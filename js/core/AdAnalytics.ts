@@ -6,6 +6,7 @@ import { logger } from '../utils/Logger';
 import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 import { Adapter } from '../types/Adapter';
 import { ViewportTracker } from '../utils/ViewportTracker';
+import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent } from 'bitmovin-player';
 
 declare var __VERSION__: any;
 
@@ -38,11 +39,53 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onPlay(e) {
-
+    console.log('onPlay');
   }
 
   onPause(e) {
-      
+    console.log('onPause');
+  }
+
+  onAdManifestLoaded(event: AdBreakEvent) {
+    console.log('onAdManifestLoaded');
+  }
+
+  onAdBreakStarted(event: AdBreakEvent) {
+    console.log('onAdBreakStarted');
+  }
+
+  onAdBreakFinished(event: AdBreakEvent) {
+    console.log('onAdBreakFinished');
+  }
+
+  onAdStarted(event: AdEvent) {
+    console.log('onAdStarted');
+  }
+
+  onAdFinished(event: AdEvent) {
+    console.log('onAdFinished');
+  }
+
+  onAdSkipped(event: AdEvent) {
+    console.log('onAdSkipped');
+  }
+
+  onAdError(event: ErrorEvent) {
+    console.log('onAdError');
+  }
+
+  onAdLinearityChanged(event: AdLinearityChangedEvent) { }
+
+  onAdClicked(event: AdClickedEvent) {
+    console.log('onAdClicked');
+  }
+
+  onAdQuartile(event: AdQuartileEvent) {
+    console.log('onAdQuartile');
+  }
+
+  onBeforeUnload() {
+    console.log('onBeforeUnload');
   }
 
   sendAnalyticsRequestAndClearValues() {
