@@ -1,4 +1,4 @@
-import {post} from './HttpCall';
+import {post} from './Http';
 import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
 
 export class LicenseCall {
