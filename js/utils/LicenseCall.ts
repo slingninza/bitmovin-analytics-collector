@@ -1,7 +1,7 @@
-import {HttpCall} from './HttpCall';
+import {post} from './HttpCall';
 import {ANALYTICS_BACKEND_BASE_URL} from './Settings';
 
-export class LicenseCall extends HttpCall {
+export class LicenseCall {
   static licenseServerUrl = ANALYTICS_BACKEND_BASE_URL + '/licensing';
 
   sendRequest(key: string, domain: string, version: string, callback: Function) {
@@ -11,6 +11,6 @@ export class LicenseCall extends HttpCall {
       analyticsVersion: version,
     };
 
-    this.post(LicenseCall.licenseServerUrl, licensingRequest, callback);
+    post(LicenseCall.licenseServerUrl, licensingRequest, callback);
   }
 }
