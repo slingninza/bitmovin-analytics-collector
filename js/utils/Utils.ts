@@ -97,6 +97,12 @@ const getCustomDataString = (customData: any): string | undefined => {
   return customData;
 };
 
+const getHostnameAndPathFromUrl = (url: string) => {
+  const domElement = document.createElement('a');
+  domElement.href = url;
+  return {hostname: domElement.hostname, path: domElement.pathname};
+}
+
 export default {
   validString,
   validBoolean,
@@ -112,4 +118,5 @@ export default {
   once,
   getHiddenProp,
   getCustomDataString,
+  getHostnameAndPathFromUrl
 };
