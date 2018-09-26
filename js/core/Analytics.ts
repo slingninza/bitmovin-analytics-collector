@@ -14,6 +14,8 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
+import { Licensing } from '../utils/Licensing';
+import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -24,13 +26,13 @@ export class Analytics {
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
+  licensing: Licensing;
+
   private config: AnalyicsConfig;
-  private licenseCall: LicenseCall;
   private analyticsCall: AnalyticsCall;
   private castClient: CastClient;
   private castReceiver: CastReceiver;
   private droppedSampleFrames: number;
-  private licensing: string;
   private startupTime: number;
   private pageLoadType: PAGE_LOAD_TYPE;
   private autoplay: boolean | undefined;
@@ -46,13 +48,12 @@ export class Analytics {
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
-    this.licenseCall = new LicenseCall();
     this.analyticsCall = new AnalyticsCall();
     this.castClient = new CastClient();
     this.castReceiver = new CastReceiver();
     this.sample = {};
     this.droppedSampleFrames = 0;
-    this.licensing = 'waiting';
+    this.licensing = new Licensing();
     this.startupTime = 0;
     this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
 
@@ -121,9 +122,9 @@ export class Analytics {
     logger.setLogging(this.config.debug || false);
 
     if (!this.isCastReceiver) {
-      this.checkLicensing(this.config.key);
+      this.licensing.checkLicensing(this.config.key, this.sample.domain, this.sample.analyticsVersion);
     } else {
-      this.licensing = 'granted';
+      this.licensing.status = AnalyticsLicensingStatus.GRANTED;
     }
 
     this.setConfigParameters();
@@ -638,35 +639,14 @@ export class Analytics {
     };
   }
 
-  checkLicensing(key: any) {
-    this.licenseCall.sendRequest(
-      key,
-      this.sample.domain,
-      this.sample.analyticsVersion,
-      this.handleLicensingResponse.bind(this)
-    );
-  }
-
-  handleLicensingResponse(licensingResponse: any) {
-    if (licensingResponse.status === 'granted') {
-      this.licensing = 'granted';
-    } else if (licensingResponse.status === 'skip') {
-      this.licensing = 'denied';
-      logger.log('Impression should not be sampled');
-    } else {
-      this.licensing = 'denied';
-      logger.log('Analytics license denied, reason: ' + licensingResponse.message);
-    }
-  }
-
   sendAnalyticsRequest() {
-    if (this.licensing === 'denied') {
+    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
-    if (this.licensing === 'granted') {
-      this.sample.time = Utils.getCurrentTimestamp();
+    this.sample.time = Utils.getCurrentTimestamp();
 
+    if (this.licensing.status === AnalyticsLicensingStatus.GRANTED) {
       if (!this.isCastClient && !this.isCastReceiver) {
         this.analyticsCall.sendRequest(this.sample, Utils.noOp);
         return;
@@ -683,9 +663,7 @@ export class Analytics {
 
         this.analyticsCall.sendRequest(this.sample, Utils.noOp);
       }
-    } else if (this.licensing === 'waiting') {
-      this.sample.time = Utils.getCurrentTimestamp();
-
+    } else if (this.licensing.status === AnalyticsLicensingStatus.WAITING) {
       logger.log('Licensing callback still pending, waiting...');
 
       const copySample = {...this.sample};
@@ -702,7 +680,7 @@ export class Analytics {
   }
 
   sendUnloadRequest() {
-    if (this.licensing === 'denied') {
+    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
@@ -717,7 +695,7 @@ export class Analytics {
   }
 
   sendAnalyticsRequestSynchronous() {
-    if (this.licensing === 'denied') {
+    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
       return;
     }
 
