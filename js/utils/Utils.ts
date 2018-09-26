@@ -80,7 +80,7 @@ const getHiddenProp = () => {
       return prefixes[i] + 'Hidden';
     }
   }
-  return null;
+  return undefined;
 };
 
 const getCustomDataString = (customData: any): string | undefined => {

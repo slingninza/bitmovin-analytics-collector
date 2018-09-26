@@ -5,6 +5,7 @@ import Utils from '../utils/Utils';
 import { logger } from '../utils/Logger';
 import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 import { Adapter } from '../types/Adapter';
+import { ViewportTracker } from '../utils/ViewportTracker';
 
 declare var __VERSION__: any;
 
@@ -14,13 +15,26 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   private analytics: Analytics;
   private sample: AdSample = {};
   private container?: HTMLElement;
+  private viewportTracker?: ViewportTracker;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
   }
 
   setContainer(container: HTMLElement) {
+    if(this.viewportTracker) {
+        this.viewportTracker.dispose();
+    }
     this.container = container;
+    this.viewportTracker = new ViewportTracker(this.container, () => this.onIntersectionChanged(), 0.5);
+  }
+
+  onIntersectionChanged() {
+    console.log('Container visible: ' + this.isContainerInViewport());
+  }
+
+  isContainerInViewport(): boolean | undefined {
+      return this.viewportTracker ? this.viewportTracker.isInViewport() : undefined;
   }
 
   onPlay(e) {
@@ -28,7 +42,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onPause(e) {
-
+      
   }
 
   sendAnalyticsRequestAndClearValues() {
