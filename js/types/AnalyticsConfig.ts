@@ -1,7 +1,7 @@
 export interface AnalyicsConfig {
   cast?: any;
   debug?: any;
-  key?: string;
+  key: string;
   playerKey?: string;
   player?: string;
   cdnProvider?: string;
