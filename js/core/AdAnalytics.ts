@@ -3,17 +3,32 @@ import { AdSample } from '../types/AdSample';
 import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
 import Utils from '../utils/Utils';
 import { logger } from '../utils/Logger';
+import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
+import { Adapter } from '../types/Adapter';
 
 declare var __VERSION__: any;
 
-export class AdAnalytics {
+export class AdAnalytics implements AdAnalyticsCallbacks {
   static readonly MODULE_NAME = 'ads';
 
   private analytics: Analytics;
   private sample: AdSample = {};
+  private container?: HTMLElement;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
+  }
+
+  setContainer(container: HTMLElement) {
+    this.container = container;
+  }
+
+  onPlay(e) {
+
+  }
+
+  onPause(e) {
+
   }
 
   sendAnalyticsRequestAndClearValues() {

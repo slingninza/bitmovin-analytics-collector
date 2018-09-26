@@ -16,6 +16,7 @@ import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
 import { Licensing } from '../utils/Licensing';
 import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
+import { AdAnalytics } from './AdAnalytics';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -48,12 +49,14 @@ export class Analytics {
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
+  private adAnalytics: AdAnalytics;
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
     this.analyticsCall = new AnalyticsCall();
     this.castClient = new CastClient();
     this.castReceiver = new CastReceiver();
+    this.adAnalytics = new AdAnalytics(this);
     this.sample = {};
     this.droppedSampleFrames = 0;
     this.licensing = new Licensing();
@@ -507,7 +510,7 @@ export class Analytics {
     );
 
     try {
-      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine, this.adAnalytics);
     } catch (e) {
       logger.error('Bitmovin Analytics: Could not detect player', e);
       return;

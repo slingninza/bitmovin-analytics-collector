@@ -7,20 +7,24 @@ import {PlaybackInfo} from '../types/PlaybackInfo';
 import { SourceInfo } from '../types/SourceInfo';
 import { ProgressiveSourceConfig } from '../types/ProgressiveSourceConfig';
 import { getSourceInfoFromBitmovinSourceConfig } from '../utils/BitmovinProgressiveSourceHelper';
+import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 
 class Bitmovin8Adapter implements Adapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: AdapterEventCallback;
   drmPerformanceInfo: DrmPerformanceInfo;
+  private adCallbacks: AdAnalyticsCallbacks;
 
-  constructor(player: any, eventCallback: AdapterEventCallback) {
+  constructor(player: any, eventCallback: AdapterEventCallback, adCallbacks: AdAnalyticsCallbacks) {
+    this.adCallbacks = adCallbacks;
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
     this.drmPerformanceInfo = {drmUsed: false};
     (window as any).player = this.player;
     this.register();
+    this.adCallbacks.setContainer(this.player.getContainer());
   }
 
   getPlayerName() {
