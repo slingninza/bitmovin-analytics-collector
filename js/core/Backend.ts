@@ -1,30 +1,63 @@
 import {Sample} from '../types/Sample';
-import {LicensingRequest, LicensingResponse} from '../types/LicensingRequest';
+import {LicensingRequest, LicensingResponse, LicensingResult} from '../types/LicensingRequest';
 import { LicenseCall } from '../utils/LicenseCall';
 import {logger} from '../utils/Logger';
 import { AnalyticsCall } from '../utils/AnalyticsCall';
 
-enum LicensingState {
-  Waiting,
-  Granted,
-  Denied
-}
-
 const noOp = () => {};
 
-export class Backend {
-  licensingPromise: Promise<void>
+export interface Backend {
+  sendRequest(sample: Sample)
+  sendUnloadRequest(sample: Sample)
+  sendRequestSynchronous(sample: Sample)
+}
+
+
+class NoOpBackend implements Backend {
+  constructor() {
+  }
+  sendRequest(sample: Sample) {}
+  sendUnloadRequest(sample: Sample) {}
+  sendRequestSynchronous(sample: Sample) {}
+}
+
+class QueueBackend implements Backend {
+  queue: Sample[] = []
+  unloadQueue: Sample[] = []
+  syncQueue: Sample[] = []
+
+  sendRequest(sample: Sample) {
+    this.queue.push(sample)
+  }
+  sendUnloadRequest(sample: Sample) {
+    this.unloadQueue.push(sample)
+  }
+  sendRequestSynchronous(sample: Sample) {
+    this.syncQueue.push(sample)
+  }
+
+  flushTo(backend: Backend) {
+    this.queue.forEach(e => {
+      backend.sendRequest(e)
+    })
+    this.unloadQueue.forEach(e => {
+      backend.sendUnloadRequest(e)
+    })
+    this.syncQueue.forEach(e => {
+      backend.sendRequestSynchronous(e)
+    })
+  }
+}
+
+class RemoteBackend implements Backend {
   analyticsCall: AnalyticsCall
 
-  constructor(licenseInfo: LicensingRequest) {
+  constructor() {
     this.analyticsCall = new AnalyticsCall();
-    this.licensingPromise = this.checkLicensing(licenseInfo)
   }
 
   sendRequest(sample: Sample) {
-    this.licensingPromise.then(() => {
-      this.analyticsCall.sendRequest(sample, noOp)
-    })
+    this.analyticsCall.sendRequest(sample, noOp)
   }
   
   sendUnloadRequest(sample: Sample) {
@@ -39,21 +72,41 @@ export class Backend {
   }
 
   sendRequestSynchronous(sample: Sample) {
-    this.licensingPromise.then(() => {
-      this.analyticsCall.sendRequestSynchronous(sample, noOp);
-    })
+    this.analyticsCall.sendRequestSynchronous(sample, noOp);
+  }
+}
+
+export class LicenseCheckingBackend implements Backend {
+  backend: Backend
+  constructor(info: LicensingRequest) {
+    this.backend = new QueueBackend();
+    this.performLicenseCheck(info);
   }
 
-  private async checkLicensing(licenseInfo: LicensingRequest): Promise<void> {
-
-    const response = await LicenseCall(licenseInfo.key, licenseInfo.domain, licenseInfo.version)
-    if (response.status === 'granted') {
-      return;
-    } else if (response.status === 'skip') {
-      logger.log('Impression should not be sampled');
-      throw new Error(response.message);
+  async performLicenseCheck(info: LicensingRequest) {
+    try {
+      const result = await LicenseCall(info.key, info.domain, info.version);
+      if (result.status === LicensingResult.Granted) {
+        const remoteBackend = new RemoteBackend();
+        (this.backend as QueueBackend).flushTo(remoteBackend);
+        this.backend = remoteBackend;
+      } else {
+        throw new Error("Licensing response unsuccessful: " + result.message);
+      }
+    } catch (e) {
+      logger.log(e);
+      this.backend = new NoOpBackend();
     }
-    logger.log('Analytics license denied, reason: ' + response.message);
-    throw new Error(response.message);
   }
+
+  sendRequest(sample: Sample) {
+    this.backend.sendRequest(sample);
+  }
+  sendUnloadRequest(sample: Sample) {
+    this.backend.sendUnloadRequest(sample);
+  }
+  sendRequestSynchronous(sample: Sample) {
+    this.backend.sendRequestSynchronous(sample);
+  }
+
 }

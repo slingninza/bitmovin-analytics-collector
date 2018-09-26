@@ -10,7 +10,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
-import { Backend } from './Backend';
+import { Backend, LicenseCheckingBackend } from './Backend';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -39,7 +39,7 @@ export class Analytics {
     this.config = config;
 
     const domain = Utils.sanitizePath(window.location.hostname);
-    this.backend = new Backend({ key: config.key, domain, version: analyticsVersion });
+    this.backend = new LicenseCheckingBackend({ key: config.key, domain, version: analyticsVersion });
     this.sample = {};
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
