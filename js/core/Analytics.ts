@@ -27,21 +27,24 @@ export class Analytics {
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
   licensing: Licensing;
+  analyticsCall: AnalyticsCall;
+  sample: Sample;
+  
+  autoplay: boolean | undefined;
+  pageLoadType: PAGE_LOAD_TYPE;
+  pageLoadTime?: number;
+  playerStartupTime?: number;
 
   private config: AnalyicsConfig;
-  private analyticsCall: AnalyticsCall;
   private castClient: CastClient;
   private castReceiver: CastReceiver;
   private droppedSampleFrames: number;
   private startupTime: number;
-  private pageLoadType: PAGE_LOAD_TYPE;
-  private autoplay: boolean | undefined;
   private isCastClient: boolean;
   private isCastReceiver: boolean;
   private isAllowedToSendSamples: boolean;
   private samplesQueue: any;
   private castClientConfig!: CastClientConfig;
-  private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
@@ -178,12 +181,12 @@ export class Analytics {
 
         this.setDuration(time);
         this.setState(state);
-        this.sample.playerStartupTime = time;
+        this.playerStartupTime = this.sample.playerStartupTime = time;
         this.sample.pageLoadType = this.pageLoadType;
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
-          this.sample.pageLoadTime = loadTime;
+          this.pageLoadTime = this.sample.pageLoadTime = loadTime;
         }
 
         this.startupTime = time;

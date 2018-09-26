@@ -1,6 +1,7 @@
 import {AnalyticsLicensingStatus} from '../enums/AnalyticsLicensingStatus';
 import {LicenseCall} from './LicenseCall';
 import {logger} from '../utils/Logger';
+import { AdAnalytics } from '../core/AdAnalytics';
 
 export class Licensing {
   private licenseCall: LicenseCall;
@@ -28,6 +29,7 @@ export class Licensing {
   handleLicensingResponse(licensingResponse: any) {
     if (licensingResponse.status === 'granted') {
       this.status = AnalyticsLicensingStatus.GRANTED;
+      this.allowedModules = [AdAnalytics.MODULE_NAME];
     } else if (licensingResponse.status === 'skip') {
       this.status = AnalyticsLicensingStatus.DENIED;
       logger.log('Impression should not be sampled');
