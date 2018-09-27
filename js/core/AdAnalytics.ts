@@ -6,7 +6,7 @@ import { logger } from '../utils/Logger';
 import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 import { Adapter } from '../types/Adapter';
 import { ViewportTracker } from '../utils/ViewportTracker';
-import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent, AdQuartile } from 'bitmovin-player';
+import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent, AdQuartile, LinearAd } from 'bitmovin-player';
 import { AdAdapter } from '../types/AdAdapter';
 
 declare var __VERSION__: any;
@@ -71,7 +71,6 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onPlay(e) {
-    console.log('onplay');
     if(this.adapter && this.adapter.isLinearAdActive()) {
       this.startAd();
     }
@@ -117,17 +116,43 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdStarted(event: AdEvent) {
+    if(!event.ad.isLinear) {
+      return;
+    }
     this.sample.adStartupTime = this.adStartupTimestamp ? Utils.getCurrentTimestamp() - this.adStartupTimestamp : undefined;
     this.sample.started = 1;
+    if (event.ad) {
+      const ad = <LinearAd>event.ad;
+      this.sample.adSkippable = ad.skippable;
+      this.sample.adClickthroughUrl = ad.clickThroughUrl;
+      this.sample.adId = ad.id;
+      this.sample.adDuration = ad.duration;
+      this.sample.mediaUrl = ad.mediaFileUrl;
+      if (this.sample.mediaUrl) {
+        const mediaUrlDetails = getHostnameAndPathFromUrl(this.sample.mediaUrl);
+        this.sample.mediaPath = mediaUrlDetails.path;
+        this.sample.mediaServer = mediaUrlDetails.hostname;
+      }
+      this.sample.isLinear = ad.isLinear;
+    }
+
     this.startAd();
   }
 
   onAdFinished(event: AdEvent) {
+    if(this.adapter && this.adapter.isLinearAdActive()) {
+      this.startAd();
+    }
+
     this.sample.completed = 1;
     this.completeAd();
   }
 
   onAdSkipped(event: AdEvent) {
+    if(this.adapter && this.adapter.isLinearAdActive()) {
+      this.startAd();
+    }
+    
     this.sample.skipped = 1;
     this.sample.skipPosition = (<any>event).position;
     this.completeAd();
@@ -151,11 +176,17 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   onAdLinearityChanged(event: AdLinearityChangedEvent) { }
 
   onAdClicked(event: AdClickedEvent) {
+    if(this.adapter && this.adapter.isLinearAdActive()) {
+      this.startAd();
+    }
     this.sample.clicked = 1;
     this.sample.clickPosition = (<any>event).position;
   }
 
   onAdQuartile(event: AdQuartileEvent) {
+    if(this.adapter && this.adapter.isLinearAdActive()) {
+      this.startAd();
+    }
     if (event.quartile === AdQuartile.FIRST_QUARTILE) {
       this.sample.quartile1 = 1;
     } else if (event.quartile === AdQuartile.MIDPOINT) {
