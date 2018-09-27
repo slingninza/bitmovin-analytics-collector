@@ -6,7 +6,7 @@ import { logger } from '../utils/Logger';
 import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 import { Adapter } from '../types/Adapter';
 import { ViewportTracker } from '../utils/ViewportTracker';
-import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent } from 'bitmovin-player';
+import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent, AdQuartile } from 'bitmovin-player';
 
 declare var __VERSION__: any;
 
@@ -17,8 +17,10 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   private sample: AdSample = {};
   private container?: HTMLElement;
   private viewportTracker?: ViewportTracker;
+  private adManifestLoadedEvents: (AdBreakEvent & {downloadTime?: number})[] = [];
   private adBreak?: any;
   private adModule?: string;
+  private adStartupTimestamp?: number;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
@@ -45,7 +47,6 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onPlay(e) {
-    console.log('onPlay');
   }
 
   onPause(e) {
@@ -53,41 +54,66 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdManifestLoaded(event: AdBreakEvent) {
-    console.log('onAdManifestLoaded');
+    this.adManifestLoadedEvents.push(event);
   }
 
   onAdBreakStarted(event: AdBreakEvent) {
     this.setAdBreak(event.adBreak);
+    this.adStartupTimestamp = Utils.getCurrentTimestamp();
+    //for the first ad in this break, we set the manifest downloadtime
+    const manifestLoadedEvent = this.adManifestLoadedEvents.find(e => e.adBreak === event.adBreak);
+    this.sample.manifestDownloadTime = manifestLoadedEvent ? manifestLoadedEvent.downloadTime : undefined;
   }
 
   onAdBreakFinished(event: AdBreakEvent) {
+    this.adManifestLoadedEvents.splice(this.adManifestLoadedEvents.findIndex(e => e.adBreak === event.adBreak), 1);
     this.setAdBreak(undefined);
   }
 
   onAdStarted(event: AdEvent) {
-    console.log('onAdStarted');
+    this.sample.adStartupTime = this.adStartupTimestamp ? Utils.getCurrentTimestamp() - this.adStartupTimestamp : undefined;
+    this.sample.started = 1;
   }
 
   onAdFinished(event: AdEvent) {
-    console.log('onAdFinished');
+    this.sample.completed = 1;
+    this.completeAd();
   }
 
   onAdSkipped(event: AdEvent) {
-    console.log('onAdSkipped');
+    this.sample.skipped = 1;
+    this.sample.skipPosition = (<any>event).position;
+    this.completeAd();
   }
 
   onAdError(event: ErrorEvent) {
-    console.log('onAdError');
+    const { code, message } = event.data ? event.data : event;
+    this.sample.errorCode = code;
+    this.sample.errorMessage = message;
+    this.completeAd();
+  }
+
+  private completeAd() {
+    //reset startupTimestamp for the next ad, in case there are multiple ads in one ad break
+    this.adStartupTimestamp = Utils.getCurrentTimestamp();
+    this.sendAnalyticsRequestAndClearValues();
   }
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) { }
 
   onAdClicked(event: AdClickedEvent) {
-    console.log('onAdClicked');
+    this.sample.clicked = 1;
+    this.sample.clickPosition = (<any>event).position;
   }
 
   onAdQuartile(event: AdQuartileEvent) {
-    console.log('onAdQuartile');
+    if (event.quartile === AdQuartile.FIRST_QUARTILE) {
+      this.sample.quartile1 = 1;
+    } else if (event.quartile === AdQuartile.MIDPOINT) {
+      this.sample.midpoint = 1;
+    } else if (event.quartile === AdQuartile.THIRD_QUARTILE) {
+      this.sample.quartile3 = 1
+    }
   }
 
   onBeforeUnload() {
@@ -96,15 +122,13 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
   sendAnalyticsRequestAndClearValues() {
     this.setAnalyticsSampleValues();
-    this.sendAnalyticsRequest(this.sample);
+    this.sendAnalyticsRequest({...this.sample});
     this.clearValues();
   }
 
   setAdBreak(adBreak) {
     this.adBreak = adBreak;
     this.clearAdBreakValues();
-
-    // this.sample.adModule = this.analytics.adapter.getAnalyticsModule();
 
     if(!adBreak) {
       return;
