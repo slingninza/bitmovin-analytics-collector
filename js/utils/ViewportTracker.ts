@@ -34,8 +34,8 @@ export class ViewportTracker {
         return this.hidden && document[this.hidden];
     }
 
-    isInViewport(): boolean | undefined {
-        return !this.isHidden() && this.inViewport;
+    isInViewport(): boolean {
+        return !this.isHidden() && (this.inViewport || true);
     }
 
     dispose() {

@@ -77,7 +77,7 @@ export interface AdSample {
     surveyUrl?: string;
     time?: number;
     timeHovered?: number;
-    timeInViewport?: number;
+    timeInViewport: number;
     timePlayed: number;
     timeUntilHover?: number;
     universalAdIdRegistry?: string;
