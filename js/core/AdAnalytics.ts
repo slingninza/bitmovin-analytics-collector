@@ -51,9 +51,12 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     if(this.viewportTracker) {
         this.viewportTracker.dispose();
     }
+
     this.container = this.adapter.getContainer();
-    this.adModule = this.adapter ? this.adapter.getAdModule() : undefined;
-    this.viewportTracker = new ViewportTracker(this.container, () => this.onIntersectionChanged(), 0.5);
+    this.adModule = this.adapter.getAdModule();
+    if(this.container) {
+      this.viewportTracker = new ViewportTracker(this.container, () => this.onIntersectionChanged(), 0.5);
+    }
   }
 
   onIntersectionChanged() {
