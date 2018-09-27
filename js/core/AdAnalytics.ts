@@ -14,13 +14,26 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   static readonly MODULE_NAME = 'ads';
 
   private analytics: Analytics;
-  private sample: AdSample = {};
+  private sample: AdSample = { 
+    clicked: 0,
+    closed: 0,
+    completed: 0,
+    midpoint: 0,
+    quartile1: 0,
+    quartile3: 0,
+    skipped: 0,
+    started: 0,
+    timePlayed: 0
+  };
   private container?: HTMLElement;
   private viewportTracker?: ViewportTracker;
   private adManifestLoadedEvents: (AdBreakEvent & {downloadTime?: number})[] = [];
   private adBreak?: any;
   private adModule?: string;
   private adStartupTimestamp?: number;
+  private beginPlayingTimestamp?: number;
+  private enterViewportTimestamp?: number;
+  private isPlaying: boolean = false;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
@@ -39,7 +52,14 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onIntersectionChanged() {
-    console.log('Container visible: ' + this.isContainerInViewport());
+    if(this.isContainerInViewport()) {
+      this.enterViewportTimestamp = Utils.getCurrentTimestamp();
+    }
+    else {
+      if(this.enterViewportTimestamp) {
+        this.sample.timeInViewport = (this.sample.timeInViewport || 0) + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
+      }
+    }
   }
 
   isContainerInViewport(): boolean | undefined {
@@ -47,10 +67,25 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onPlay(e) {
+    console.log('onplay');
+    this.startAd();
+  }
+
+  private updatePlayingTime() {
+    if(this.beginPlayingTimestamp && this.isPlaying) {
+      this.sample.timePlayed += Utils.getCurrentTimestamp() - this.beginPlayingTimestamp;
+      if(this.isContainerInViewport() && this.enterViewportTimestamp) {
+        this.sample.timeInViewport = (this.sample.timeInViewport || 0) + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
+      }
+    }
+    console.log('updatePlayingTime');
+    console.log('   timePlayed: ' + this.sample.timePlayed);
+    console.log('   timeInViewport: ' + this.sample.timeInViewport);
   }
 
   onPause(e) {
-    console.log('onPause');
+    this.updatePlayingTime();
+    this.isPlaying = false;
   }
 
   onAdManifestLoaded(event: AdBreakEvent) {
@@ -70,9 +105,19 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.setAdBreak(undefined);
   }
 
+  private startAd() {
+    this.beginPlayingTimestamp = Utils.getCurrentTimestamp();
+    this.enterViewportTimestamp = Utils.getCurrentTimestamp();
+    console.log('startAd');
+    console.log('   beginPlayingTimestamp: ' + this.beginPlayingTimestamp);
+    console.log('   enterViewportTimestamp: ' + this.enterViewportTimestamp);
+    this.isPlaying = true;
+  }
+
   onAdStarted(event: AdEvent) {
     this.sample.adStartupTime = this.adStartupTimestamp ? Utils.getCurrentTimestamp() - this.adStartupTimestamp : undefined;
     this.sample.started = 1;
+    this.startAd();
   }
 
   onAdFinished(event: AdEvent) {
@@ -96,6 +141,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   private completeAd() {
     //reset startupTimestamp for the next ad, in case there are multiple ads in one ad break
     this.adStartupTimestamp = Utils.getCurrentTimestamp();
+    this.updatePlayingTime();
     this.sendAnalyticsRequestAndClearValues();
   }
 
@@ -226,6 +272,9 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.sample.closePosition = undefined;
     this.sample.errorCode = undefined;
     this.sample.errorMessage = undefined;
+    console.log('clearValues');
+    console.log('   timePlayed: ' + this.sample.timePlayed);
+    console.log('   timeInViewport: ' + this.sample.timeInViewport);
   }
 
   sendAnalyticsRequest(sample: AdSample) {
