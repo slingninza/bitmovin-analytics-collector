@@ -9,8 +9,9 @@ import { ProgressiveSourceConfig } from '../types/ProgressiveSourceConfig';
 import { getSourceInfoFromBitmovinSourceConfig } from '../utils/BitmovinProgressiveSourceHelper';
 import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 import {AdClickedEvent, AdQuartileEvent, ErrorEvent, AdEvent, AdBreakEvent} from 'bitmovin-player';
+import { AdAdapter } from '../types/AdAdapter';
 
-class Bitmovin8Adapter implements Adapter {
+class Bitmovin8Adapter implements Adapter, AdAdapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: AdapterEventCallback;
@@ -25,8 +26,8 @@ class Bitmovin8Adapter implements Adapter {
     this.drmPerformanceInfo = {drmUsed: false};
     (window as any).player = this.player;
     this.register();
-    this.adCallbacks.setContainer(this.player.getContainer());
-    this.adCallbacks.setAdModule('IMAModule');
+    
+    this.adCallbacks.setAdapter(this);
   }
 
   getPlayerName() {
@@ -35,6 +36,18 @@ class Bitmovin8Adapter implements Adapter {
 
   getPlayerVersion() {
     return this.player.version;
+  }
+
+  isLinearAdActive() {
+    return this.player.ads && this.player.ads.isLinearAdActive();
+  }
+
+  getContainer() {
+    return this.player.getContainer();
+  }
+
+  getAdModule() {
+    return 'IMAModule';
   }
 
   private getAutoPlay(): boolean {

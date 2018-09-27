@@ -1,10 +1,10 @@
 import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent } from 'bitmovin-player';
+import { AdAdapter } from './AdAdapter';
 
 export interface AdAnalyticsCallbacks {
     onPlay: (e: any) => void;
     onPause: (e: any) => void;
-    setContainer: (container: HTMLElement) => void;
-    setAdModule: (adModule: string) => void;
+    setAdapter: (adapter: AdAdapter) => void;
     onAdBreakFinished: (event: AdBreakEvent) => void;
     onAdBreakStarted: (event: AdBreakEvent) => void;
     onAdClicked: (event: AdClickedEvent) => void;

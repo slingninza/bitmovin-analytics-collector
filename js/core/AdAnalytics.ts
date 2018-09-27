@@ -7,6 +7,7 @@ import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 import { Adapter } from '../types/Adapter';
 import { ViewportTracker } from '../utils/ViewportTracker';
 import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent, AdQuartile } from 'bitmovin-player';
+import { AdAdapter } from '../types/AdAdapter';
 
 declare var __VERSION__: any;
 
@@ -34,6 +35,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   private beginPlayingTimestamp?: number;
   private enterViewportTimestamp?: number;
   private isPlaying: boolean = false;
+  private adapter?: AdAdapter;
 
   constructor(analytics: Analytics) {
     this.analytics = analytics;
@@ -43,11 +45,14 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.adModule = this.sample.adModule = adModule;
   }
 
-  setContainer(container: HTMLElement) {
+  setAdapter(adAdapter: AdAdapter) {
+    this.adapter = adAdapter;
+
     if(this.viewportTracker) {
         this.viewportTracker.dispose();
     }
-    this.container = container;
+    this.container = this.adapter.getContainer();
+    this.adModule = this.adapter ? this.adapter.getAdModule() : undefined;
     this.viewportTracker = new ViewportTracker(this.container, () => this.onIntersectionChanged(), 0.5);
   }
 
