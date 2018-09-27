@@ -50,6 +50,13 @@ class Bitmovin8Adapter implements Adapter, AdAdapter {
     return 'IMAModule';
   }
 
+  getCurrentTimeInAd() {
+    if(this.player.ads && this.player.ads.currentTime) {
+      return this.player.ads.currenTime();
+    }
+    return undefined;
+   }
+
   private getAutoPlay(): boolean {
     if (this.player.getConfig().playback) {
       return this.player.getConfig().playback.autoplay || false;

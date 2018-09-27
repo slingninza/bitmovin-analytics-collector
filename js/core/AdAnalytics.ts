@@ -31,7 +31,6 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   private viewportTracker?: ViewportTracker;
   private adManifestLoadedEvents: (AdBreakEvent & {downloadTime?: number})[] = [];
   private adBreak?: any;
-  private adModule?: string;
   private adStartupTimestamp?: number;
   private beginPlayingTimestamp?: number;
   private enterViewportTimestamp?: number;
@@ -42,10 +41,6 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.analytics = analytics;
   }
 
-  setAdModule(adModule: string) {
-    this.adModule = this.sample.adModule = adModule;
-  }
-
   setAdapter(adAdapter: AdAdapter) {
     this.adapter = adAdapter;
 
@@ -54,7 +49,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     }
 
     this.container = this.adapter.getContainer();
-    this.adModule = this.adapter.getAdModule();
+    this.sample.adModule = this.adapter.getAdModule();
     if(this.container) {
       this.viewportTracker = new ViewportTracker(this.container, () => this.onIntersectionChanged(), 0.5);
     }
@@ -171,7 +166,13 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onBeforeUnload() {
-    console.log('onBeforeUnload');
+    if(!this.adBreak) {
+      return;
+    }
+
+    this.sample.closed = 1;
+    this.sample.closePosition = this.adapter ? this.adapter.getCurrentTimeInAd() : undefined;
+    this.sendAnalyticsRequestAndClearValues();
   }
 
   sendAnalyticsRequestAndClearValues() {
@@ -241,6 +242,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.sample.customUserId = this.analytics.sample.customUserId;
     this.sample.domain = this.analytics.sample.domain;
     this.sample.experimentName = this.analytics.sample.experimentName;
+    this.sample.key = this.analytics.sample.key;
     this.sample.pageLoadTime = this.analytics.pageLoadTime;
     this.sample.pageLoadType = this.analytics.pageLoadType;
     this.sample.path = this.analytics.sample.path;
