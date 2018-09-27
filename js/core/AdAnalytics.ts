@@ -128,11 +128,9 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
       this.sample.adId = ad.id;
       this.sample.adDuration = ad.duration;
       this.sample.mediaUrl = ad.mediaFileUrl;
-      if (this.sample.mediaUrl) {
-        const mediaUrlDetails = getHostnameAndPathFromUrl(this.sample.mediaUrl);
-        this.sample.mediaPath = mediaUrlDetails.path;
-        this.sample.mediaServer = mediaUrlDetails.hostname;
-      }
+      const mediaUrlDetails = Utils.getHostnameAndPathFromUrl(this.sample.mediaUrl || '');
+      this.sample.mediaPath = mediaUrlDetails.path;
+      this.sample.mediaServer = mediaUrlDetails.hostname;
       this.sample.isLinear = ad.isLinear;
     }
 
