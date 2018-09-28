@@ -166,19 +166,11 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdFinished(event: AdEvent) {
-    if (this.adapter && this.adapter.isLinearAdActive()) {
-      this.startAd();
-    }
-
     this.sample.completed = 1;
     this.completeAd();
   }
 
   onAdSkipped(event: AdEvent) {
-    if (this.adapter && this.adapter.isLinearAdActive()) {
-      this.startAd();
-    }
-
     this.sample.skipped = 1;
     this.sample.skipPosition = (<any>event).position;
     this.completeAd();
@@ -207,17 +199,11 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   onAdLinearityChanged(event: AdLinearityChangedEvent) {}
 
   onAdClicked(event: AdClickedEvent) {
-    if (this.adapter && this.adapter.isLinearAdActive()) {
-      this.startAd();
-    }
     this.sample.clicked = 1;
     this.sample.clickPosition = (<any>event).position;
   }
 
   onAdQuartile(event: AdQuartileEvent) {
-    if (this.adapter && this.adapter.isLinearAdActive()) {
-      this.startAd();
-    }
     if (event.quartile === AdQuartile.FIRST_QUARTILE) {
       this.sample.quartile1 = 1;
     } else if (event.quartile === AdQuartile.MIDPOINT) {
