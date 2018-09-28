@@ -40,7 +40,6 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   };
   private container?: HTMLElement;
   private viewportTracker?: ViewportTracker;
-  //private adManifestLoadedEvents: (AdBreakEvent & {downloadTime?: number})[] = [];
   private adBreak?: any;
   private adStartupTimestamp?: number;
   private beginPlayingTimestamp?: number;
@@ -104,20 +103,14 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     }
   }
 
-  onAdManifestLoaded(event: AdBreakEvent) {
-  //   this.adManifestLoadedEvents.push(event);
-  }
+  onAdManifestLoaded(event: AdBreakEvent) {  }
 
   onAdBreakStarted(event: AdBreakEvent) {
     this.setAdBreak(event.adBreak);
     this.adStartupTimestamp = Utils.getCurrentTimestamp();
-    //for the first ad in this break, we set the manifest downloadtime
-    //const manifestLoadedEvent = this.adManifestLoadedEvents.find(e => e.adBreak === event.adBreak);
-    //this.sample.manifestDownloadTime = .then((response) => response.downloadTime); //manifestLoadedEvent ? manifestLoadedEvent.downloadTime : undefined;
   }
 
   onAdBreakFinished(event: AdBreakEvent) {
-    //this.adManifestLoadedEvents.splice(this.adManifestLoadedEvents.findIndex(e => e.adBreak === event.adBreak), 1);
     this.setAdBreak(undefined);
   }
 
