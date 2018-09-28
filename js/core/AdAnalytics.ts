@@ -1,13 +1,23 @@
 import {Analytics} from './Analytics';
-import { AdSample } from '../types/AdSample';
-import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
+import {AdSample} from '../types/AdSample';
+import {AnalyticsLicensingStatus} from '../enums/AnalyticsLicensingStatus';
 import Utils from '../utils/Utils';
-import { logger } from '../utils/Logger';
-import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
-import { Adapter } from '../types/Adapter';
-import { ViewportTracker } from '../utils/ViewportTracker';
-import { AdBreakEvent, AdClickedEvent, AdEvent, AdQuartileEvent, AdLinearityChangedEvent, ErrorEvent, AdQuartile, LinearAd } from 'bitmovin-player';
-import { AdAdapter } from '../types/AdAdapter';
+import {logger} from '../utils/Logger';
+import {AdAnalyticsCallbacks} from '../types/AdAnalyticsCallbacks';
+import {Adapter} from '../types/Adapter';
+import {ViewportTracker} from '../utils/ViewportTracker';
+import {
+  AdBreakEvent,
+  AdClickedEvent,
+  AdEvent,
+  AdQuartileEvent,
+  AdLinearityChangedEvent,
+  ErrorEvent,
+  AdQuartile,
+  LinearAd,
+} from 'bitmovin-player';
+import {AdAdapter} from '../types/AdAdapter';
+import {AdData} from '../types/AdData';
 
 declare var __VERSION__: any;
 
@@ -15,7 +25,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   static readonly MODULE_NAME = 'ads';
 
   private analytics: Analytics;
-  private sample: AdSample = { 
+  private sample: AdSample = {
     clicked: 0,
     closed: 0,
     completed: 0,
@@ -25,7 +35,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     skipped: 0,
     started: 0,
     timePlayed: 0,
-    timeInViewport: 0
+    timeInViewport: 0,
   };
   private container?: HTMLElement;
   private viewportTracker?: ViewportTracker;
@@ -44,49 +54,50 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   setAdapter(adAdapter: AdAdapter) {
     this.adapter = adAdapter;
 
-    if(this.viewportTracker) {
-        this.viewportTracker.dispose();
+    if (this.viewportTracker) {
+      this.viewportTracker.dispose();
     }
 
     this.container = this.adapter.getContainer();
     this.sample.adModule = this.adapter.getAdModule();
-    if(this.container) {
+    if (this.container) {
       this.viewportTracker = new ViewportTracker(this.container, () => this.onIntersectionChanged(), 0.5);
     }
   }
 
   onIntersectionChanged() {
-    if(this.isContainerInViewport()) {
+    if (this.isContainerInViewport()) {
       this.enterViewportTimestamp = Utils.getCurrentTimestamp();
-    }
-    else {
-      if(this.enterViewportTimestamp) {
-        this.sample.timeInViewport = (this.sample.timeInViewport || 0) + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
+    } else {
+      if (this.enterViewportTimestamp) {
+        this.sample.timeInViewport =
+          (this.sample.timeInViewport || 0) + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
       }
     }
   }
 
   isContainerInViewport(): boolean | undefined {
-      return this.viewportTracker ? this.viewportTracker.isInViewport() : true;
+    return this.viewportTracker ? this.viewportTracker.isInViewport() : true;
   }
 
   onPlay(e) {
-    if(this.adapter && this.adapter.isLinearAdActive()) {
+    if (this.adapter && this.adapter.isLinearAdActive()) {
       this.startAd();
     }
   }
 
   private updatePlayingTime() {
-    if(this.beginPlayingTimestamp && this.isPlaying) {
+    if (this.beginPlayingTimestamp && this.isPlaying) {
       this.sample.timePlayed += Utils.getCurrentTimestamp() - this.beginPlayingTimestamp;
-      if(this.isContainerInViewport() && this.enterViewportTimestamp) {
-        this.sample.timeInViewport = this.sample.timeInViewport + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
+      if (this.isContainerInViewport() && this.enterViewportTimestamp) {
+        this.sample.timeInViewport =
+          this.sample.timeInViewport + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
       }
     }
   }
 
   onPause(e) {
-    if(this.adapter && this.adapter.isLinearAdActive()) {
+    if (this.adapter && this.adapter.isLinearAdActive()) {
       this.updatePlayingTime();
       this.isPlaying = false;
     }
@@ -116,10 +127,12 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdStarted(event: AdEvent) {
-    if(!event.ad.isLinear) {
+    if (!event.ad.isLinear) {
       return;
     }
-    this.sample.adStartupTime = this.adStartupTimestamp ? Utils.getCurrentTimestamp() - this.adStartupTimestamp : undefined;
+    this.sample.adStartupTime = this.adStartupTimestamp
+      ? Utils.getCurrentTimestamp() - this.adStartupTimestamp
+      : undefined;
     this.sample.started = 1;
     if (event.ad) {
       const ad = <LinearAd>event.ad;
@@ -132,13 +145,34 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
       this.sample.mediaPath = mediaUrlDetails.path;
       this.sample.mediaServer = mediaUrlDetails.hostname;
       this.sample.isLinear = ad.isLinear;
+      const data = <AdData>(<any>event.ad).additionalData;
+      if (data) {
+        this.sample.adSystem = data.adSystem;
+        this.sample.advertiserName = data.advertiserName;
+        this.sample.apiFramework = data.apiFramework;
+        this.sample.creativeAdId = data.creativeAdId;
+        this.sample.creativeId = data.creativeId;
+        this.sample.dealId = data.dealId;
+        this.sample.adDescription = data.adDescription;
+        this.sample.minSuggestedDuration = data.minSuggestedDuration;
+        this.sample.adSkipAfter = data.skipTimeOffset || this.sample.adSkipAfter;
+        this.sample.surveyUrl = data.surveyUrl;
+        this.sample.adTitle = data.title;
+        this.sample.universalAdIdRegistry = data.universalAdIdRegistry;
+        this.sample.universalAdIdValue = data.universalAdIdValue;
+        this.sample.wrapperAdsCount = data.wrapperAdsCount;
+        this.sample.videoBitrate = data.vastMediaBitrate;
+        this.sample.adPlaybackHeight = data.vastMediaHeight;
+        this.sample.adPlaybackWidth = data.vastMediaWidth;
+        this.sample.streamFormat = data.contentType;
+      }
     }
 
     this.startAd();
   }
 
   onAdFinished(event: AdEvent) {
-    if(this.adapter && this.adapter.isLinearAdActive()) {
+    if (this.adapter && this.adapter.isLinearAdActive()) {
       this.startAd();
     }
 
@@ -147,17 +181,17 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdSkipped(event: AdEvent) {
-    if(this.adapter && this.adapter.isLinearAdActive()) {
+    if (this.adapter && this.adapter.isLinearAdActive()) {
       this.startAd();
     }
-    
+
     this.sample.skipped = 1;
     this.sample.skipPosition = (<any>event).position;
     this.completeAd();
   }
 
   onAdError(event: ErrorEvent) {
-    const { code, message } = event.data ? event.data : event;
+    const {code, message} = event.data ? event.data : event;
     this.sample.errorCode = code;
     this.sample.errorMessage = message;
     this.completeAd();
@@ -171,10 +205,10 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.sendAnalyticsRequestAndClearValues();
   }
 
-  onAdLinearityChanged(event: AdLinearityChangedEvent) { }
+  onAdLinearityChanged(event: AdLinearityChangedEvent) {}
 
   onAdClicked(event: AdClickedEvent) {
-    if(this.adapter && this.adapter.isLinearAdActive()) {
+    if (this.adapter && this.adapter.isLinearAdActive()) {
       this.startAd();
     }
     this.sample.clicked = 1;
@@ -182,7 +216,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdQuartile(event: AdQuartileEvent) {
-    if(this.adapter && this.adapter.isLinearAdActive()) {
+    if (this.adapter && this.adapter.isLinearAdActive()) {
       this.startAd();
     }
     if (event.quartile === AdQuartile.FIRST_QUARTILE) {
@@ -190,12 +224,12 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     } else if (event.quartile === AdQuartile.MIDPOINT) {
       this.sample.midpoint = 1;
     } else if (event.quartile === AdQuartile.THIRD_QUARTILE) {
-      this.sample.quartile3 = 1
+      this.sample.quartile3 = 1;
     }
   }
 
   onBeforeUnload() {
-    if(!this.adBreak) {
+    if (!this.adBreak) {
       return;
     }
 
@@ -214,7 +248,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.adBreak = adBreak;
     this.clearAdBreakValues();
 
-    if(!adBreak) {
+    if (!adBreak) {
       return;
     }
 
@@ -252,7 +286,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.sample.adTagPath = undefined;
     this.sample.adTagType = undefined;
     this.sample.adIsPersistent = undefined;
-    this.sample.adWrapperCount = 0;
+    this.sample.wrapperAdsCount = 0;
     this.sample.adIdPlayer = undefined;
   }
 
@@ -290,8 +324,34 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.sample.videoWindowWidth = this.analytics.sample.videoWindowWidth;
   }
 
-
   clearValues() {
+    this.sample.adSkippable = undefined;
+    this.sample.adClickthroughUrl = undefined;
+    this.sample.adId = undefined;
+    this.sample.adDuration = undefined;
+    this.sample.mediaUrl = undefined;
+    this.sample.mediaPath = undefined;
+    this.sample.mediaServer = undefined;
+    this.sample.isLinear = undefined;
+    this.sample.adSystem = undefined;
+    this.sample.advertiserName = undefined;
+    this.sample.apiFramework = undefined;
+    this.sample.creativeAdId = undefined;
+    this.sample.creativeId = undefined;
+    this.sample.dealId = undefined;
+    this.sample.adDescription = undefined;
+    this.sample.minSuggestedDuration = undefined;
+    this.sample.adSkipAfter = undefined;
+    this.sample.surveyUrl = undefined;
+    this.sample.adTitle = undefined;
+    this.sample.universalAdIdRegistry = undefined;
+    this.sample.universalAdIdValue = undefined;
+    this.sample.wrapperAdsCount = undefined;
+    this.sample.videoBitrate = undefined;
+    this.sample.adPlaybackHeight = undefined;
+    this.sample.adPlaybackWidth = undefined;
+    this.sample.streamFormat = undefined;
+
     this.sample.manifestDownloadTime = undefined;
     this.sample.adStartupTime = undefined;
     this.sample.timePlayed = 0;
