@@ -15,6 +15,7 @@ import {
   ErrorEvent,
   AdQuartile,
   LinearAd,
+  VastResponse,
 } from 'bitmovin-player';
 import {AdAdapter} from '../types/AdAdapter';
 import {AdData} from '../types/AdData';
@@ -39,7 +40,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   };
   private container?: HTMLElement;
   private viewportTracker?: ViewportTracker;
-  private adManifestLoadedEvents: (AdBreakEvent & {downloadTime?: number})[] = [];
+  //private adManifestLoadedEvents: (AdBreakEvent & {downloadTime?: number})[] = [];
   private adBreak?: any;
   private adStartupTimestamp?: number;
   private beginPlayingTimestamp?: number;
@@ -104,19 +105,19 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdManifestLoaded(event: AdBreakEvent) {
-    this.adManifestLoadedEvents.push(event);
+  //   this.adManifestLoadedEvents.push(event);
   }
 
   onAdBreakStarted(event: AdBreakEvent) {
     this.setAdBreak(event.adBreak);
     this.adStartupTimestamp = Utils.getCurrentTimestamp();
     //for the first ad in this break, we set the manifest downloadtime
-    const manifestLoadedEvent = this.adManifestLoadedEvents.find(e => e.adBreak === event.adBreak);
-    this.sample.manifestDownloadTime = manifestLoadedEvent ? manifestLoadedEvent.downloadTime : undefined;
+    //const manifestLoadedEvent = this.adManifestLoadedEvents.find(e => e.adBreak === event.adBreak);
+    //this.sample.manifestDownloadTime = .then((response) => response.downloadTime); //manifestLoadedEvent ? manifestLoadedEvent.downloadTime : undefined;
   }
 
   onAdBreakFinished(event: AdBreakEvent) {
-    this.adManifestLoadedEvents.splice(this.adManifestLoadedEvents.findIndex(e => e.adBreak === event.adBreak), 1);
+    //this.adManifestLoadedEvents.splice(this.adManifestLoadedEvents.findIndex(e => e.adBreak === event.adBreak), 1);
     this.setAdBreak(undefined);
   }
 
@@ -191,9 +192,14 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   onAdError(event: ErrorEvent) {
-    const {code, message} = event.data ? event.data : event;
+    const {code, message, adBreak} = event.data ? event.data : event;
     this.sample.errorCode = code;
     this.sample.errorMessage = message;
+
+    if(adBreak) {
+      this.setAdBreak(adBreak);
+    }
+
     this.completeAd();
   }
 
@@ -252,6 +258,11 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
       return;
     }
 
+    if(adBreak.vastResponse) {
+      //should always be resolved at that point
+      adBreak.vastResponse.then((vastResponse) => this.sample.manifestDownloadTime = vastResponse.downloadTime * 1000);      
+    }
+
     if (adBreak.position === 'pre' || adBreak.position === 'post') {
       this.sample.adPosition = adBreak.position;
     } else {
@@ -271,7 +282,6 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
       this.sample.adTagServer = adTagDetails.hostname;
       this.sample.adTagPath = adTagDetails.path;
     }
-    //this.sample.adWrapperCount = adBreak.adWrapperIds ? adBreak.adWrapperIds.length : 0;
   }
 
   clearAdBreakValues() {
