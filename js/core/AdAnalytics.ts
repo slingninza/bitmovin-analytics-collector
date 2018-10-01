@@ -34,9 +34,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     quartile1: 0,
     quartile3: 0,
     skipped: 0,
-    started: 0,
-    timePlayed: 0,
-    timeInViewport: 0,
+    started: 0
   };
   private container?: HTMLElement;
   private viewportTracker?: ViewportTracker;
@@ -88,8 +86,10 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
   private updatePlayingTime() {
     if (this.beginPlayingTimestamp && this.isPlaying) {
-      this.sample.timePlayed += Utils.getCurrentTimestamp() - this.beginPlayingTimestamp;
-      if (this.isContainerInViewport() && this.enterViewportTimestamp) {
+      if(this.sample.timePlayed) {
+        this.sample.timePlayed += Utils.getCurrentTimestamp() - this.beginPlayingTimestamp;
+      }
+      if (this.isContainerInViewport() && this.enterViewportTimestamp && this.sample.timeInViewport) {
         this.sample.timeInViewport =
           this.sample.timeInViewport + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
       }
@@ -128,6 +128,8 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
       ? Utils.getCurrentTimestamp() - this.adStartupTimestamp
       : undefined;
     this.sample.started = 1;
+    this.sample.timePlayed = 0;
+    this.sample.timeInViewport = 0;
     if (event.ad) {
       const ad = <LinearAd>event.ad;
       this.sample.adSkippable = ad.skippable;
@@ -343,10 +345,10 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
     this.sample.manifestDownloadTime = undefined;
     this.sample.adStartupTime = undefined;
-    this.sample.timePlayed = 0;
+    this.sample.timePlayed = undefined;
     this.sample.timeHovered = undefined;
     this.sample.timeUntilHover = undefined;
-    this.sample.timeInViewport = 0;
+    this.sample.timeInViewport = undefined;
     this.sample.percentageInViewport = undefined;
     this.sample.started = 0;
     this.sample.quartile1 = 0;
@@ -369,7 +371,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
     sample.adImpressionId = Utils.generateUUID();
     sample.time = Utils.getCurrentTimestamp();
-    sample.percentageInViewport = sample.timePlayed === 0 ? undefined : sample.timeInViewport / sample.timePlayed;
+    sample.percentageInViewport = !sample.timePlayed || sample.timePlayed === 0 ? undefined : sample.timeInViewport || 0 / sample.timePlayed;
 
     if (this.analytics.licensing.status === AnalyticsLicensingStatus.GRANTED) {
       if (this.analytics.licensing.isModuleAllowed(AdAnalytics.MODULE_NAME)) {
