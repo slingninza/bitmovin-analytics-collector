@@ -1,5 +1,3 @@
-import {LicenseCall} from '../utils/LicenseCall';
-import {AnalyticsCall} from '../utils/AnalyticsCall';
 import Utils from '../utils/Utils';
 import {logger} from '../utils/Logger';
 import {AdapterFactory} from './AdapterFactory';
@@ -12,26 +10,25 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
+import { Backend, LicenseCheckingBackend } from './Backend';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
   BACKGROUND = 2,
 }
+//@ts-ignore
+const analyticsVersion: string = __VERSION__;
 export class Analytics {
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
   private config: AnalyicsConfig;
-  private licenseCall: LicenseCall;
-  private analyticsCall: AnalyticsCall;
+  private backend: Backend
   private droppedSampleFrames: number;
-  private licensing: string;
   private startupTime: number;
   private pageLoadType: PAGE_LOAD_TYPE;
   private autoplay: boolean | undefined;
-  private isAllowedToSendSamples: boolean;
-  private samplesQueue: any;
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
@@ -39,18 +36,15 @@ export class Analytics {
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
-    this.licenseCall = new LicenseCall();
-    this.analyticsCall = new AnalyticsCall();
+
+    const domain = Utils.sanitizePath(window.location.hostname);
+    this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: analyticsVersion });
     this.sample = {};
     this.droppedSampleFrames = 0;
-    this.licensing = 'waiting';
     this.startupTime = 0;
     this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
 
     this.autoplay = undefined;
-
-    this.isAllowedToSendSamples = false;
-    this.samplesQueue = [];
 
     this.setPageLoadType();
 
@@ -94,7 +88,6 @@ export class Analytics {
 
     logger.setLogging(this.config.debug || false);
 
-      this.checkLicensing(this.config.key);
     this.setConfigParameters();
 
     this.generateNewImpressionId();
@@ -572,57 +565,10 @@ export class Analytics {
     };
   }
 
-  checkLicensing(key: any) {
-    this.licenseCall.sendRequest(
-      key,
-      this.sample.domain,
-      this.sample.analyticsVersion,
-      this.handleLicensingResponse.bind(this)
-    );
-  }
-
-  handleLicensingResponse(licensingResponse: any) {
-    if (licensingResponse.status === 'granted') {
-      this.licensing = 'granted';
-    } else if (licensingResponse.status === 'skip') {
-      this.licensing = 'denied';
-      logger.log('Impression should not be sampled');
-    } else {
-      this.licensing = 'denied';
-      logger.log('Analytics license denied, reason: ' + licensingResponse.message);
-    }
-  }
-
   sendAnalyticsRequest() {
-    if (this.licensing === 'denied') {
-      return;
-    }
-
-    if (this.licensing === 'granted') {
-      this.sample.time = Utils.getCurrentTimestamp();
-
-      if (!this.isAllowedToSendSamples) {
-        const copySample = {...this.sample};
-        this.samplesQueue.push(copySample);
-      } else {
-        for (let i = 0; i < this.samplesQueue.length; i++) {
-          this.analyticsCall.sendRequest(this.samplesQueue[i], Utils.noOp);
-        }
-        this.samplesQueue = [];
-
-        this.analyticsCall.sendRequest(this.sample, Utils.noOp);
-      }
-    } else if (this.licensing === 'waiting') {
-      this.sample.time = Utils.getCurrentTimestamp();
-
-      logger.log('Licensing callback still pending, waiting...');
-
-      const copySample = {...this.sample};
-
-      window.setTimeout(() => {
-        this.analyticsCall.sendRequest(copySample, Utils.noOp);
-      }, Analytics.LICENSE_CALL_PENDING_TIMEOUT);
-    }
+    this.sample.time = Utils.getCurrentTimestamp();
+    const copySample = { ...this.sample };
+    this.backend.sendRequest(copySample)
   }
 
   sendAnalyticsRequestAndClearValues() {
@@ -631,26 +577,11 @@ export class Analytics {
   }
 
   sendUnloadRequest() {
-    if (this.licensing === 'denied') {
-      return;
-    }
-
-    if (typeof navigator.sendBeacon === 'undefined') {
-      this.sendAnalyticsRequestSynchronous();
-    } else {
-      const success = navigator.sendBeacon(this.analyticsCall.getAnalyticsServerUrl(), JSON.stringify(this.sample));
-      if (!success) {
-        this.sendAnalyticsRequestSynchronous();
-      }
-    }
+      this.backend.sendUnloadRequest(this.sample);
   }
 
   sendAnalyticsRequestSynchronous() {
-    if (this.licensing === 'denied') {
-      return;
-    }
-
-    this.analyticsCall.sendRequestSynchronous(this.sample, Utils.noOp);
+    this.backend.sendRequestSynchronous(this.sample);
   }
 
   clearValues() {
