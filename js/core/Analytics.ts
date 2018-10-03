@@ -26,7 +26,6 @@ export class Analytics {
   private config: AnalyicsConfig;
   private backend: Backend
   private droppedSampleFrames: number;
-  private licensing: string;
   private startupTime: number;
   private pageLoadType: PAGE_LOAD_TYPE;
   private autoplay: boolean | undefined;
@@ -42,7 +41,6 @@ export class Analytics {
     this.backend = new LicenseCheckingBackend({ key: config.key, domain, version: analyticsVersion });
     this.sample = {};
     this.droppedSampleFrames = 0;
-    this.licensing = 'waiting';
     this.startupTime = 0;
     this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
 
