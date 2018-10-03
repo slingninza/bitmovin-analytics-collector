@@ -14,6 +14,7 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
+import {VERSION} from '../Version';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
@@ -633,8 +634,7 @@ export class Analytics {
       startupTime: 0,
       version: this.sample.version,
       player: this.sample.player,
-      //@ts-ignore
-      analyticsVersion: __VERSION__,
+      analyticsVersion: VERSION,
     };
   }
 
