@@ -38,7 +38,7 @@ export class Analytics {
     this.config = config;
 
     const domain = Utils.sanitizePath(window.location.hostname);
-    this.backend = new LicenseCheckingBackend({ key: config.key, domain, version: analyticsVersion });
+    this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: analyticsVersion });
     this.sample = {};
     this.droppedSampleFrames = 0;
     this.startupTime = 0;
