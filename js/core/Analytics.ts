@@ -11,13 +11,12 @@ import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
 import { Backend, LicenseCheckingBackend } from './Backend';
+import {VERSION} from '../Version';
 
 enum PAGE_LOAD_TYPE {
   FOREGROUND = 1,
   BACKGROUND = 2,
 }
-//@ts-ignore
-const analyticsVersion: string = __VERSION__;
 export class Analytics {
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
@@ -38,7 +37,7 @@ export class Analytics {
     this.config = config;
 
     const domain = Utils.sanitizePath(window.location.hostname);
-    this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: analyticsVersion });
+    this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: VERSION });
     this.sample = {};
     this.droppedSampleFrames = 0;
     this.startupTime = 0;
@@ -560,8 +559,7 @@ export class Analytics {
       startupTime: 0,
       version: this.sample.version,
       player: this.sample.player,
-      //@ts-ignore
-      analyticsVersion: __VERSION__,
+      analyticsVersion: VERSION,
     };
   }
 
