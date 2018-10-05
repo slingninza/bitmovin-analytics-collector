@@ -173,7 +173,6 @@ export class Analytics {
         this.setDuration(time);
         this.setState(state);
         this.sample.playerStartupTime = time;
-        this.sample.pageLoadType = this.setPageLoadType();
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
@@ -186,7 +185,6 @@ export class Analytics {
 
         this.sendAnalyticsRequestAndClearValues();
 
-        this.sample.pageLoadType = this.setPageLoadType();
         this.sample.pageLoadTime = 0;
       },
 
