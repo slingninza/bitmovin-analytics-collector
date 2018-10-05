@@ -3,6 +3,7 @@ import {Player} from '../enums/Player';
 import {CdnProvider} from '../enums/CDNProvider';
 import {AnalyticsStateMachineOptions} from '../types/AnalyticsStateMachineOptions';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
+import {VERSION} from '../Version';
 
 export const analyticsWrapper = (config: AnalyicsConfig) => {
   const analytics = new Analytics(config);
@@ -17,7 +18,7 @@ export const analyticsWrapper = (config: AnalyicsConfig) => {
     setCustomDataOnce: analytics.setCustomDataOnce,
     sourceChange: (config: AnalyicsConfig) => {
       analytics.sourceChange(config);
-    },
+    }
   };
 };
 
@@ -83,6 +84,7 @@ const AnalyticsModule = {
 (analyticsWrapper as any).Players = Player;
 (analyticsWrapper as any).CdnProviders = CdnProvider;
 (analyticsWrapper as any).PlayerModule = AnalyticsModule;
+(analyticsWrapper as any).version = VERSION;
 
 (window as any).bitmovin = (window as any).bitmovin || {};
 (window as any).bitmovin.analytics = analyticsWrapper;
