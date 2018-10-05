@@ -28,8 +28,8 @@ export interface Sample {
   duration?: number;
   startupTime?: number;
   analyticsVersion?: any;
-  playerStartupTime?: number;
-  pageLoadType?: number;
+  playerStartupTime: number;
+  pageLoadType: number;
   streamFormat?: string;
   isMuted?: boolean;
   progUrl?: string;
@@ -44,7 +44,7 @@ export interface Sample {
   errorMessage?: any;
   errorCode?: any;
   autoplay?: any;
-  pageLoadTime?: number;
+  pageLoadTime: number;
   experimentName?: any;
   customData1?: any;
   customData2?: any;
