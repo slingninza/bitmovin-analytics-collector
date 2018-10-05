@@ -94,7 +94,7 @@ export class LicenseCheckingBackend implements Backend {
         throw new Error(result.message);
       }
     } catch (e) {
-      logger.error("License Check for Bitmovin Analytics failed because of ", e)
+      logger.errorMessageTouser("License Check for Bitmovin Analytics failed because of ", e)
       this.backend = new NoOpBackend();
     }
   }

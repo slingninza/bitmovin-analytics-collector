@@ -19,6 +19,10 @@ class Logger {
     console.log(msg, ...optionalParamters);
   }
 
+  errorMessageTouser(msg: string, ...optionalParamters: any[]) {
+    console.error(msg, ...optionalParamters);
+  }
+
   error(msg: string | undefined, ...optionalParamters: any[]) {
     if (!(this as any).showLogs) {
       return;
