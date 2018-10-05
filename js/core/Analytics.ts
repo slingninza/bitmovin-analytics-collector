@@ -432,7 +432,15 @@ export class Analytics {
     if (this.sample.state) {
       this.sendAnalyticsRequestAndClearValues();
     }
-    this.sample = this.setupSample();
+
+    // Carry over the player and version from the old sample (was detected during register)
+    const {player, version} = this.sample;
+    this.sample = {
+      ...this.setupSample(),
+      player,
+      version
+    };
+
     this.startupTime = 0;
     this.init();
 
@@ -632,8 +640,6 @@ export class Analytics {
       videoStartupTime: 0,
       duration: 0,
       startupTime: 0,
-      version: this.sample.version,
-      player: this.sample.player,
       analyticsVersion: VERSION,
     };
   }
