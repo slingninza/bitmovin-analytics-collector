@@ -641,6 +641,7 @@ export class Analytics {
       duration: 0,
       startupTime: 0,
       analyticsVersion: VERSION,
+      pageLoadTime: 0
     };
   }
 

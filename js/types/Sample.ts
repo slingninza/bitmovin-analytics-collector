@@ -44,7 +44,7 @@ export interface Sample {
   errorMessage?: any;
   errorCode?: any;
   autoplay?: any;
-  pageLoadTime?: number;
+  pageLoadTime: number;
   experimentName?: any;
   customData1?: any;
   customData2?: any;
