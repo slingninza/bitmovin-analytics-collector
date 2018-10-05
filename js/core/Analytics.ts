@@ -33,7 +33,6 @@ export class Analytics {
   private droppedSampleFrames: number;
   private licensing: string;
   private startupTime: number;
-  private pageLoadType: PAGE_LOAD_TYPE;
   private autoplay: boolean | undefined;
   private isCastClient: boolean;
   private isCastReceiver: boolean;
@@ -51,7 +50,6 @@ export class Analytics {
     this.analyticsCall = new AnalyticsCall();
     this.castClient = new CastClient();
     this.castReceiver = new CastReceiver();
-    this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
     this.startupTime = 0;
@@ -77,8 +75,6 @@ export class Analytics {
         }
       });
     }
-
-    this.pageLoadType = this.setPageLoadType();
 
     this.sample = this.setupSample();
     this.init();
@@ -177,7 +173,7 @@ export class Analytics {
         this.setDuration(time);
         this.setState(state);
         this.sample.playerStartupTime = time;
-        this.sample.pageLoadType = this.pageLoadType;
+        this.sample.pageLoadType = this.setPageLoadType();
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
@@ -190,7 +186,7 @@ export class Analytics {
 
         this.sendAnalyticsRequestAndClearValues();
 
-        this.sample.pageLoadType = this.pageLoadType;
+        this.sample.pageLoadType = this.setPageLoadType();
         this.sample.pageLoadTime = 0;
       },
 
@@ -611,7 +607,7 @@ export class Analytics {
   setupSample() : Sample {
     return {
       playerStartupTime: 0,
-      pageLoadType: this.pageLoadType,
+      pageLoadType: this.setPageLoadType(),
       domain: Utils.sanitizePath(window.location.hostname),
       path: Utils.sanitizePath(window.location.pathname),
       language: navigator.language || (navigator as any).userLanguage,
