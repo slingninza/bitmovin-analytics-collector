@@ -28,7 +28,7 @@ export interface Sample {
   duration?: number;
   startupTime?: number;
   analyticsVersion?: any;
-  playerStartupTime?: number;
+  playerStartupTime: number;
   pageLoadType: number;
   streamFormat?: string;
   isMuted?: boolean;

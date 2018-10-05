@@ -61,9 +61,6 @@ export class Analytics {
     this.isCastReceiver = false;
     this.isAllowedToSendSamples = false;
     this.samplesQueue = [];
-    this.sample = {
-      pageLoadType: this.pageLoadType
-    };
 
     if (this.config.cast && this.config.cast.receiver) {
       this.isCastReceiver = true;
@@ -82,7 +79,7 @@ export class Analytics {
 
     this.pageLoadType = this.setPageLoadType();
 
-    this.setupSample();
+    this.sample = this.setupSample();
     this.init();
     this.setupStateMachineCallbacks();
   }
@@ -434,7 +431,7 @@ export class Analytics {
     if (this.sample.state) {
       this.sendAnalyticsRequestAndClearValues();
     }
-    this.setupSample();
+    this.sample = this.setupSample();
     this.startupTime = 0;
     this.init();
 
@@ -602,8 +599,9 @@ export class Analytics {
     }
   }
 
-  setupSample() {
-    this.sample = {
+  setupSample() : Sample {
+    return {
+      playerStartupTime: 0,
       pageLoadType: this.pageLoadType,
       domain: Utils.sanitizePath(window.location.hostname),
       path: Utils.sanitizePath(window.location.pathname),
