@@ -78,7 +78,7 @@ export class Analytics {
       });
     }
 
-    this.setPageLoadType();
+    this.pageLoadType = this.setPageLoadType();
 
     this.setupSample();
     this.init();
@@ -103,13 +103,12 @@ export class Analytics {
     this.setConfigParameters(sample, config);
   }
 
-  setPageLoadType() {
-    window.setTimeout(() => {
-      //@ts-ignore
-      if (document[Utils.getHiddenProp()] === true) {
-        this.pageLoadType = PAGE_LOAD_TYPE.BACKGROUND;
-      }
-    }, Analytics.PAGE_LOAD_TYPE_TIMEOUT);
+  setPageLoadType() : PAGE_LOAD_TYPE {
+    //@ts-ignore
+    if (document[Utils.getHiddenProp()] === true) {
+      return PAGE_LOAD_TYPE.BACKGROUND;
+    }
+    return PAGE_LOAD_TYPE.FOREGROUND
   }
 
   init() {
