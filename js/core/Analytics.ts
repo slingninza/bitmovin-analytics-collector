@@ -50,11 +50,10 @@ export class Analytics {
     this.analyticsCall = new AnalyticsCall();
     this.castClient = new CastClient();
     this.castReceiver = new CastReceiver();
-    this.sample = {};
+    this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
     this.droppedSampleFrames = 0;
     this.licensing = 'waiting';
     this.startupTime = 0;
-    this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
 
     this.autoplay = undefined;
 
@@ -62,6 +61,9 @@ export class Analytics {
     this.isCastReceiver = false;
     this.isAllowedToSendSamples = false;
     this.samplesQueue = [];
+    this.sample = {
+      pageLoadType: this.pageLoadType
+    };
 
     if (this.config.cast && this.config.cast.receiver) {
       this.isCastReceiver = true;
@@ -602,6 +604,7 @@ export class Analytics {
 
   setupSample() {
     this.sample = {
+      pageLoadType: this.pageLoadType,
       domain: Utils.sanitizePath(window.location.hostname),
       path: Utils.sanitizePath(window.location.pathname),
       language: navigator.language || (navigator as any).userLanguage,
@@ -736,7 +739,6 @@ export class Analytics {
 
     this.sample.duration = 0;
     this.sample.droppedFrames = 0;
-    this.sample.pageLoadType = 0;
 
     this.sample.drmType = undefined;
     this.sample.drmLoadTime = undefined;
