@@ -91,10 +91,10 @@ export class LicenseCheckingBackend implements Backend {
         (this.backend as QueueBackend).flushTo(remoteBackend);
         this.backend = remoteBackend;
       } else {
-        throw new Error("Licensing response unsuccessful: " + result.message);
+        throw new Error(result.message);
       }
     } catch (e) {
-      logger.log(e);
+      logger.errorMessageTouser("License Check for Bitmovin Analytics failed because of ", e)
       this.backend = new NoOpBackend();
     }
   }
