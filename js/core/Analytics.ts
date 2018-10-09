@@ -26,7 +26,6 @@ export class Analytics {
   private backend: Backend
   private droppedSampleFrames: number;
   private startupTime: number;
-  private pageLoadType: PAGE_LOAD_TYPE;
   private autoplay: boolean | undefined;
   private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
@@ -38,16 +37,12 @@ export class Analytics {
 
     const domain = Utils.sanitizePath(window.location.hostname);
     this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: VERSION });
-    this.sample = {};
     this.droppedSampleFrames = 0;
     this.startupTime = 0;
-    this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
 
     this.autoplay = undefined;
 
-    this.setPageLoadType();
-
-    this.setupSample();
+    this.sample = this.setupSample();
     this.init();
     this.setupStateMachineCallbacks();
   }
@@ -70,13 +65,12 @@ export class Analytics {
     this.setConfigParameters(sample, config);
   }
 
-  setPageLoadType() {
-    window.setTimeout(() => {
-      //@ts-ignore
-      if (document[Utils.getHiddenProp()] === true) {
-        this.pageLoadType = PAGE_LOAD_TYPE.BACKGROUND;
-      }
-    }, Analytics.PAGE_LOAD_TYPE_TIMEOUT);
+  setPageLoadType() : PAGE_LOAD_TYPE {
+    //@ts-ignore
+    if (document[Utils.getHiddenProp()] === true) {
+      return PAGE_LOAD_TYPE.BACKGROUND;
+    }
+    return PAGE_LOAD_TYPE.FOREGROUND
   }
 
   init() {
@@ -139,7 +133,6 @@ export class Analytics {
         this.setDuration(time);
         this.setState(state);
         this.sample.playerStartupTime = time;
-        this.sample.pageLoadType = this.pageLoadType;
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
@@ -152,7 +145,6 @@ export class Analytics {
 
         this.sendAnalyticsRequestAndClearValues();
 
-        this.sample.pageLoadType = this.pageLoadType;
         this.sample.pageLoadTime = 0;
       },
 
@@ -360,7 +352,15 @@ export class Analytics {
     if (this.sample.state) {
       this.sendAnalyticsRequestAndClearValues();
     }
-    this.setupSample();
+
+    // Carry over the player and version from the old sample (was detected during register)
+    const {player, version} = this.sample;
+    this.sample = {
+      ...this.setupSample(),
+      player,
+      version
+    };
+
     this.startupTime = 0;
     this.init();
 
@@ -528,8 +528,10 @@ export class Analytics {
     }
   }
 
-  setupSample() {
-    this.sample = {
+  setupSample() : Sample {
+    return {
+      playerStartupTime: 0,
+      pageLoadType: this.setPageLoadType(),
       domain: Utils.sanitizePath(window.location.hostname),
       path: Utils.sanitizePath(window.location.pathname),
       language: navigator.language || (navigator as any).userLanguage,
@@ -557,9 +559,8 @@ export class Analytics {
       videoStartupTime: 0,
       duration: 0,
       startupTime: 0,
-      version: this.sample.version,
-      player: this.sample.player,
       analyticsVersion: VERSION,
+      pageLoadTime: 0
     };
   }
 
@@ -595,7 +596,6 @@ export class Analytics {
 
     this.sample.duration = 0;
     this.sample.droppedFrames = 0;
-    this.sample.pageLoadType = 0;
 
     this.sample.drmType = undefined;
     this.sample.drmLoadTime = undefined;
