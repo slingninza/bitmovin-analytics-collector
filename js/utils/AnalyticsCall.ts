@@ -16,7 +16,7 @@ export class AnalyticsCall {
   }
 
   sendAdRequest(sample: AdSample, callback: Function) {
-    this.post(AnalyticsCall.adAnalayticsServerUrl, sample, callback);
+    post(AnalyticsCall.adAnalayticsServerUrl, sample, callback);
   }
 
   getAnalyticsServerUrl() {
