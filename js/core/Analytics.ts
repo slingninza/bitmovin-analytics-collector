@@ -24,15 +24,18 @@ export class Analytics {
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
   private config: AnalyicsConfig;
-  private backend: Backend
   private droppedSampleFrames: number;
   private startupTime: number;
-  private autoplay: boolean | undefined;
-  private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
   private adAnalytics: AdAnalytics;
+
+  pageLoadTime: number = 0;
+  playerStartupTime: number = 0;
+  autoplay: boolean | undefined;
+  sample: Sample;
+  backend: Backend
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
