@@ -3,6 +3,7 @@ import {LicensingRequest, LicensingResponse, LicensingResult} from '../types/Lic
 import { LicenseCall } from '../utils/LicenseCall';
 import {logger} from '../utils/Logger';
 import { AnalyticsCall } from '../utils/AnalyticsCall';
+import { AdSample } from '../types/AdSample';
 
 const noOp = () => {};
 
@@ -10,6 +11,7 @@ export interface Backend {
   sendRequest(sample: Sample)
   sendUnloadRequest(sample: Sample)
   sendRequestSynchronous(sample: Sample)
+  sendAdRequest(sample: AdSample)
 }
 
 
@@ -19,12 +21,14 @@ class NoOpBackend implements Backend {
   sendRequest(sample: Sample) {}
   sendUnloadRequest(sample: Sample) {}
   sendRequestSynchronous(sample: Sample) {}
+  sendAdRequest(sample: AdSample) {}
 }
 
 class QueueBackend implements Backend {
   queue: Sample[] = []
   unloadQueue: Sample[] = []
   syncQueue: Sample[] = []
+  adQueue: AdSample[] = []
 
   sendRequest(sample: Sample) {
     this.queue.push(sample)
@@ -34,6 +38,9 @@ class QueueBackend implements Backend {
   }
   sendRequestSynchronous(sample: Sample) {
     this.syncQueue.push(sample)
+  }
+  sendAdRequest(sample: AdSample) {
+    this.adQueue.push(sample)
   }
 
   flushTo(backend: Backend) {
@@ -46,13 +53,18 @@ class QueueBackend implements Backend {
     this.syncQueue.forEach(e => {
       backend.sendRequestSynchronous(e)
     })
+    this.adQueue.forEach(e => {
+      backend.sendAdRequest(e)
+    })
   }
 }
 
 class RemoteBackend implements Backend {
   analyticsCall: AnalyticsCall
+  hasAdModule: boolean;
 
-  constructor() {
+  constructor(hasAdModule: boolean) {
+    this.hasAdModule = hasAdModule;
     this.analyticsCall = new AnalyticsCall();
   }
 
@@ -74,6 +86,20 @@ class RemoteBackend implements Backend {
   sendRequestSynchronous(sample: Sample) {
     this.analyticsCall.sendRequestSynchronous(sample, noOp);
   }
+
+  sendAdRequest(sample: AdSample) {
+    if(!this.hasAdModule) {
+      return;
+    }
+    if (typeof navigator.sendBeacon === 'undefined') {
+      this.analyticsCall.sendAdRequest(sample, noOp);
+    } else {
+      const success = navigator.sendBeacon(AnalyticsCall.adAnalayticsServerUrl, JSON.stringify(sample));
+      if (!success) {
+        this.analyticsCall.sendAdRequest(sample, noOp);
+      }
+    }
+  }
 }
 
 export class LicenseCheckingBackend implements Backend {
@@ -87,7 +113,7 @@ export class LicenseCheckingBackend implements Backend {
     try {
       const result = await LicenseCall(info.key, info.domain, info.version);
       if (result.status === LicensingResult.Granted) {
-        const remoteBackend = new RemoteBackend();
+        const remoteBackend = new RemoteBackend(true);
         (this.backend as QueueBackend).flushTo(remoteBackend);
         this.backend = remoteBackend;
       } else {
@@ -108,5 +134,7 @@ export class LicenseCheckingBackend implements Backend {
   sendRequestSynchronous(sample: Sample) {
     this.backend.sendRequestSynchronous(sample);
   }
-
+  sendAdRequest(sample: AdSample) {
+    this.backend.sendAdRequest(sample);
+  }
 }
