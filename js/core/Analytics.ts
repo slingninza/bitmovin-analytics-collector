@@ -1,11 +1,7 @@
-import {LicenseCall} from '../utils/LicenseCall';
-import {AnalyticsCall} from '../utils/AnalyticsCall';
 import Utils from '../utils/Utils';
 import {logger} from '../utils/Logger';
 import {AdapterFactory} from './AdapterFactory';
 import {AnalyticsStateMachineFactory} from './AnalyticsStateMachineFactory';
-import {CastClient} from '../cast/CastClient';
-import {CastReceiver} from '../cast/CastReceiver';
 import {AnalyticsStateMachineOptions} from '../types/AnalyticsStateMachineOptions';
 import {Sample} from '../types/Sample';
 import {StateMachineCallbacks} from '../types/StateMachineCallbacks';
@@ -14,8 +10,8 @@ import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import {AnalyicsConfig} from '../types/AnalyticsConfig';
 import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
-import { Licensing } from '../utils/Licensing';
-import { AnalyticsLicensingStatus } from '../enums/AnalyticsLicensingStatus';
+import { Backend, LicenseCheckingBackend } from './Backend';
+import {VERSION} from '../Version';
 import { AdAnalytics } from './AdAnalytics';
 
 enum PAGE_LOAD_TYPE {
@@ -27,25 +23,12 @@ export class Analytics {
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
-  licensing: Licensing;
-  analyticsCall: AnalyticsCall;
-  sample: Sample;
-  
-  autoplay: boolean | undefined;
-  pageLoadType: PAGE_LOAD_TYPE;
-  pageLoadTime?: number;
-  playerStartupTime?: number;
-
   private config: AnalyicsConfig;
-  private castClient: CastClient;
-  private castReceiver: CastReceiver;
+  private backend: Backend
   private droppedSampleFrames: number;
   private startupTime: number;
-  private isCastClient: boolean;
-  private isCastReceiver: boolean;
-  private isAllowedToSendSamples: boolean;
-  private samplesQueue: any;
-  private castClientConfig!: CastClientConfig;
+  private autoplay: boolean | undefined;
+  private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
@@ -53,43 +36,19 @@ export class Analytics {
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
-    this.analyticsCall = new AnalyticsCall();
-    this.castClient = new CastClient();
-    this.castReceiver = new CastReceiver();
-    this.adAnalytics = new AdAnalytics(this);
-    this.sample = {};
+
+    const domain = Utils.sanitizePath(window.location.hostname);
+    this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: VERSION });
     this.droppedSampleFrames = 0;
-    this.licensing = new Licensing();
     this.startupTime = 0;
-    this.pageLoadType = PAGE_LOAD_TYPE.FOREGROUND;
 
     this.autoplay = undefined;
 
-    this.isCastClient = false;
-    this.isCastReceiver = false;
-    this.isAllowedToSendSamples = false;
-    this.samplesQueue = [];
-
-    if (this.config.cast && this.config.cast.receiver) {
-      this.isCastReceiver = true;
-      this.castReceiver.setUp();
-      this.castReceiver.setCallback((event: any) => {
-        switch (event.type) {
-          case Analytics.CAST_RECEIVER_CONFIG_MESSAGE:
-            this.castClientConfig = event.data;
-            this.updateSampleToCastClientConfig(this.sample, this.castClientConfig);
-            this.updateSamplesToCastClientConfig(this.samplesQueue, event.data);
-            this.isAllowedToSendSamples = true;
-            break;
-        }
-      });
-    }
-
-    this.setPageLoadType();
-
-    this.setupSample();
+    this.sample = this.setupSample();
     this.init();
     this.setupStateMachineCallbacks();
+
+    this.adAnalytics = new AdAnalytics(this);
   }
 
   updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
@@ -110,28 +69,21 @@ export class Analytics {
     this.setConfigParameters(sample, config);
   }
 
-  setPageLoadType() {
-    window.setTimeout(() => {
-      //@ts-ignore
-      if (document[Utils.getHiddenProp()] === true) {
-        this.pageLoadType = PAGE_LOAD_TYPE.BACKGROUND;
-      }
-    }, Analytics.PAGE_LOAD_TYPE_TIMEOUT);
+  setPageLoadType() : PAGE_LOAD_TYPE {
+    //@ts-ignore
+    if (document[Utils.getHiddenProp()] === true) {
+      return PAGE_LOAD_TYPE.BACKGROUND;
+    }
+    return PAGE_LOAD_TYPE.FOREGROUND
   }
 
   init() {
-    if (!this.isCastReceiver && (this.config.key == '' || !Utils.validString(this.config.key))) {
+    if (this.config.key == '' || !Utils.validString(this.config.key)) {
       console.error('Invalid analytics license key provided');
       return;
     }
 
     logger.setLogging(this.config.debug || false);
-
-    if (!this.isCastReceiver) {
-      this.licensing.checkLicensing(this.config.key, this.sample.domain, this.sample.analyticsVersion);
-    } else {
-      this.licensing.status = AnalyticsLicensingStatus.GRANTED;
-    }
 
     this.setConfigParameters();
 
@@ -184,12 +136,11 @@ export class Analytics {
 
         this.setDuration(time);
         this.setState(state);
-        this.playerStartupTime = this.sample.playerStartupTime = time;
-        this.sample.pageLoadType = this.pageLoadType;
+        this.sample.playerStartupTime = time;
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
-          this.pageLoadTime = this.sample.pageLoadTime = loadTime;
+          this.sample.pageLoadTime = loadTime;
         }
 
         this.startupTime = time;
@@ -198,7 +149,6 @@ export class Analytics {
 
         this.sendAnalyticsRequestAndClearValues();
 
-        this.sample.pageLoadType = this.pageLoadType;
         this.sample.pageLoadTime = 0;
       },
 
@@ -381,40 +331,6 @@ export class Analytics {
         }
       },
 
-      startCasting: (timestamp: number, event: any) => {
-        if (event && event.resuming) {
-          this.isAllowedToSendSamples = false;
-          logger.warning('Player started casting but a session is already casting!');
-          return;
-        }
-
-        this.isCastClient = true;
-        this.isAllowedToSendSamples = false;
-
-        const {domain, path, language, userAgent, userId, impressionId} = this.sample;
-        const castStartMessage = {
-          type: Analytics.CAST_RECEIVER_CONFIG_MESSAGE,
-          data: {
-            config: this.config,
-            userId,
-            domain,
-            path,
-            language,
-            userAgent,
-            impressionId,
-          },
-        };
-
-        this.castClient.setUp();
-        this.castClient.sendMessage(castStartMessage);
-      },
-
-      casting: () => {
-        this.isCastClient = false;
-        this.samplesQueue = [];
-        this.isAllowedToSendSamples = true;
-      },
-
       source_changing: (time: number, state: string, event: any) => {
         this.setPlaybackInfoFromAdapter();
       },
@@ -440,7 +356,15 @@ export class Analytics {
     if (this.sample.state) {
       this.sendAnalyticsRequestAndClearValues();
     }
-    this.setupSample();
+
+    // Carry over the player and version from the old sample (was detected during register)
+    const {player, version} = this.sample;
+    this.sample = {
+      ...this.setupSample(),
+      player,
+      version
+    };
+
     this.startupTime = 0;
     this.init();
 
@@ -608,8 +532,10 @@ export class Analytics {
     }
   }
 
-  setupSample() {
-    this.sample = {
+  setupSample() : Sample {
+    return {
+      playerStartupTime: 0,
+      pageLoadType: this.setPageLoadType(),
       domain: Utils.sanitizePath(window.location.hostname),
       path: Utils.sanitizePath(window.location.pathname),
       language: navigator.language || (navigator as any).userLanguage,
@@ -617,7 +543,6 @@ export class Analytics {
       screenWidth: screen.width,
       screenHeight: screen.height,
       isLive: false,
-      isCasting: this.isCastReceiver,
       videoDuration: 0,
       size: 'WINDOW',
       time: 0,
@@ -638,46 +563,15 @@ export class Analytics {
       videoStartupTime: 0,
       duration: 0,
       startupTime: 0,
-      version: this.sample.version,
-      player: this.sample.player,
-      //@ts-ignore
-      analyticsVersion: __VERSION__,
+      analyticsVersion: VERSION,
+      pageLoadTime: 0
     };
   }
 
   sendAnalyticsRequest() {
-    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
-      return;
-    }
-
     this.sample.time = Utils.getCurrentTimestamp();
-
-    if (this.licensing.status === AnalyticsLicensingStatus.GRANTED) {
-      if (!this.isCastClient && !this.isCastReceiver) {
-        this.analyticsCall.sendRequest(this.sample, Utils.noOp);
-        return;
-      }
-
-      if (!this.isAllowedToSendSamples) {
-        const copySample = {...this.sample};
-        this.samplesQueue.push(copySample);
-      } else {
-        for (let i = 0; i < this.samplesQueue.length; i++) {
-          this.analyticsCall.sendRequest(this.samplesQueue[i], Utils.noOp);
-        }
-        this.samplesQueue = [];
-
-        this.analyticsCall.sendRequest(this.sample, Utils.noOp);
-      }
-    } else if (this.licensing.status === AnalyticsLicensingStatus.WAITING) {
-      logger.log('Licensing callback still pending, waiting...');
-
-      const copySample = {...this.sample};
-
-      window.setTimeout(() => {
-        this.analyticsCall.sendRequest(copySample, Utils.noOp);
-      }, Analytics.LICENSE_CALL_PENDING_TIMEOUT);
-    }
+    const copySample = { ...this.sample };
+    this.backend.sendRequest(copySample)
   }
 
   sendAnalyticsRequestAndClearValues() {
@@ -686,26 +580,11 @@ export class Analytics {
   }
 
   sendUnloadRequest() {
-    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
-      return;
-    }
-
-    if (typeof navigator.sendBeacon === 'undefined') {
-      this.sendAnalyticsRequestSynchronous();
-    } else {
-      const success = navigator.sendBeacon(this.analyticsCall.getAnalyticsServerUrl(), JSON.stringify(this.sample));
-      if (!success) {
-        this.sendAnalyticsRequestSynchronous();
-      }
-    }
+      this.backend.sendUnloadRequest(this.sample);
   }
 
   sendAnalyticsRequestSynchronous() {
-    if (this.licensing.status === AnalyticsLicensingStatus.DENIED) {
-      return;
-    }
-
-    this.analyticsCall.sendRequestSynchronous(this.sample, Utils.noOp);
+    this.backend.sendRequestSynchronous(this.sample);
   }
 
   clearValues() {
@@ -721,7 +600,6 @@ export class Analytics {
 
     this.sample.duration = 0;
     this.sample.droppedFrames = 0;
-    this.sample.pageLoadType = 0;
 
     this.sample.drmType = undefined;
     this.sample.drmLoadTime = undefined;

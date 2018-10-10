@@ -87,7 +87,7 @@ function makeConfig() {
         __VERSION__: JSON.stringify(getGitVersion())
       })
     ],
-    watch: true
+    watch: isDevMode()
   };
 
   if (!isDevMode()) {

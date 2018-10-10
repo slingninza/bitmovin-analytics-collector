@@ -22,7 +22,5 @@ export interface StateMachineCallbacks {
   unMute: () => void;
   setVideoTimeEndFromEvent: (event: any) => void;
   setVideoTimeStartFromEvent: (event: any) => void;
-  startCasting: (timestamp: number, event: any) => void;
-  casting: () => void;
   source_changing: (time: number, state: string, event: any) => void;
 }
