@@ -298,12 +298,12 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.sample.experimentName = this.analytics.sample.experimentName;
     this.sample.key = this.analytics.sample.key;
     this.sample.pageLoadTime = this.analytics.pageLoadTime;
-    this.sample.pageLoadType = this.analytics.pageLoadType;
+    this.sample.pageLoadType = this.analytics.setPageLoadType();
     this.sample.path = this.analytics.sample.path;
     this.sample.player = this.analytics.sample.player;
     this.sample.playerKey = this.analytics.sample.playerKey;
     this.sample.playerTech = this.analytics.sample.playerTech;
-    this.sample.playerStartupTime = this.analytics.sample.playerStartupTime;
+    this.sample.playerStartupTime = this.analytics.playerStartupTime;
     this.sample.version = this.analytics.sample.version;
     this.sample.screenHeight = this.analytics.sample.screenHeight;
     this.sample.screenWidth = this.analytics.sample.screenWidth;
@@ -365,27 +365,11 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
   }
 
   sendAnalyticsRequest(sample: AdSample) {
-    if (this.analytics.licensing.status === AnalyticsLicensingStatus.DENIED) {
-      return;
-    }
 
-    sample.adImpressionId = Utils.generateUUID();
-    sample.time = Utils.getCurrentTimestamp();
+    this.sample.time = Utils.getCurrentTimestamp();
+    this.sample.adImpressionId = Utils.generateUUID();
     sample.percentageInViewport = !sample.timePlayed || sample.timePlayed === 0 ? undefined : sample.timeInViewport || 0 / sample.timePlayed;
-
-    if (this.analytics.licensing.status === AnalyticsLicensingStatus.GRANTED) {
-      if (this.analytics.licensing.isModuleAllowed(AdAnalytics.MODULE_NAME)) {
-        return;
-      }
-      this.analytics.analyticsCall.sendAdRequest(sample, Utils.noOp);
-    } else if (this.analytics.licensing.status === AnalyticsLicensingStatus.WAITING) {
-      logger.log('Licensing callback still pending, waiting...');
-
-      const copySample = {...sample};
-
-      window.setTimeout(() => {
-        this.analytics.analyticsCall.sendAdRequest(copySample, Utils.noOp);
-      }, Analytics.LICENSE_CALL_PENDING_TIMEOUT);
-    }
+    const copySample = { ...this.sample };
+    this.analytics.backend.sendAdRequest(copySample);
   }
 }
