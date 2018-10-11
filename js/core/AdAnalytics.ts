@@ -86,12 +86,11 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
   private updatePlayingTime() {
     if (this.beginPlayingTimestamp && this.isPlaying) {
-      if(this.sample.timePlayed) {
+      if(this.sample.timePlayed !== undefined) {
         this.sample.timePlayed += Utils.getCurrentTimestamp() - this.beginPlayingTimestamp;
       }
-      if (this.isContainerInViewport() && this.enterViewportTimestamp && this.sample.timeInViewport) {
-        this.sample.timeInViewport =
-          this.sample.timeInViewport + Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
+      if (this.isContainerInViewport() && this.enterViewportTimestamp && this.sample.timeInViewport !== undefined) {
+        this.sample.timeInViewport += Utils.getCurrentTimestamp() - this.enterViewportTimestamp;
       }
     }
   }
@@ -220,6 +219,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
       return;
     }
 
+    this.updatePlayingTime();
     this.sample.closed = 1;
     this.sample.closePosition = this.adapter ? this.adapter.getCurrentTimeInAd() : undefined;
     this.sendAnalyticsRequestAndClearValues();
