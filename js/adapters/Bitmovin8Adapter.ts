@@ -50,13 +50,6 @@ class Bitmovin8Adapter implements Adapter, AdAdapter {
     return 'IMAModule';
   }
 
-  getCurrentTimeInAd() {
-    if(this.player.ads && this.player.ads.currentTime) {
-      return this.player.ads.currenTime();
-    }
-    return undefined;
-   }
-
   private getAutoPlay(): boolean {
     if (this.player.getConfig().playback) {
       return this.player.getConfig().playback.autoplay || false;
@@ -285,7 +278,7 @@ class Bitmovin8Adapter implements Adapter, AdAdapter {
       this.adCallbacks.onAdFinished(event);
     });
     this.player.on(this.player.exports.PlayerEvent.AdClicked, (event: AdClickedEvent) => {
-      this.adCallbacks.onAdClicked(event);
+      this.adCallbacks.onAdClicked(event, this.player.getCurrentTime());
     });
     this.player.on(this.player.exports.PlayerEvent.AdQuartile, (event: AdQuartileEvent) => {
       this.adCallbacks.onAdQuartile(event);
@@ -303,7 +296,7 @@ class Bitmovin8Adapter implements Adapter, AdAdapter {
     window.onunload = window.onbeforeunload = () => {
       if (!this.onBeforeUnLoadEvent) {
         this.onBeforeUnLoadEvent = true;
-        this.adCallbacks.onBeforeUnload();
+        this.adCallbacks.onBeforeUnload(this.player.getCurrentTime());
         this.eventCallback(Event.UNLOAD, {
           currentTime: this.player.getCurrentTime(),
           droppedFrames: this.player.getDroppedVideoFrames(),

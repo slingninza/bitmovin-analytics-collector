@@ -7,7 +7,7 @@ export interface AdAnalyticsCallbacks {
     setAdapter: (adapter: AdAdapter) => void;
     onAdBreakFinished: (event: AdBreakEvent) => void;
     onAdBreakStarted: (event: AdBreakEvent) => void;
-    onAdClicked: (event: AdClickedEvent) => void;
+    onAdClicked: (event: AdClickedEvent, currentTime: number) => void;
     onAdError: (event: ErrorEvent) => void;
     onAdFinished: (event: AdEvent) => void;
     onAdLinearityChanged: (event: AdLinearityChangedEvent) => void;
@@ -15,5 +15,5 @@ export interface AdAnalyticsCallbacks {
     onAdQuartile: (event: AdQuartileEvent) => void;
     onAdSkipped: (event: AdEvent) => void;
     onAdStarted: (event: AdEvent) => void;
-    onBeforeUnload: () => void;
+    onBeforeUnload: (currentTime: number) => void;
 }
