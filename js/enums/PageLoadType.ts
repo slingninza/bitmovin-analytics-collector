@@ -1,0 +1,4 @@
+export enum PAGE_LOAD_TYPE {
+  FOREGROUND = 1,
+  BACKGROUND = 2,
+}

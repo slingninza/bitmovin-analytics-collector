@@ -1,3 +1,5 @@
+import { PAGE_LOAD_TYPE } from "../enums/PageLoadType";
+
 export const validString = (text: any) : boolean => {
   return text != undefined && typeof text == 'string';
 };
@@ -53,19 +55,6 @@ export const getCookie = (cname: string) : string => {
 
 export const noOp = () => {};
 
-export const getHiddenProp = () => {
-  const prefixes = ['webkit', 'moz', 'ms', 'o'];
-  if ('hidden' in document) {
-    return 'hidden';
-  }
-  for (let i = 0; i < prefixes.length; i++) {
-    if (prefixes[i] + 'Hidden' in document) {
-      return prefixes[i] + 'Hidden';
-    }
-  }
-  return null;
-};
-
 export const getCustomDataString = (customData: any): string | undefined => {
   if (typeof customData === 'object') {
     return JSON.stringify(customData);
@@ -80,3 +69,24 @@ export const getCustomDataString = (customData: any): string | undefined => {
   return customData;
 };
 
+
+const getHiddenProp = () : string | null => {
+  const prefixes = ['webkit', 'moz', 'ms', 'o'];
+  if ('hidden' in document) {
+    return 'hidden';
+  }
+  for (let i = 0; i < prefixes.length; i++) {
+    if (prefixes[i] + 'Hidden' in document) {
+      return prefixes[i] + 'Hidden';
+    }
+  }
+  return null;
+};
+
+export function getPageLoadType() : PAGE_LOAD_TYPE {
+    //@ts-ignore
+    if (document[getHiddenProp()] === true) {
+      return PAGE_LOAD_TYPE.BACKGROUND;
+    }
+    return PAGE_LOAD_TYPE.FOREGROUND
+  }
