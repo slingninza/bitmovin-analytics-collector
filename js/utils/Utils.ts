@@ -1,33 +1,33 @@
-export const validString = (text: any) => {
+export const validString = (text: any) : boolean => {
   return text != undefined && typeof text == 'string';
 };
 
-export const validBoolean = (bool: any) => {
+export const validBoolean = (bool: any) : boolean => {
   return bool != undefined && typeof bool == 'boolean';
 };
 
-export const validNumber = (num: any) => {
+export const validNumber = (num: any) : boolean => {
   return num != undefined && typeof num == 'number';
 };
 
-export const sanitizePath = (path: string) => {
+export const sanitizePath = (path: string) : string => {
   return path.replace(/\/$/g, '');
 };
 
-export const calculateTime = (time: number) => {
+export const calculateTime = (time: number) : number => {
   time = time * 1000;
   return Math.round(time);
 };
 
-export const getCurrentTimestamp = () => {
+export const getCurrentTimestamp = () : number => {
   return Date.now();
 };
 
-export const getDurationFromTimestampToNow = (timestamp: number) => {
+export const getDurationFromTimestampToNow = (timestamp: number) : number => {
   return getCurrentTimestamp() - timestamp;
 };
 
-export const generateUUID = () => {
+export const generateUUID = () : string => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = (Math.random() * 16) | 0;
     const v = c == 'x' ? r : (r & 0x3) | 0x8;
@@ -35,7 +35,7 @@ export const generateUUID = () => {
   });
 };
 
-export const getCookie = (cname: string) => {
+export const getCookie = (cname: string) : string => {
   const name = cname + '=';
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
