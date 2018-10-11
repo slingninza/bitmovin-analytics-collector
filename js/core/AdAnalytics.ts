@@ -173,7 +173,8 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
   onAdSkipped(event: AdEvent) {
     this.sample.skipped = 1;
-    this.sample.skipPosition = (<any>event).position;
+    //not possible - getRemainingTime() is -1 at this point already
+    //this.sample.skipPosition = currentTime;
     this.completeAd();
   }
 
@@ -181,7 +182,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     const {code, message, adBreak} = event.data ? event.data : event;
     this.sample.errorCode = code;
     this.sample.errorMessage = message;
-
+    
     if(adBreak) {
       this.setAdBreak(adBreak);
     }
@@ -199,9 +200,9 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) {}
 
-  onAdClicked(event: AdClickedEvent) {
+  onAdClicked(event: AdClickedEvent, currentTime: number) {
     this.sample.clicked = 1;
-    this.sample.clickPosition = (<any>event).position;
+    this.sample.clickPosition = currentTime;
   }
 
   onAdQuartile(event: AdQuartileEvent) {
@@ -214,14 +215,14 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     }
   }
 
-  onBeforeUnload() {
+  onBeforeUnload(currentTime: number) {
     if (!this.adBreak) {
       return;
     }
 
     this.updatePlayingTime();
     this.sample.closed = 1;
-    this.sample.closePosition = this.adapter ? this.adapter.getCurrentTimeInAd() : undefined;
+    this.sample.closePosition = currentTime;
     this.sendAnalyticsRequestAndClearValues();
   }
 
