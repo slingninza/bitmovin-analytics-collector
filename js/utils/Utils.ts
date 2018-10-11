@@ -1,33 +1,33 @@
-const validString = (text: any) => {
+export const validString = (text: any) => {
   return text != undefined && typeof text == 'string';
 };
 
-const validBoolean = (bool: any) => {
+export const validBoolean = (bool: any) => {
   return bool != undefined && typeof bool == 'boolean';
 };
 
-const validNumber = (num: any) => {
+export const validNumber = (num: any) => {
   return num != undefined && typeof num == 'number';
 };
 
-const sanitizePath = (path: string) => {
+export const sanitizePath = (path: string) => {
   return path.replace(/\/$/g, '');
 };
 
-const calculateTime = (time: number) => {
+export const calculateTime = (time: number) => {
   time = time * 1000;
   return Math.round(time);
 };
 
-const getCurrentTimestamp = () => {
+export const getCurrentTimestamp = () => {
   return Date.now();
 };
 
-const getDurationFromTimestampToNow = (timestamp: number) => {
+export const getDurationFromTimestampToNow = (timestamp: number) => {
   return getCurrentTimestamp() - timestamp;
 };
 
-const generateUUID = () => {
+export const generateUUID = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = (Math.random() * 16) | 0;
     const v = c == 'x' ? r : (r & 0x3) | 0x8;
@@ -35,7 +35,7 @@ const generateUUID = () => {
   });
 };
 
-const getCookie = (cname: string) => {
+export const getCookie = (cname: string) => {
   const name = cname + '=';
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
@@ -51,9 +51,9 @@ const getCookie = (cname: string) => {
   return '';
 };
 
-const noOp = () => {};
+export const noOp = () => {};
 
-const times = function(fn: Function, times: number) {
+export const times = function(fn: Function, times: number) {
   let count = 0;
   let retVal: any;
   return function() {
@@ -66,11 +66,11 @@ const times = function(fn: Function, times: number) {
   };
 };
 
-const once = (fn: Function) => {
+export const once = (fn: Function) => {
   return times(fn, 1);
 };
 
-const getHiddenProp = () => {
+export const getHiddenProp = () => {
   const prefixes = ['webkit', 'moz', 'ms', 'o'];
   if ('hidden' in document) {
     return 'hidden';
@@ -83,7 +83,7 @@ const getHiddenProp = () => {
   return null;
 };
 
-const getCustomDataString = (customData: any): string | undefined => {
+export const getCustomDataString = (customData: any): string | undefined => {
   if (typeof customData === 'object') {
     return JSON.stringify(customData);
   } else if (typeof customData === 'function') {
@@ -97,19 +97,3 @@ const getCustomDataString = (customData: any): string | undefined => {
   return customData;
 };
 
-export default {
-  validString,
-  validBoolean,
-  validNumber,
-  sanitizePath,
-  calculateTime,
-  getCurrentTimestamp,
-  getDurationFromTimestampToNow,
-  generateUUID,
-  getCookie,
-  noOp,
-  times,
-  once,
-  getHiddenProp,
-  getCustomDataString,
-};

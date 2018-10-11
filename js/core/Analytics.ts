@@ -1,4 +1,4 @@
-import Utils from '../utils/Utils';
+import * as Utils from '../utils/Utils';
 import {logger} from '../utils/Logger';
 import {AdapterFactory} from './AdapterFactory';
 import {AnalyticsStateMachineFactory} from './AnalyticsStateMachineFactory';
