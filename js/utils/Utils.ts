@@ -53,23 +53,6 @@ export const getCookie = (cname: string) : string => {
 
 export const noOp = () => {};
 
-export const times = function(fn: Function, times: number) {
-  let count = 0;
-  let retVal: any;
-  return function() {
-    if (count >= times) {
-      return retVal;
-    }
-    retVal = fn.apply(null, arguments);
-    count++;
-    return retVal;
-  };
-};
-
-export const once = (fn: Function) => {
-  return times(fn, 1);
-};
-
 export const getHiddenProp = () => {
   const prefixes = ['webkit', 'moz', 'ms', 'o'];
   if ('hidden' in document) {
