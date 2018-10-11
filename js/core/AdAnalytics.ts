@@ -241,7 +241,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
     if(adBreak.vastResponse) {
       //should always be resolved at that point
-      adBreak.vastResponse.then((vastResponse) => this.sample.manifestDownloadTime = vastResponse.downloadTime * 1000);      
+      adBreak.vastResponse.then((vastResponse) => this.sample.manifestDownloadTime = Math.round(vastResponse.downloadTime * 1000));
     }
 
     if (adBreak.position === 'pre' || adBreak.position === 'post') {
@@ -368,7 +368,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
     this.sample.time = Utils.getCurrentTimestamp();
     this.sample.adImpressionId = Utils.generateUUID();
-    sample.percentageInViewport = !sample.timePlayed || sample.timePlayed === 0 ? undefined : sample.timeInViewport || 0 / sample.timePlayed;
+    sample.percentageInViewport = !sample.timePlayed || sample.timePlayed === 0 ? undefined : Math.round(sample.timeInViewport || 0 / sample.timePlayed);
     const copySample = { ...this.sample };
     this.analytics.backend.sendAdRequest(copySample);
   }
