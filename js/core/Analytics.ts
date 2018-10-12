@@ -12,6 +12,7 @@ import {Player} from '../enums/Player';
 import {CastClientConfig} from '../types/CastClientConfig';
 import { Backend, LicenseCheckingBackend } from './Backend';
 import {VERSION} from '../Version';
+import { AdAnalytics } from './AdAnalytics';
 
 export class Analytics {
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
@@ -19,14 +20,18 @@ export class Analytics {
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';
 
   private config: AnalyicsConfig;
-  private backend: Backend
   private droppedSampleFrames: number;
   private startupTime: number;
-  private autoplay: boolean | undefined;
-  private sample: Sample;
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
+  private adAnalytics: AdAnalytics;
+
+  pageLoadTime: number = 0;
+  playerStartupTime: number = 0;
+  autoplay: boolean | undefined;
+  sample: Sample;
+  backend: Backend
 
   constructor(config: AnalyicsConfig) {
     this.config = config;
@@ -41,6 +46,8 @@ export class Analytics {
     this.sample = this.setupSample();
     this.init();
     this.setupStateMachineCallbacks();
+
+    this.adAnalytics = new AdAnalytics(this);
   }
 
   updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
@@ -418,7 +425,7 @@ export class Analytics {
     );
 
     try {
-      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine, this.adAnalytics);
     } catch (e) {
       logger.error('Bitmovin Analytics: Could not detect player', e);
       return;

@@ -7,20 +7,27 @@ import {PlaybackInfo} from '../types/PlaybackInfo';
 import { SourceInfo } from '../types/SourceInfo';
 import { ProgressiveSourceConfig } from '../types/ProgressiveSourceConfig';
 import { getSourceInfoFromBitmovinSourceConfig } from '../utils/BitmovinProgressiveSourceHelper';
+import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
+import {AdClickedEvent, AdQuartileEvent, ErrorEvent, AdEvent, AdBreakEvent} from 'bitmovin-player';
+import { AdAdapter } from '../types/AdAdapter';
 
-class Bitmovin8Adapter implements Adapter {
+class Bitmovin8Adapter implements Adapter, AdAdapter {
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: AdapterEventCallback;
   drmPerformanceInfo: DrmPerformanceInfo;
+  private adCallbacks: AdAnalyticsCallbacks;
 
-  constructor(player: any, eventCallback: AdapterEventCallback) {
+  constructor(player: any, eventCallback: AdapterEventCallback, adCallbacks: AdAnalyticsCallbacks) {
+    this.adCallbacks = adCallbacks;
     this.onBeforeUnLoadEvent = false;
     this.player = player;
     this.eventCallback = eventCallback;
     this.drmPerformanceInfo = {drmUsed: false};
     (window as any).player = this.player;
     this.register();
+    
+    this.adCallbacks.setAdapter(this);
   }
 
   getPlayerName() {
@@ -29,6 +36,18 @@ class Bitmovin8Adapter implements Adapter {
 
   getPlayerVersion() {
     return this.player.version;
+  }
+
+  isLinearAdActive() {
+    return this.player.ads && this.player.ads.isLinearAdActive();
+  }
+
+  getContainer() {
+    return this.player.getContainer();
+  }
+
+  getAdModule() {
+    return 'IMAModule';
   }
 
   private getAutoPlay(): boolean {
@@ -88,11 +107,14 @@ class Bitmovin8Adapter implements Adapter {
       });
     });
 
-    this.player.on(this.player.exports.PlayerEvent.Play, () => {
+    this.player.on(this.player.exports.PlayerEvent.Play, (e) => {
       this.eventCallback(Event.PLAY, {
         currentTime: this.player.getCurrentTime(),
         droppedFrames: this.player.getDroppedVideoFrames(),
       });
+      if(e.issuer === 'advertising-api') {
+        this.adCallbacks.onPlay(e);
+      }
     });
 
     this.player.on(this.player.exports.PlayerEvent.Playing, () => {
@@ -107,6 +129,9 @@ class Bitmovin8Adapter implements Adapter {
           currentTime: this.player.getCurrentTime(),
           droppedFrames: this.player.getDroppedVideoFrames(),
         });
+        if(e.issuer === 'advertising-api') {
+          this.adCallbacks.onPause(e);
+        }
       }
     });
 
@@ -232,9 +257,46 @@ class Bitmovin8Adapter implements Adapter {
       }
     });
 
+    this.player.on(this.player.exports.PlayerEvent.AdBreakStarted, (event: AdBreakEvent) => {
+      this.adCallbacks.onAdBreakStarted(event);
+      this.eventCallback(Event.START_AD, {
+        currentTime: this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedVideoFrames(),
+      });
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdBreakFinished, (event: AdBreakEvent) => {
+      this.adCallbacks.onAdBreakFinished(event);
+      this.eventCallback(Event.END_AD, {
+        currentTime: this.player.getCurrentTime(),
+        droppedFrames: this.player.getDroppedVideoFrames(),
+      });
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdStarted, (event: AdEvent) => {
+      this.adCallbacks.onAdStarted(event);
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdFinished, (event: AdEvent) => {
+      this.adCallbacks.onAdFinished(event);
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdClicked, (event: AdClickedEvent) => {
+      this.adCallbacks.onAdClicked(event, this.player.getCurrentTime());
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdQuartile, (event: AdQuartileEvent) => {
+      this.adCallbacks.onAdQuartile(event);
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdSkipped, (event: AdEvent) => {
+      this.adCallbacks.onAdSkipped(event);
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdError, (event: ErrorEvent) => {
+      this.adCallbacks.onAdError(event);
+    });
+    this.player.on(this.player.exports.PlayerEvent.AdManifestLoaded, (event: AdBreakEvent) => {
+      this.adCallbacks.onAdManifestLoaded(event);
+    });
+
     window.onunload = window.onbeforeunload = () => {
       if (!this.onBeforeUnLoadEvent) {
         this.onBeforeUnLoadEvent = true;
+        this.adCallbacks.onBeforeUnload(this.player.getCurrentTime());
         this.eventCallback(Event.UNLOAD, {
           currentTime: this.player.getCurrentTime(),
           droppedFrames: this.player.getDroppedVideoFrames(),
