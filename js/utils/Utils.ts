@@ -1,33 +1,35 @@
-const validString = (text: any) => {
+import { PAGE_LOAD_TYPE } from "../enums/PageLoadType";
+
+export const validString = (text: any) : boolean => {
   return text != undefined && typeof text == 'string';
 };
 
-const validBoolean = (bool: any) => {
+export const validBoolean = (bool: any) : boolean => {
   return bool != undefined && typeof bool == 'boolean';
 };
 
-const validNumber = (num: any) => {
+export const validNumber = (num: any) : boolean => {
   return num != undefined && typeof num == 'number';
 };
 
-const sanitizePath = (path: string) => {
+export const sanitizePath = (path: string) : string => {
   return path.replace(/\/$/g, '');
 };
 
-const calculateTime = (time: number) => {
+export const calculateTime = (time: number) : number => {
   time = time * 1000;
   return Math.round(time);
 };
 
-const getCurrentTimestamp = () => {
+export const getCurrentTimestamp = () : number => {
   return Date.now();
 };
 
-const getDurationFromTimestampToNow = (timestamp: number) => {
+export const getDurationFromTimestampToNow = (timestamp: number) : number => {
   return getCurrentTimestamp() - timestamp;
 };
 
-const generateUUID = () => {
+export const generateUUID = () : string => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = (Math.random() * 16) | 0;
     const v = c == 'x' ? r : (r & 0x3) | 0x8;
@@ -35,7 +37,7 @@ const generateUUID = () => {
   });
 };
 
-const getCookie = (cname: string) => {
+export const getCookie = (cname: string) : string => {
   const name = cname + '=';
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
@@ -51,39 +53,9 @@ const getCookie = (cname: string) => {
   return '';
 };
 
-const noOp = () => {};
+export const noOp = () => {};
 
-const times = function(fn: Function, times: number) {
-  let count = 0;
-  let retVal: any;
-  return function() {
-    if (count >= times) {
-      return retVal;
-    }
-    retVal = fn.apply(null, arguments);
-    count++;
-    return retVal;
-  };
-};
-
-const once = (fn: Function) => {
-  return times(fn, 1);
-};
-
-const getHiddenProp = () => {
-  const prefixes = ['webkit', 'moz', 'ms', 'o'];
-  if ('hidden' in document) {
-    return 'hidden';
-  }
-  for (let i = 0; i < prefixes.length; i++) {
-    if (prefixes[i] + 'Hidden' in document) {
-      return prefixes[i] + 'Hidden';
-    }
-  }
-  return null;
-};
-
-const getCustomDataString = (customData: any): string | undefined => {
+export const getCustomDataString = (customData: any): string | undefined => {
   if (typeof customData === 'object') {
     return JSON.stringify(customData);
   } else if (typeof customData === 'function') {
@@ -97,19 +69,24 @@ const getCustomDataString = (customData: any): string | undefined => {
   return customData;
 };
 
-export default {
-  validString,
-  validBoolean,
-  validNumber,
-  sanitizePath,
-  calculateTime,
-  getCurrentTimestamp,
-  getDurationFromTimestampToNow,
-  generateUUID,
-  getCookie,
-  noOp,
-  times,
-  once,
-  getHiddenProp,
-  getCustomDataString,
+
+const getHiddenProp = () : string | null => {
+  const prefixes = ['webkit', 'moz', 'ms', 'o'];
+  if ('hidden' in document) {
+    return 'hidden';
+  }
+  for (let i = 0; i < prefixes.length; i++) {
+    if (prefixes[i] + 'Hidden' in document) {
+      return prefixes[i] + 'Hidden';
+    }
+  }
+  return null;
 };
+
+export function getPageLoadType() : PAGE_LOAD_TYPE {
+    //@ts-ignore
+    if (document[getHiddenProp()] === true) {
+      return PAGE_LOAD_TYPE.BACKGROUND;
+    }
+    return PAGE_LOAD_TYPE.FOREGROUND
+  }

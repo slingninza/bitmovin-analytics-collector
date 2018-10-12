@@ -1,4 +1,4 @@
-import Utils from '../utils/Utils';
+import * as Utils from '../utils/Utils';
 import {logger} from '../utils/Logger';
 import {AdapterFactory} from './AdapterFactory';
 import {AnalyticsStateMachineFactory} from './AnalyticsStateMachineFactory';
@@ -13,10 +13,6 @@ import {CastClientConfig} from '../types/CastClientConfig';
 import { Backend, LicenseCheckingBackend } from './Backend';
 import {VERSION} from '../Version';
 
-enum PAGE_LOAD_TYPE {
-  FOREGROUND = 1,
-  BACKGROUND = 2,
-}
 export class Analytics {
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
@@ -63,14 +59,6 @@ export class Analytics {
     sample.language = language;
 
     this.setConfigParameters(sample, config);
-  }
-
-  setPageLoadType() : PAGE_LOAD_TYPE {
-    //@ts-ignore
-    if (document[Utils.getHiddenProp()] === true) {
-      return PAGE_LOAD_TYPE.BACKGROUND;
-    }
-    return PAGE_LOAD_TYPE.FOREGROUND
   }
 
   init() {
@@ -531,7 +519,7 @@ export class Analytics {
   setupSample() : Sample {
     return {
       playerStartupTime: 0,
-      pageLoadType: this.setPageLoadType(),
+      pageLoadType: Utils.getPageLoadType(),
       domain: Utils.sanitizePath(window.location.hostname),
       path: Utils.sanitizePath(window.location.pathname),
       language: navigator.language || (navigator as any).userLanguage,
