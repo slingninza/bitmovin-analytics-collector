@@ -1,9 +1,8 @@
-import {Analytics} from './Analytics';
+ import {Analytics} from './Analytics';
 import {AdSample} from '../types/AdSample';
 import {AnalyticsLicensingStatus} from '../enums/AnalyticsLicensingStatus';
 import * as Utils from '../utils/Utils';
 import {logger} from '../utils/Logger';
-import {AdAnalyticsCallbacks} from '../types/AdAnalyticsCallbacks';
 import {Adapter} from '../types/Adapter';
 import {ViewportTracker} from '../utils/ViewportTracker';
 import {
@@ -22,10 +21,13 @@ import {AdData} from '../types/AdData';
 
 declare var __VERSION__: any;
 
-export class AdAnalytics implements AdAnalyticsCallbacks {
+export class AdAnalytics {
   static readonly MODULE_NAME = 'ads';
 
   private analytics: Analytics;
+  private adapter: AdAdapter;
+  private viewportTracker: ViewportTracker;
+
   private sample: AdSample = {
     clicked: 0,
     closed: 0,
@@ -36,31 +38,33 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     skipped: 0,
     started: 0
   };
-  private container?: HTMLElement;
-  private viewportTracker?: ViewportTracker;
+
   private adBreak?: any;
   private adStartupTimestamp?: number;
   private beginPlayingTimestamp?: number;
   private enterViewportTimestamp?: number;
   private isPlaying: boolean = false;
-  private adapter?: AdAdapter;
 
-  constructor(analytics: Analytics) {
+  constructor(analytics: Analytics, adapter: AdAdapter) {
     this.analytics = analytics;
-  }
+    this.adapter = adapter;
 
-  setAdapter(adAdapter: AdAdapter) {
-    this.adapter = adAdapter;
+    this.adapter.onAdStarted = this.onAdStarted;
+    this.adapter.onAdFinished = this.onAdFinished;
+    this.adapter.onAdBreakStarted = this.onAdBreakStarted;
+    this.adapter.onAdBreakFinished = this.onAdBreakFinished;
+    this.adapter.onAdClicked = this.onAdClicked;
+    this.adapter.onAdError = this.onAdError;
+    this.adapter.onAdManifestLoaded = this.onAdManifestLoaded;
+    this.adapter.onPlay = this.onPlay;
+    this.adapter.onPause = this.onPause;
+    this.adapter.onBeforeUnload = this.onBeforeUnload;
+    this.adapter.onAdSkipped = this.onAdSkipped;
+    this.adapter.onAdQuartile = this.onAdQuartile;
 
-    if (this.viewportTracker) {
-      this.viewportTracker.dispose();
-    }
-
-    this.container = this.adapter.getContainer();
+    this.viewportTracker = new ViewportTracker(this.adapter.getContainer(), () => this.onIntersectionChanged(), 0.5);
+    
     this.sample.adModule = this.adapter.getAdModule();
-    if (this.container) {
-      this.viewportTracker = new ViewportTracker(this.container, () => this.onIntersectionChanged(), 0.5);
-    }
   }
 
   onIntersectionChanged() {
@@ -200,9 +204,9 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
 
   onAdLinearityChanged(event: AdLinearityChangedEvent) {}
 
-  onAdClicked(event: AdClickedEvent, currentTime: number) {
+  onAdClicked(event: AdClickedEvent) {
     this.sample.clicked = 1;
-    this.sample.clickPosition = currentTime;
+    //this.sample.clickPosition = currentTime;
   }
 
   onAdQuartile(event: AdQuartileEvent) {
@@ -215,14 +219,14 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     }
   }
 
-  onBeforeUnload(currentTime: number) {
+  onBeforeUnload() {
     if (!this.adBreak) {
       return;
     }
 
     this.updatePlayingTime();
     this.sample.closed = 1;
-    this.sample.closePosition = currentTime;
+    //this.sample.closePosition = currentTime;
     this.sendAnalyticsRequestAndClearValues();
   }
 

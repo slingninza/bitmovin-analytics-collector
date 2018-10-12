@@ -13,6 +13,7 @@ import {CastClientConfig} from '../types/CastClientConfig';
 import { Backend, LicenseCheckingBackend } from './Backend';
 import {VERSION} from '../Version';
 import { AdAnalytics } from './AdAnalytics';
+import { AdAdapter } from '../types/AdAdapter';
 
 export class Analytics {
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
@@ -25,7 +26,6 @@ export class Analytics {
   private stateMachineCallbacks!: StateMachineCallbacks;
   private analyticsStateMachine!: AnalyticsStateMachine;
   private adapter!: Adapter;
-  private adAnalytics: AdAnalytics;
 
   pageLoadTime: number = 0;
   playerStartupTime: number = 0;
@@ -46,8 +46,6 @@ export class Analytics {
     this.sample = this.setupSample();
     this.init();
     this.setupStateMachineCallbacks();
-
-    this.adAnalytics = new AdAnalytics(this);
   }
 
   updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
@@ -425,7 +423,10 @@ export class Analytics {
     );
 
     try {
-      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine, this.adAnalytics);
+      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
+      if(this.adapter instanceof AdAdapter) {
+        new AdAnalytics(this, this.adapter);
+      }
     } catch (e) {
       logger.error('Bitmovin Analytics: Could not detect player', e);
       return;

@@ -9,7 +9,6 @@ import {Adapter} from '../types/Adapter';
 import {AnalyticsStateMachine} from '../types/AnalyticsStateMachine';
 import { VideojsAnalyticsStateMachine } from '../analyticsStateMachines/VideoJsAnalyticsStateMachine';
 import { HTML5AnalyticsStateMachine } from '../analyticsStateMachines/HTML5AnalyticsStateMachine';
-import { AdAnalyticsCallbacks } from '../types/AdAnalyticsCallbacks';
 
 /**
  * Stateless. Auto-maps given player instance to new adapter instances.
@@ -21,11 +20,11 @@ export class AdapterFactory {
    * @param {AnalyticsEventCallback} eventCallback
    * @param {AnalyticsStateMachine} stateMachine
    */
-  static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine, adCallbacks: AdAnalyticsCallbacks): Adapter {
+  static getAdapter(player: any, eventCallback: any, stateMachine: AnalyticsStateMachine): Adapter {
     if (PlayerDetector.isBitmovinVersion7Plus(player)) {
       return new Bitmovin7Adapter(player, eventCallback);
     } else if (PlayerDetector.isBitmovinVersion8Plus(player)) {
-      return new Bitmovin8Adapter(player, eventCallback, adCallbacks);
+      return new Bitmovin8Adapter(player, eventCallback);
     } else if (PlayerDetector.isVideoJs(player)) {
       return new VideoJsAdapter(player, eventCallback, stateMachine as VideojsAnalyticsStateMachine);
     } else if (PlayerDetector.isHlsjs(player)) {
