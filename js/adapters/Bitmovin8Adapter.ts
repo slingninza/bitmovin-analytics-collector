@@ -10,14 +10,28 @@ import { getSourceInfoFromBitmovinSourceConfig } from '../utils/BitmovinProgress
 import {AdClickedEvent, AdQuartileEvent, ErrorEvent, AdEvent, AdBreakEvent} from 'bitmovin-player';
 import { AdAdapter } from '../types/AdAdapter';
 
-class Bitmovin8Adapter extends AdAdapter implements Adapter {
+class Bitmovin8Adapter implements Adapter, AdAdapter {
+
   onBeforeUnLoadEvent: boolean;
   player: any;
   eventCallback: AdapterEventCallback;
   drmPerformanceInfo: DrmPerformanceInfo;
 
+  onAdStarted: (event: AdEvent) => void = () => {};
+  onAdFinished: (event: AdEvent) => void = () => {};
+  onAdBreakStarted: (event: AdBreakEvent) => void = () => {};
+  onAdBreakFinished: (event: AdBreakEvent) => void = () => {};
+  onAdClicked: (event: AdClickedEvent) => void = () => {};
+  onAdError: (event: ErrorEvent) => void = () => {};
+  onAdManifestLoaded: (event: AdBreakEvent) => void = () => {};
+  onAdQuartile: (event: AdQuartileEvent) => void = () => {};
+  onAdSkipped: (event: AdEvent) => void = () => {};
+  onPlay: (issuer: string) => void = () => {};
+  onPause: (issuer: string) => void = () => {};
+  onBeforeUnload: () => void = () => {};
+  getAdAdapter = (): AdAdapter => this;
+
   constructor(player: any, eventCallback: AdapterEventCallback) {
-    super();
 
     this.onBeforeUnLoadEvent = false;
     this.player = player;

@@ -424,8 +424,9 @@ export class Analytics {
 
     try {
       this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine);
-      if(this.adapter instanceof AdAdapter) {
-        new AdAnalytics(this, this.adapter);
+      const adAdapter = this.adapter.getAdAdapter && this.adapter.getAdAdapter();
+      if(adAdapter) {
+        new AdAnalytics(this, adAdapter);
       }
     } catch (e) {
       logger.error('Bitmovin Analytics: Could not detect player', e);
