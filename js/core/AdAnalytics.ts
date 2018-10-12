@@ -1,7 +1,7 @@
 import {Analytics} from './Analytics';
 import {AdSample} from '../types/AdSample';
 import {AnalyticsLicensingStatus} from '../enums/AnalyticsLicensingStatus';
-import Utils from '../utils/Utils';
+import * as Utils from '../utils/Utils';
 import {logger} from '../utils/Logger';
 import {AdAnalyticsCallbacks} from '../types/AdAnalyticsCallbacks';
 import {Adapter} from '../types/Adapter';
@@ -299,7 +299,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     this.sample.experimentName = this.analytics.sample.experimentName;
     this.sample.key = this.analytics.sample.key;
     this.sample.pageLoadTime = this.analytics.pageLoadTime;
-    this.sample.pageLoadType = this.analytics.setPageLoadType();
+    this.sample.pageLoadType = Utils.getPageLoadType();
     this.sample.path = this.analytics.sample.path;
     this.sample.player = this.analytics.sample.player;
     this.sample.playerKey = this.analytics.sample.playerKey;
