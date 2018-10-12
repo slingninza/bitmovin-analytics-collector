@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [development]
 
+### Added
+
+- Ad Tracking with Player v8
 
 ### Fixed
 - Unsmooth audio track switching
