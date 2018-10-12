@@ -2,15 +2,15 @@ import * as Utils from "./Utils";
 
 export class ViewportTracker {
 
-    private onIntersectionChanged: any;
+    private onIntersectionChanged: () => void;
     private observer: IntersectionObserver;
     private element: HTMLElement;
     private inViewport?: boolean = undefined;
     private threshold: number;
-    private hidden?: string;
+    private hidden: string | null;
     private visibilityChange?: string;
 
-    constructor(element: HTMLElement, onIntersectionChanged: any, threshold: number = 1.0) {
+    constructor(element: HTMLElement, onIntersectionChanged: () => void, threshold: number = 1.0) {
         this.threshold = threshold;
         this.onIntersectionChanged = onIntersectionChanged;
         this.element = element;
