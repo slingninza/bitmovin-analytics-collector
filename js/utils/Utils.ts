@@ -69,7 +69,7 @@ export const getCustomDataString = (customData: any): string | undefined => {
   return customData;
 };
 
-const getHiddenProp = (): string | null => {
+export const getHiddenProp = (): string | null => {
   const prefixes = ['webkit', 'moz', 'ms', 'o'];
   if ('hidden' in document) {
     return 'hidden';
