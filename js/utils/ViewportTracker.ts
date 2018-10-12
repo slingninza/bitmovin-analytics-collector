@@ -1,4 +1,4 @@
-import Utils from "./Utils";
+import * as Utils from "./Utils";
 
 export class ViewportTracker {
 

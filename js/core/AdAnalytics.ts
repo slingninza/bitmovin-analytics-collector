@@ -74,11 +74,11 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     }
   }
 
-  isContainerInViewport(): boolean | undefined {
+  isContainerInViewport(): boolean {
     return this.viewportTracker ? this.viewportTracker.isInViewport() : true;
   }
 
-  onPlay(e) {
+  onPlay() {
     if (this.adapter && this.adapter.isLinearAdActive()) {
       this.startAd();
     }
@@ -95,7 +95,7 @@ export class AdAnalytics implements AdAnalyticsCallbacks {
     }
   }
 
-  onPause(e) {
+  onPause() {
     if (this.adapter && this.adapter.isLinearAdActive()) {
       this.updatePlayingTime();
       this.isPlaying = false;
