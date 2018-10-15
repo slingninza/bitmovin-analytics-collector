@@ -15,6 +15,7 @@ import {VERSION} from '../Version';
 import { AdAnalytics } from './AdAnalytics';
 
 export class Analytics {
+  public static version: string = VERSION;
   static LICENSE_CALL_PENDING_TIMEOUT = 200;
   static PAGE_LOAD_TYPE_TIMEOUT = 200;
   static CAST_RECEIVER_CONFIG_MESSAGE = 'CAST_RECEIVER_CONFIG_MESSAGE';

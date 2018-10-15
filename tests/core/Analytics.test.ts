@@ -1,7 +1,8 @@
 import { Analytics } from "../../js/core/Analytics";
 
 describe('Analytics', () => {
-    test('it calls the http post method', () => {
+    test('has a version property', () => {
+        expect(Analytics.version).toBeDefined()
         expect(Analytics.version).toEqual("version")
     });
 });
