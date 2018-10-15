@@ -41,9 +41,14 @@ export const AnalyticsModule = {
     setup: (module: any, player: any) => {
       const analyticsModule = module.Analytics;
       const config = player.getConfig();
+      const analyticsConfig = config.analytics;
 
-      new analyticsModule(config, player);
-      return Promise.resolve();
+      if (!analyticsConfig) {
+        return Promise.resolve();
+      }
+
+      const analyticsInstance = new analyticsModule(analyticsConfig, player);
+      return Promise.resolve(analyticsInstance);
     },
   },
 };
