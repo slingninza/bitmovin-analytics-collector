@@ -16,10 +16,7 @@ describe('AnalyticsModule', () => {
         })
         describe('setup', () => {
             test('retrieves player config and calls new Analytics()', () => {
-                const analyticsConfig = {
-                    key: 'FOO'
-                }
-                const config = {analytics: analyticsConfig};
+                const config = {};
                 const player = {
                     getConfig: jest.fn(() => config)
                 }
@@ -27,23 +24,23 @@ describe('AnalyticsModule', () => {
                 return AnalyticsModule.hooks.setup(module, player).then(() => {
                     expect(player.getConfig).toHaveBeenCalled()
                     expect(module.Analytics).toHaveBeenCalledTimes(1)
-                    expect(module.Analytics).toHaveBeenLastCalledWith(analyticsConfig, player)
+                    expect(module.Analytics).toHaveBeenLastCalledWith(config, player)
                 });
             })
 
-            test('it does not instantiate analytics if analytics config is not present', () => {
+            test('it tries to instantiate analytics if analytics config is not present', () => {
                 const config = {};
                 const player = {
                     getConfig: jest.fn(() => config)
                 }
                 const module = { Analytics: jest.fn() }
                 return AnalyticsModule.hooks.setup(module, player).then(() => {
-                    expect(module.Analytics).not.toHaveBeenCalled()
+                    expect(module.Analytics).toHaveBeenCalled()
                 });
             })
 
             test('return Promise resolves to return value of module', () => {
-                const config = { analytics: {} };
+                const config = {};
                 const player = {
                     getConfig: jest.fn(() => config)
                 }
