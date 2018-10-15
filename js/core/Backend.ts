@@ -16,8 +16,6 @@ export interface Backend {
 
 
 class NoOpBackend implements Backend {
-  constructor() {
-  }
   sendRequest(sample: Sample) {}
   sendUnloadRequest(sample: Sample) {}
   sendRequestSynchronous(sample: Sample) {}
