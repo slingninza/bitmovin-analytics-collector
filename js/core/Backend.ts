@@ -102,14 +102,16 @@ export class RemoteBackend implements Backend {
 
 export class LicenseCheckingBackend implements Backend {
   backend: Backend
-  constructor(info: LicensingRequest) {
+  licenseCall: (key: string, domain: string, version: string) => Promise<LicensingResponse>
+  promise: Promise<LicensingResponse>
+  constructor(info: LicensingRequest, licenseCall: (key: string, domain: string, version: string) => Promise<LicensingResponse>) {
     this.backend = new QueueBackend();
-    this.performLicenseCheck(info);
+    this.licenseCall = licenseCall;
+    this.promise = this.performLicenseCheck(info.key, info.domain, info.version);
   }
 
-  async performLicenseCheck(info: LicensingRequest) {
-    try {
-      const result = await LicenseCall(info.key, info.domain, info.version);
+  performLicenseCheck(key: string, domain: string, version: string): Promise<LicensingResponse> {
+    return this.licenseCall(key, domain, version).then(result => {
       if (result.status === LicensingResult.Granted) {
         const remoteBackend = new RemoteBackend(true);
         (this.backend as QueueBackend).flushTo(remoteBackend);
@@ -117,10 +119,12 @@ export class LicenseCheckingBackend implements Backend {
       } else {
         throw new Error(result.message);
       }
-    } catch (e) {
-      logger.errorMessageTouser("License Check for Bitmovin Analytics failed because of ", e)
+      return result;
+    }).catch(err => {
+      logger.errorMessageTouser("License Check for Bitmovin Analytics failed because of ", err);
       this.backend = new NoOpBackend();
-    }
+      return err;
+    });
   }
 
   sendRequest(sample: Sample) {
