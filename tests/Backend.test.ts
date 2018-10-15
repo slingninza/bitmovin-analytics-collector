@@ -76,12 +76,5 @@ describe('LicenseCheckingBackend',  () => {
                 })
             })
         })
-
-
-        //test('it queues requests until the LicenseCall resolves', () => {
-        //    const mockLicenseCall = jest.fn().mockResolvedValue(granted);
-        //    const backend = new LicenseCheckingBackend(validLicensingRequest, mockLicenseCall);
-        //    expect(backend.backend).toBeInstanceOf(RemoteBackend);
-        //});
     });
 });
