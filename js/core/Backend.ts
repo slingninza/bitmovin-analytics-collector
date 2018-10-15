@@ -15,14 +15,14 @@ export interface Backend {
 }
 
 
-class NoOpBackend implements Backend {
+export class NoOpBackend implements Backend {
   sendRequest(sample: Sample) {}
   sendUnloadRequest(sample: Sample) {}
   sendRequestSynchronous(sample: Sample) {}
   sendAdRequest(sample: AdSample) {}
 }
 
-class QueueBackend implements Backend {
+export class QueueBackend implements Backend {
   queue: Sample[] = []
   unloadQueue: Sample[] = []
   syncQueue: Sample[] = []
@@ -57,7 +57,7 @@ class QueueBackend implements Backend {
   }
 }
 
-class RemoteBackend implements Backend {
+export class RemoteBackend implements Backend {
   analyticsCall: AnalyticsCall
   hasAdModule: boolean;
 
