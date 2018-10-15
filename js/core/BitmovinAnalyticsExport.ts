@@ -53,11 +53,11 @@ export const AnalyticsModule = {
   },
 };
 
-//(analyticsWrapper as any).Players = Player;
-//(analyticsWrapper as any).CdnProviders = CdnProvider;
-//(analyticsWrapper as any).PlayerModule = AnalyticsModule;
-//(analyticsWrapper as any).version = VERSION;
-//
+export { Player as Players };
+export { CdnProvider as CdnProvider };
+export { AnalyticsModule as PlayerModule };
+export { VERSION as version };
+
 //(window as any).bitmovin = (window as any).bitmovin || {};
 //(window as any).bitmovin.analytics = analyticsWrapper;
 //
