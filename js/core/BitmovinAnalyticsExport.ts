@@ -12,7 +12,7 @@ export class AnalyticsPlayerModule {
       return;
     }
 
-    const analytics = new Analytics(config as AnalyicsConfig, player);
+    const analytics = new Analytics(analyticsConfig as AnalyicsConfig, player);
     // assign the analytics object to the player
     player.analytics = analytics;
     this.wrapPlayerLoad(player, analytics);
@@ -53,7 +53,10 @@ export { CdnProvider as CdnProvider };
 export { AnalyticsModule as PlayerModule };
 export { VERSION as version };
 
-//(window as any).bitmovin = (window as any).bitmovin || {};
-//(window as any).bitmovin.analytics = analyticsWrapper;
+
+(window as any).bitmovin = (window as any).bitmovin || {};
+(window as any).bitmovin.analytics = (window as any).bitmovin.analytics  || {};
+(window as any).bitmovin.analytics.PlayerModule = AnalyticsModule;
+
 //
 //export default analyticsWrapper;
