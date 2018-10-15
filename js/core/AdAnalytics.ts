@@ -43,18 +43,18 @@ export class AdAnalytics {
     this.analytics = analytics;
     this.adapter = adapter;
 
-    this.adapter.onAdStarted = this.onAdStarted;
-    this.adapter.onAdFinished = this.onAdFinished;
-    this.adapter.onAdBreakStarted = this.onAdBreakStarted;
-    this.adapter.onAdBreakFinished = this.onAdBreakFinished;
-    this.adapter.onAdClicked = this.onAdClicked;
-    this.adapter.onAdError = this.onAdError;
-    this.adapter.onAdManifestLoaded = this.onAdManifestLoaded;
-    this.adapter.onPlay = this.onPlay;
-    this.adapter.onPause = this.onPause;
-    this.adapter.onBeforeUnload = this.onBeforeUnload;
-    this.adapter.onAdSkipped = this.onAdSkipped;
-    this.adapter.onAdQuartile = this.onAdQuartile;
+    this.adapter.onAdStarted = (event) => this.onAdStarted(event);
+    this.adapter.onAdFinished = (event) => this.onAdFinished(event);
+    this.adapter.onAdBreakStarted = (event) => this.onAdBreakStarted(event);
+    this.adapter.onAdBreakFinished = (event) => this.onAdBreakFinished(event);
+    this.adapter.onAdClicked = (event) => this.onAdClicked(event);
+    this.adapter.onAdError = (event) => this.onAdError(event);
+    this.adapter.onAdManifestLoaded = (event) => this.onAdManifestLoaded(event);
+    this.adapter.onPlay = () => this.onPlay();
+    this.adapter.onPause = () => this.onPause();
+    this.adapter.onBeforeUnload = () => this.onBeforeUnload();
+    this.adapter.onAdSkipped = (event) => this.onAdSkipped(event);
+    this.adapter.onAdQuartile = (event) => this.onAdQuartile(event);
 
     this.viewportTracker = new ViewportTracker(this.adapter.getContainer(), () => this.onIntersectionChanged(), 0.5);
   }
