@@ -49,6 +49,16 @@ export class AdSample {
   universalAdIdValue?: string;
   videoBitrate?: number;
   adSkipAfter?: number;
+  adBreakPosition?: number;
+  exitPosition?: number;
+  playPercentage?: number;
+  skipPercentage?: number;
+  clickPercentage?: number;
+  closePercentage?: number;
+  errorPosition?: number;
+  errorPercentage?: number;
+  timeToContent?: number;
+  timeFromContent?: number;
 }
 
 export class AdBreakSample {
