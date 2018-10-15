@@ -13,6 +13,7 @@ import {CastClientConfig} from '../types/CastClientConfig';
 import { Backend, LicenseCheckingBackend } from './Backend';
 import {VERSION} from '../Version';
 import { AdAnalytics } from './AdAnalytics';
+import { LicenseCall } from '../utils/LicenseCall';
 
 export class Analytics {
   public static version: string = VERSION;
@@ -38,7 +39,7 @@ export class Analytics {
     this.config = config;
 
     const domain = Utils.sanitizePath(window.location.hostname);
-    this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: VERSION });
+    this.backend = new LicenseCheckingBackend({ key: config.key, domain: domain, version: VERSION }, LicenseCall);
     this.droppedSampleFrames = 0;
     this.startupTime = 0;
 
