@@ -35,7 +35,7 @@ export class Analytics {
   sample: Sample;
   backend: Backend
 
-  constructor(config: AnalyicsConfig) {
+  constructor(config: AnalyicsConfig, player: any) {
     this.config = config;
 
     const domain = Utils.sanitizePath(window.location.hostname);
@@ -50,6 +50,24 @@ export class Analytics {
     this.setupStateMachineCallbacks();
 
     this.adAnalytics = new AdAnalytics(this);
+
+    try {
+      this.analyticsStateMachine = AnalyticsStateMachineFactory.getAnalyticsStateMachine(player, this.stateMachineCallbacks, { starttime: undefined });
+      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine, this.adAnalytics);
+    } catch (e) {
+      logger.error("Bitmovin Analytics: Could not detect player", e);
+    }
+
+    this.setSamplePlayerAndVersionFromAdapter(this.adapter);
+  }
+
+  setSamplePlayerAndVersionFromAdapter(adapter: Adapter) {
+    if (!this.sample.player) {
+      this.sample.player = adapter.getPlayerName();
+    }
+    if (!this.sample.version) {
+      this.sample.version = this.sample.player + '-' + adapter.getPlayerVersion();
+    }
   }
 
   updateSamplesToCastClientConfig(samples: Sample[], castClientConfig: CastClientConfig) {
@@ -409,35 +427,6 @@ export class Analytics {
       ...filterValues(values),
     };
     this.setConfigParameters();
-  };
-
-  register = (player: any, opts?: AnalyticsStateMachineOptions) => {
-    if (!opts) {
-      opts = {
-        starttime: undefined,
-      };
-    }
-    if (!opts.starttime) {
-      opts.starttime = Utils.getCurrentTimestamp();
-    }
-    this.analyticsStateMachine = AnalyticsStateMachineFactory.getAnalyticsStateMachine(
-      player,
-      this.stateMachineCallbacks,
-      opts
-    );
-
-    try {
-      this.adapter = AdapterFactory.getAdapter(player, this.record, this.analyticsStateMachine, this.adAnalytics);
-    } catch (e) {
-      logger.error('Bitmovin Analytics: Could not detect player', e);
-      return;
-    }
-    if (!this.sample.player) {
-      this.sample.player = this.adapter.getPlayerName();
-    }
-    if (!this.sample.version) {
-      this.sample.version = this.sample.player + '-' + this.adapter.getPlayerVersion();
-    }
   };
 
   getCurrentImpressionId = (): string | undefined => {
