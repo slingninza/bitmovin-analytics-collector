@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Ad Tracking with Player v8
+- `AnalyticsPlayerModule` class
+- `Analytics.version` returns the version of the analytics collector
+
+### Removed
+
+- `.augment` syntax removed in favor of ES6 classes
+- `.register` syntax removed in favor of ES6 classes 
+- `window.bitmovin.analytics`
+- `window.bitmovin.analytics.Players`
+- `window.bitmovin.analytics.CdnProviders`
+- `window.bitmovin.analytics.PlayerModule`
+- `window.bitmovin.analytics.version`
 
 ### Fixed
 - Unsmooth audio track switching
