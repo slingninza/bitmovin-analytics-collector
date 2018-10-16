@@ -243,7 +243,7 @@ export class AdAnalytics {
 
     this.adSample.closed = 1;
     this.adSample.closePosition = this.currentTime;
-    this.adSample.closePercentage = Utils.calculatePercentage(this.adSample.closePercentage, this.adSample.adDuration);
+    this.adSample.closePercentage = Utils.calculatePercentage(this.adSample.closePosition, this.adSample.adDuration);
     this.completeAd(this.adSample.closePosition);
   }
 
