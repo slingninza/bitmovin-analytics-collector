@@ -49,7 +49,7 @@ export class AdSample {
   universalAdIdValue?: string;
   videoBitrate?: number;
   adSkipAfter?: number;
-  adBreakPosition?: number;
+  adPodPosition?: number;
   exitPosition?: number;
   playPercentage?: number;
   skipPercentage?: number;
@@ -110,4 +110,36 @@ export class AdAnalyticsSample {
   pageLoadTime?: number;
   pageLoadType?: number;
   autoplay?: boolean;
+  
+  constructor(sample?: Sample) {
+    if(!sample) {
+      return;
+    }
+    this.videoImpressionId = sample.impressionId;
+    this.userAgent = sample.userAgent;
+    this.language = sample.language;
+    this.cdnProvider = sample.cdnProvider;
+    this.customData1 = sample.customData1;
+    this.customData2 = sample.customData2;
+    this.customData3 = sample.customData3;
+    this.customData4 = sample.customData4;
+    this.customData5 = sample.customData5;
+    this.customUserId = sample.customUserId;
+    this.domain = sample.domain;
+    this.experimentName = sample.experimentName;
+    this.key = sample.key;
+    this.path = sample.path;
+    this.player = sample.player;
+    this.playerKey = sample.playerKey;
+    this.playerTech = sample.playerTech;
+    this.screenHeight = sample.screenHeight;
+    this.screenWidth = sample.screenWidth;
+    this.version = sample.version;
+    this.size = sample.size;
+    this.userId = sample.userId;
+    this.videoId = sample.videoId;
+    this.videoTitle = sample.videoTitle;
+    this.videoWindowHeight = sample.videoWindowHeight;
+    this.videoWindowWidth = sample.videoWindowWidth;
+  }
 }

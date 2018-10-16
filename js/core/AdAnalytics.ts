@@ -273,17 +273,16 @@ export class AdAnalytics {
   }
 
   createNewAdAnalyticsSample(analyticsSample: Sample): AdAnalyticsSample {
+    
     return {
-      //todo extract the actual values as we can't just set everything automatically here
-      ...(<AdAnalyticsSample>analyticsSample),
-      videoImpressionId: analyticsSample.impressionId,
+      ...new AdAnalyticsSample(analyticsSample),
       analyticsVersion: __VERSION__,
       adModule: this.adapter.getAdModule(),
       playerStartupTime: this.analytics.playerStartupTime,
       pageLoadTime: this.analytics.pageLoadTime,
       autoplay: this.analytics.autoplay,
       pageLoadType: Utils.getPageLoadType()
-    };
+    }
   }
 
   createNewAdSample() {
