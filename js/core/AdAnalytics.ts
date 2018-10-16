@@ -254,7 +254,7 @@ export class AdAnalytics {
       ...this.adBreakSample, 
       ...this.adSample, 
       // the ad can override the skipAfter - if it isn't set, we use the adBreaks value as a fallback
-      adSkipAfter: this.adSample.adSkipAfter || this.adBreakSample.adSkipAfter 
+      adSkipAfter: this.adSample.adSkipAfter || this.adBreakSample.adSkipAfter
     });
     this.adSample = this.createNewAdSample();
     this.currentTime = undefined;
@@ -330,6 +330,7 @@ export class AdAnalytics {
     sample.time = Utils.getCurrentTimestamp();
     sample.adImpressionId = Utils.generateUUID();
     sample.percentageInViewport = Utils.calculatePercentage(sample.timeInViewport, sample.timePlayed);
+    sample.adSkippable = sample.adSkipAfter === undefined ? undefined : sample.adSkipAfter >= 0;
     this.analytics.backend.sendAdRequest(sample);
   }
 }
