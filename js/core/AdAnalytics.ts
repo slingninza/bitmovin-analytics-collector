@@ -129,9 +129,6 @@ export class AdAnalytics {
       if(this.adSample.adDuration !== undefined && this.adSample.adDuration > 0 && this.adapter.isLinearAdActive()) {
           this.currentTime = Utils.calculateTime(Math.max(this.adapter.currentTime(), 0));
       }
-      else {
-        this.currentTime = undefined;
-      }
     }, AdAnalytics.TIMEOUT_CURRENT_TIME_INTERVAL);
   }
 
