@@ -34,7 +34,6 @@ export class AdAnalytics {
   private adBreakSample: AdBreakSample = new AdBreakSample();
   private adSample: AdSample = new AdSample();
 
-  private adBreak?: any;
   private adStartupTimestamp?: number;
   private beginPlayingTimestamp?: number;
   private enterViewportTimestamp?: number;
@@ -258,7 +257,6 @@ export class AdAnalytics {
   }
 
   setAdBreak(adBreak) {
-    this.adBreak = adBreak;
     this.adBreakSample = this.createNewAdBreakSample();
 
     if (!adBreak) {
