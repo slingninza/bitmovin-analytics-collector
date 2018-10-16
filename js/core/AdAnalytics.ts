@@ -24,6 +24,7 @@ declare var __VERSION__: any;
 
 export class AdAnalytics {
   static readonly MODULE_NAME = 'ads';
+  private static readonly TIMEOUT_CURRENT_TIME_INTERVAL = 100;
 
   private analytics: Analytics;
   private adapter: AdAdapter;
@@ -38,6 +39,8 @@ export class AdAnalytics {
   private beginPlayingTimestamp?: number;
   private enterViewportTimestamp?: number;
   private isPlaying: boolean = false;
+  private currentTime?: number;
+  private currentTimeInterval?: number;
 
   constructor(analytics: Analytics, adapter: AdAdapter) {
     this.analytics = analytics;
@@ -113,6 +116,16 @@ export class AdAnalytics {
     this.beginPlayingTimestamp = Utils.getCurrentTimestamp();
     this.enterViewportTimestamp = Utils.getCurrentTimestamp();
     this.isPlaying = true;
+    this.currentTime = 0;
+
+    this.currentTimeInterval = setInterval(() => {
+      if(this.adSample.adDuration !== undefined && this.adSample.adDuration > 0 && this.adapter.isLinearAdActive()) {
+          this.currentTime = Utils.calculateTime(Math.max(this.adapter.currentTime(), 0));
+      }
+      else {
+        this.currentTime = undefined;
+      }
+    }, AdAnalytics.TIMEOUT_CURRENT_TIME_INTERVAL);
   }
 
   onAdStarted(event: AdEvent) {

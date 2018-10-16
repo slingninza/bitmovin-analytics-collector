@@ -52,6 +52,7 @@ class Bitmovin8Adapter implements Adapter, AdAdapter {
   isLinearAdActive = () => this.player.ads && this.player.ads.isLinearAdActive();
   getContainer = () => this.player.getContainer();
   getAdModule = () => 'IMAModule';
+  currentTime = () => this.player.ads && this.player.ads.currentTime();
 
   private getAutoPlay(): boolean {
     if (this.player.getConfig().playback) {
