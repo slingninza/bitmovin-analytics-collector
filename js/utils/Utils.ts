@@ -16,6 +16,14 @@ export const sanitizePath = (path: string): string => {
   return path.replace(/\/$/g, '');
 };
 
+export const calculateTimeWithUndefined = (time?: number): number | undefined => {
+  if(time === undefined) {
+    return time;
+  }
+  time = time * 1000;
+  return Math.round(time);
+};
+
 export const calculateTime = (time: number): number => {
   time = time * 1000;
   return Math.round(time);
@@ -96,3 +104,10 @@ export const getHostnameAndPathFromUrl = (url: string) => {
 
   return {hostname: domElement.hostname, path: domElement.pathname};
 };
+
+export const calculatePercentage = (numerator?: number, denominator?: number): number | undefined => {
+  if(denominator === undefined || denominator === 0) {
+    return undefined;
+  }
+  return Math.round((numerator || 0) / denominator * 100);
+}

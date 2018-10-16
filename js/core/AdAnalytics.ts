@@ -113,6 +113,9 @@ export class AdAnalytics {
   }
 
   private startAd() {
+    this.adSample.started = 1;
+    this.adSample.timePlayed = 0;
+    this.adSample.timeInViewport = 0;
     this.beginPlayingTimestamp = Utils.getCurrentTimestamp();
     this.enterViewportTimestamp = Utils.getCurrentTimestamp();
     this.isPlaying = true;
@@ -135,15 +138,15 @@ export class AdAnalytics {
     this.adSample.adStartupTime = this.adStartupTimestamp
       ? Utils.getCurrentTimestamp() - this.adStartupTimestamp
       : undefined;
-    this.adSample.started = 1;
-    this.adSample.timePlayed = 0;
-    this.adSample.timeInViewport = 0;
+
+    this.startAd();
+
     if (event.ad) {
       const ad = <LinearAd>event.ad;
       this.adSample.adSkippable = ad.skippable;
       this.adSample.adClickthroughUrl = ad.clickThroughUrl;
       this.adSample.adId = ad.id;
-      this.adSample.adDuration = ad.duration;
+      this.adSample.adDuration = Utils.calculateTime(ad.duration);
       this.adSample.mediaUrl = ad.mediaFileUrl;
       const mediaUrlDetails = Utils.getHostnameAndPathFromUrl(this.adSample.mediaUrl || '');
       this.adSample.mediaPath = mediaUrlDetails.path;
@@ -158,33 +161,31 @@ export class AdAnalytics {
         this.adSample.creativeId = data.creativeId;
         this.adSample.dealId = data.dealId;
         this.adSample.adDescription = data.adDescription;
-        this.adSample.minSuggestedDuration = data.minSuggestedDuration;
-        this.adSample.adSkipAfter = data.skipTimeOffset;
+        this.adSample.minSuggestedDuration = Utils.calculateTimeWithUndefined(data.minSuggestedDuration);
+        this.adSample.adSkipAfter = this.parseSkipAfter(data.skipTimeOffset);
         this.adSample.surveyUrl = data.surveyUrl;
         this.adSample.adTitle = data.title;
         this.adSample.universalAdIdRegistry = data.universalAdIdRegistry;
         this.adSample.universalAdIdValue = data.universalAdIdValue;
         this.adSample.wrapperAdsCount = data.wrapperAdsCount;
-        this.adSample.videoBitrate = data.vastMediaBitrate;
+        this.adSample.videoBitrate = data.vastMediaBitrate === undefined ? undefined : data.vastMediaBitrate * 1000;
         this.adSample.adPlaybackHeight = data.vastMediaHeight;
         this.adSample.adPlaybackWidth = data.vastMediaWidth;
         this.adSample.streamFormat = data.contentType;
       }
     }
-
-    this.startAd();
   }
 
   onAdFinished(event: AdEvent) {
     this.adSample.completed = 1;
-    this.completeAd();
+    this.completeAd(this.adSample.adDuration);
   }
 
   onAdSkipped(event: AdEvent) {
     this.adSample.skipped = 1;
-    //not possible - getRemainingTime() is -1 at this point already
-    //this.sample.skipPosition = currentTime;
-    this.completeAd();
+    this.adSample.skipPosition = this.currentTime;
+    this.adSample.skipPercentage = Utils.calculatePercentage(this.adSample.skipPosition, this.adSample.adDuration);
+    this.completeAd(this.adSample.skipPosition);
   }
 
   onAdError(event: ErrorEvent) {
@@ -196,10 +197,16 @@ export class AdAnalytics {
       this.setAdBreak(adBreak);
     }
 
-    this.completeAd();
+    this.adSample.errorPosition = this.currentTime;
+    this.adSample.errorPercentage = Utils.calculatePercentage(this.adSample.errorPosition, this.adSample.adDuration);
+    this.completeAd(this.adSample.errorPosition);
   }
 
-  private completeAd() {
+  private completeAd(exitPosition?: number) {
+    
+    clearInterval(this.currentTimeInterval);
+    this.adSample.exitPosition = exitPosition;
+    this.adSample.playPercentage = Utils.calculatePercentage(this.adSample.exitPosition, this.adSample.adDuration);
     //reset startupTimestamp for the next ad, in case there are multiple ads in one ad break
     this.adStartupTimestamp = Utils.getCurrentTimestamp();
     this.updatePlayingTime();
@@ -211,7 +218,8 @@ export class AdAnalytics {
 
   onAdClicked(event: AdClickedEvent) {
     this.adSample.clicked = 1;
-    //this.sample.clickPosition = currentTime;
+    this.adSample.clickPosition = this.currentTime;
+    this.adSample.clickPercentage = Utils.calculatePercentage(this.adSample.clickPosition, this.adSample.adDuration);
   }
 
   onAdQuartile(event: AdQuartileEvent) {
@@ -225,14 +233,14 @@ export class AdAnalytics {
   }
 
   onBeforeUnload() {
-    if (!this.adBreak) {
+    if (!this.adapter.isLinearAdActive()) {
       return;
     }
 
-    this.updatePlayingTime();
     this.adSample.closed = 1;
-    //this.sample.closePosition = currentTime;
-    this.sendAnalyticsRequestAndCreateNewSample();
+    this.adSample.closePosition = this.currentTime;
+    this.adSample.closePercentage = Utils.calculatePercentage(this.adSample.closePercentage, this.adSample.adDuration);
+    this.completeAd(this.adSample.closePosition);
   }
 
   sendAnalyticsRequestAndCreateNewSample() {
@@ -245,6 +253,7 @@ export class AdAnalytics {
       adSkipAfter: this.adSample.adSkipAfter || this.adBreakSample.adSkipAfter 
     });
     this.adSample = this.createNewAdSample();
+    this.currentTime = undefined;
   }
 
   setAdBreak(adBreak) {
@@ -266,10 +275,10 @@ export class AdAnalytics {
       this.adBreakSample.adPosition = 'mid';
       this.adBreakSample.adOffset = adBreak.position;
     }
-    this.adBreakSample.adScheduleTime = adBreak.scheduleTime;
-    this.adBreakSample.adReplaceContentDuration = adBreak.replaceContentDuration;
-    this.adBreakSample.adPreloadOffset = adBreak.preloadOffset;
-    this.adBreakSample.adSkipAfter = adBreak.skipAfter;
+    this.adBreakSample.adScheduleTime = Utils.calculateTimeWithUndefined(adBreak.scheduleTime);
+    this.adBreakSample.adReplaceContentDuration = Utils.calculateTimeWithUndefined(adBreak.replaceContentDuration);
+    this.adBreakSample.adPreloadOffset = Utils.calculateTimeWithUndefined(adBreak.preloadOffset);
+    this.adBreakSample.adSkipAfter = this.parseSkipAfter(adBreak.skipAfter);
     this.adBreakSample.adTagType = adBreak.tag ? adBreak.tag.type : undefined;
     this.adBreakSample.adIsPersistent = adBreak.persistent;
     this.adBreakSample.adIdPlayer = adBreak.id;
@@ -279,6 +288,16 @@ export class AdAnalytics {
       this.adBreakSample.adTagServer = adTagDetails.hostname;
       this.adBreakSample.adTagPath = adTagDetails.path;
     }
+  }
+
+  parseSkipAfter(skipAfter?: number) {
+    if(skipAfter === undefined) {
+      return undefined;
+    }
+    if(skipAfter === -1) {
+      return skipAfter;
+    }
+    return Utils.calculateTime(skipAfter);
   }
 
   createNewAdBreakSample() {
@@ -306,7 +325,7 @@ export class AdAnalytics {
 
     sample.time = Utils.getCurrentTimestamp();
     sample.adImpressionId = Utils.generateUUID();
-    sample.percentageInViewport = !sample.timePlayed || sample.timePlayed === 0 ? undefined : Math.round(sample.timeInViewport || 0 / sample.timePlayed);
+    sample.percentageInViewport = Utils.calculatePercentage(sample.timeInViewport, sample.timePlayed);
     this.analytics.backend.sendAdRequest(sample);
   }
 }
