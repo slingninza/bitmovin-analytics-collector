@@ -41,6 +41,7 @@ export class AdAnalytics {
   private isPlaying: boolean = false;
   private currentTime?: number;
   private currentTimeInterval?: number;
+  private adPodPosition: number = 0;
 
   constructor(analytics: Analytics, adapter: AdAdapter) {
     this.analytics = analytics;
@@ -104,6 +105,7 @@ export class AdAnalytics {
   onAdManifestLoaded(event: AdBreakEvent) {  }
 
   onAdBreakStarted(event: AdBreakEvent) {
+    this.adPodPosition = 0;
     this.setAdBreak(event.adBreak);
     this.adStartupTimestamp = Utils.getCurrentTimestamp();
   }
@@ -116,10 +118,12 @@ export class AdAnalytics {
     this.adSample.started = 1;
     this.adSample.timePlayed = 0;
     this.adSample.timeInViewport = 0;
+    this.adSample.adPodPosition = this.adPodPosition;
     this.beginPlayingTimestamp = Utils.getCurrentTimestamp();
     this.enterViewportTimestamp = Utils.getCurrentTimestamp();
     this.isPlaying = true;
     this.currentTime = 0;
+    this.adPodPosition++;
 
     this.currentTimeInterval = setInterval(() => {
       if(this.adSample.adDuration !== undefined && this.adSample.adDuration > 0 && this.adapter.isLinearAdActive()) {
