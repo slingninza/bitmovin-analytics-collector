@@ -125,11 +125,11 @@ export class Analytics {
 
         this.setDuration(time);
         this.setState(state);
-        this.sample.playerStartupTime = time;
+        this.playerStartupTime = this.sample.playerStartupTime = time;
 
         if (window.performance && window.performance.timing) {
           const loadTime = Utils.getCurrentTimestamp() - window.performance.timing.navigationStart;
-          this.sample.pageLoadTime = loadTime;
+          this.pageLoadTime = this.sample.pageLoadTime = loadTime;
         }
 
         this.startupTime = time;
